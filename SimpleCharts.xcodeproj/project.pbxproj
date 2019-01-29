@@ -8,12 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		28DCBF9621FA23B6006BB48F /* SimpleCharts.h in Headers */ = {isa = PBXBuildFile; fileRef = 28DCBF9421FA23B6006BB48F /* SimpleCharts.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		28DCBF9E21FB4688006BB48F /* LineChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28DCBF9D21FB4688006BB48F /* LineChartView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		28DCBF9121FA23B6006BB48F /* SimpleCharts.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SimpleCharts.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		28DCBF9421FA23B6006BB48F /* SimpleCharts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimpleCharts.h; sourceTree = "<group>"; };
 		28DCBF9521FA23B6006BB48F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		28DCBF9D21FB4688006BB48F /* LineChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineChartView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,8 +48,9 @@
 		28DCBF9321FA23B6006BB48F /* SimpleCharts */ = {
 			isa = PBXGroup;
 			children = (
-				28DCBF9421FA23B6006BB48F /* SimpleCharts.h */,
 				28DCBF9521FA23B6006BB48F /* Info.plist */,
+				28DCBF9421FA23B6006BB48F /* SimpleCharts.h */,
+				28DCBF9D21FB4688006BB48F /* LineChartView.swift */,
 			);
 			path = SimpleCharts;
 			sourceTree = "<group>";
@@ -95,6 +98,7 @@
 				TargetAttributes = {
 					28DCBF9021FA23B6006BB48F = {
 						CreatedOnToolsVersion = 10.1;
+						LastSwiftMigration = 1010;
 					};
 				};
 			};
@@ -130,6 +134,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				28DCBF9E21FB4688006BB48F /* LineChartView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -261,6 +266,7 @@
 		28DCBF9A21FA23B6006BB48F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
@@ -278,6 +284,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.codesistency.SimpleCharts;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -286,6 +293,7 @@
 		28DCBF9B21FA23B6006BB48F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
