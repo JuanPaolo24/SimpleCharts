@@ -35,14 +35,15 @@ open class LineChartView: UIView {
       print("could not get context")
       return
     }
+    let valuetest: [Double] = [0, 60, 100, 50, 120, 200, 100]
     
+    plotPoints(context: context, rect: rect, array: valuetest, isCircle: true)
     
-    let valuetest: [Double] = [0, 60, 100, 50, 120, 300, 100]
-    
-    plotPoints(context: context, rect: rect, array: valuetest)
+    axisGridLines(context: context, rect: rect, isGridline: true)
     
     context.addPath(yAxis(rect: rect))
     context.addPath(xAxis(rect: rect))
+    context.setLineWidth(3.0)
     context.setStrokeColor(UIColor.black.cgColor)
     context.strokePath()
 
@@ -66,38 +67,53 @@ open class LineChartView: UIView {
   }
   
   
-  
-  
-  
-  //TODO: Fix the gridlines to not rely on the increment
-  func plotPoints(context: CGContext, rect: CGRect, array: [Double]) {
+  func plotPoints(context: CGContext, rect: CGRect, array: [Double], isCircle: Bool) {
     
     let firstPoint = array.first
     let connection = CGMutablePath()
     connection.move(to: CGPoint(x: Double(40), y: Double(rect.size.height - 31) - firstPoint!))
     
     
-    
-    
     for (i, value) in array.enumerated() {
       
-      context.addArc(center: CGPoint(x: Double(40 * (i + 1)), y: Double(rect.size.height - 31) - value), radius: 5, startAngle: CGFloat(0).degreesToRadians, endAngle: CGFloat(360).degreesToRadians, clockwise: true)
-      context.setLineWidth(1.0)
-      context.setFillColor(UIColor.black.cgColor)
-      context.fillPath()
+      if isCircle == true {
+        context.addArc(center: CGPoint(x: Double(40 * (i + 1)), y: Double(rect.size.height - 31) - value), radius: 5, startAngle: CGFloat(0).degreesToRadians, endAngle: CGFloat(360).degreesToRadians, clockwise: true)
+        context.setLineWidth(1.0)
+        context.setFillColor(UIColor.black.cgColor)
+        context.fillPath()
+      }
       
       connection.addLine(to: CGPoint(x: Double(40 * (i + 1)), y: Double(rect.size.height - 31) - value))
       context.addPath(connection)
-
-      let firstGridLine = CGMutablePath()
-      firstGridLine.move(to: CGPoint(x: Double(40 * (i + 1)), y: 10))
-      firstGridLine.addLine(to: CGPoint(x: Double(40 * (i + 1)), y: Double(rect.size.height - 31)))
-      context.addPath(firstGridLine)
       context.setStrokeColor(UIColor.black.cgColor)
       context.strokePath()
-      context.setLineWidth(0.5)
+      context.setLineWidth(1.0)
       
     }
+    
+  }
+  
+  
+  func axisGridLines(context: CGContext, rect: CGRect, isGridline: Bool) {
+    
+    if isGridline == true {
+      for i in 0...8 {
+        let firstGridLine = CGMutablePath()
+        firstGridLine.move(to: CGPoint(x: Double(40 * (i + 1)), y: 10))
+        firstGridLine.addLine(to: CGPoint(x: Double(40 * (i + 1)), y: Double(rect.size.height - 31)))
+        context.addPath(firstGridLine)
+        let secondGridLine = CGMutablePath()
+        secondGridLine.move(to: CGPoint(x: 30, y: Int(rect.size.height) - (50 * i)))
+        secondGridLine.addLine(to: CGPoint(x: Int(rect.size.width - 31), y: Int(rect.size.height) - (50 * i)))
+        
+        
+        context.addPath(secondGridLine)
+        context.setStrokeColor(UIColor.black.cgColor)
+        context.strokePath()
+        context.setLineWidth(1.0)
+      }
+    }
+    
   }
   
 
