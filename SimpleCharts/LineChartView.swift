@@ -10,9 +10,6 @@ import Foundation
 import CoreGraphics
 
 
-//TODO: Implement labels on both axis
-//TODO: Implement points on the graph
-
 
 extension FloatingPoint {
   var degreesToRadians: Self {return self * .pi / 180}
@@ -39,7 +36,10 @@ open class LineChartView: UIView {
       return
     }
     
-    drawPoint(context: context, rect: rect)
+    
+    let valuetest: [Double] = [0, 60, 100, 50, 120, 300, 100]
+    
+    plotPoints(context: context, rect: rect, array: valuetest)
     
     context.addPath(yAxis(rect: rect))
     context.addPath(xAxis(rect: rect))
@@ -65,41 +65,43 @@ open class LineChartView: UIView {
     
   }
   
-  func drawPoint(context: CGContext, rect: CGRect) {
+  
+  
+  
+  
+  //TODO: Fix the gridlines to not rely on the increment
+  func plotPoints(context: CGContext, rect: CGRect, array: [Double]) {
     
-    for i in 1...5 {
-      context.addArc(center: linePoint(x: CGFloat(50 * i), y: rect.size.height - CGFloat(50 * i)), radius: 5, startAngle: CGFloat(0).degreesToRadians, endAngle: CGFloat(360).degreesToRadians, clockwise: true)
+    let firstPoint = array.first
+    let connection = CGMutablePath()
+    connection.move(to: CGPoint(x: Double(40), y: Double(rect.size.height - 31) - firstPoint!))
+    
+    
+    
+    
+    for (i, value) in array.enumerated() {
       
+      context.addArc(center: CGPoint(x: Double(40 * (i + 1)), y: Double(rect.size.height - 31) - value), radius: 5, startAngle: CGFloat(0).degreesToRadians, endAngle: CGFloat(360).degreesToRadians, clockwise: true)
       context.setLineWidth(1.0)
       context.setFillColor(UIColor.black.cgColor)
       context.fillPath()
       
-      
-      context.addPath(lineConnection(xFrom: CGFloat(50 * i), yFrom: rect.size.height - CGFloat(50 * i), xTo: CGFloat(50 * i) + 50, yTo: rect.size.height - (CGFloat(50 * i) + 50)))
+      connection.addLine(to: CGPoint(x: Double(40 * (i + 1)), y: Double(rect.size.height - 31) - value))
+      context.addPath(connection)
+
+      let firstGridLine = CGMutablePath()
+      firstGridLine.move(to: CGPoint(x: Double(40 * (i + 1)), y: 10))
+      firstGridLine.addLine(to: CGPoint(x: Double(40 * (i + 1)), y: Double(rect.size.height - 31)))
+      context.addPath(firstGridLine)
       context.setStrokeColor(UIColor.black.cgColor)
       context.strokePath()
+      context.setLineWidth(0.5)
       
     }
-    
   }
   
-  func linePoint(x: CGFloat, y: CGFloat) -> CGPoint {
-    let centerPoint = CGPoint(x: x, y: y)
-    
-    return centerPoint
-  }
-  
-  
-  func lineConnection(xFrom: CGFloat, yFrom: CGFloat, xTo: CGFloat, yTo: CGFloat) -> CGMutablePath {
-    let connection = CGMutablePath()
-    connection.move(to: CGPoint(x: xFrom, y: yFrom))
-    connection.addLine(to: CGPoint(x: xTo, y: yTo))
-    
-    return connection
-  }
-  
-  
-  
+
+
   
   func axisLabel(name: String) -> UILabel {
     let label = UILabel(frame: CGRect.zero)
