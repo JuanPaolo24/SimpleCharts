@@ -37,7 +37,7 @@ open class LineChartView: UIView {
       return
     }
     
-    let valuetest: [Double] = [50, 55, 100, 50, 120, 200, 300, 200, 123, 100]
+    let valuetest: [Double] = [130, 55, 100, 50, 120]
     
     plotPoints(context: context, rect: rect, array: valuetest, circleEnabled: true, lineEnabled: true)
     drawAxis(context: context, rect: rect)
@@ -74,48 +74,24 @@ open class LineChartView: UIView {
     let yAxisPadding = rect.size.height - 31
     let arrayCount = Double(array.count)
     let pointIncrement = Double(rect.size.width - 62) / arrayCount
-    let sideMargin = 41.0
-    var marker = 0.0
-    var xValue = 0.0
+    var yValue = 0.0
     var maxValue = 0.0
     
     
-    //Need to refactor this function
-    //////////////////////////////////////////
-    var test1 = 0.0
-    var test2 = 0.0
-    
-    if pointIncrement > sideMargin {
-      test1 = pointIncrement - sideMargin
-      test2 = Double(pointIncrement - test1)
-    } else {
-      test1 = sideMargin - pointIncrement
-      test2 = Double(pointIncrement + test1)
-    }
-    //////////////////////////////////////////
-    
     if let max = array.max() {
-      maxValue = max + 50
+      maxValue = max + 20
       if let firstValue = array.first {
         let yValue = (Double(yAxisPadding) / maxValue) * firstValue
         
-        connection.move(to: CGPoint(x: test2, y: Double(yAxisPadding) - yValue))
+        connection.move(to: CGPoint(x: calculatexValue(pointIncrement: pointIncrement, i: 0, sideMargin: 41.0), y: Double(yAxisPadding) - yValue))
       }
     }
     
-    
     for (i, value) in array.enumerated() {
-      
-      if pointIncrement > sideMargin {
-        marker = pointIncrement - sideMargin
-        xValue = Double((pointIncrement * (Double(i) + 1.0)) - marker)
-      } else {
-        marker = sideMargin - pointIncrement
-        xValue = Double((pointIncrement * (Double(i) + 1.0)) + marker)
-      }
-    
-      
-      let yValue = (Double(yAxisPadding) / maxValue) * value
+
+      let xValue = calculatexValue(pointIncrement: pointIncrement, i: i, sideMargin: 41.0)
+
+      yValue = (Double(yAxisPadding) / maxValue) * value
       
       print(yValue)
       
@@ -127,6 +103,22 @@ open class LineChartView: UIView {
         drawLines(context: context, connection: connection, xValue: xValue, yValue: yValue, yAxisPadding: yAxisPadding, lineWidth: 1.0, colour: UIColor.black.cgColor)
       }
     }
+  }
+  
+  
+  //Ensures that there is sufficient padding at the start and end of the x axis
+  func calculatexValue(pointIncrement: Double, i: Int, sideMargin: Double) -> Double {
+    var xValue = 0.0
+    var marker = 0.0
+    if pointIncrement > sideMargin {
+      marker = pointIncrement - sideMargin
+      xValue = Double((pointIncrement * (Double(i) + 1.0)) - marker)
+    } else {
+      marker = sideMargin - pointIncrement
+      xValue = Double((pointIncrement * (Double(i) + 1.0)) + marker)
+    }
+    
+    return xValue
   }
   
   
@@ -161,8 +153,9 @@ open class LineChartView: UIView {
     
     
     if let max = array.max() {
+      let maxValue = max + 20
       //Manipulate the value at the end of this to create distance between the axis
-      yAxisIncrement = ((Double(rect.size.height - 31) / max) * Double(arrayCount)) * 4
+      yAxisIncrement = ((Double(rect.size.height - 31) / maxValue) * Double(arrayCount)) * 4
       windowCount = Double(rect.size.height - 31) / yAxisIncrement
     }
     
@@ -176,6 +169,7 @@ open class LineChartView: UIView {
         let secondGridLine = CGMutablePath()
         secondGridLine.move(to: CGPoint(x: 30, y: Double(rect.size.height - 31) - (yAxisIncrement * Double(i))))
         secondGridLine.addLine(to: CGPoint(x: Double(rect.size.width - 31), y: Double(rect.size.height - 31) - (yAxisIncrement * Double(i))))
+        
         
         context.addPath(secondGridLine)
         context.setStrokeColor(UIColor.black.cgColor)
@@ -192,20 +186,25 @@ open class LineChartView: UIView {
     let arrayCount = array.count
     var yAxisIncrement = 0.0
     var windowCount = 0.0
+    var actualValue = 0.0
+    var scaleValue = 0.0
     
     
     if let max = array.max() {
+      let maxValue = max + 20
+      scaleValue = (Double(rect.size.height - 31) / maxValue)
       //Manipulate the value at the end of this to create distance between the axis
-      yAxisIncrement = ((Double(rect.size.height - 31) / max) * Double(arrayCount)) * 4
+      yAxisIncrement =  scaleValue * Double(arrayCount) * 4
       windowCount = Double(rect.size.height - 31) / yAxisIncrement
+      actualValue = yAxisIncrement / scaleValue
     }
     
-  
-    
+    print(yAxisIncrement)
     for i in 0...Int(windowCount) {
+
       
-      let yLabelTest = axisLabel(name: String(i * Int(yAxisIncrement - 10)))
-      yLabelTest.frame = CGRect(x: 5, y: Double(rect.size.height - 31) - (yAxisIncrement * Double(i)), width: 40, height: 20)
+      let yLabelTest = axisLabel(name: String(i * Int(actualValue)))
+      yLabelTest.frame = CGRect(x: 5, y: Double(rect.size.height - 36) - (yAxisIncrement * Double(i)), width: 20, height: 10)
       
       let xLabelTest = axisLabel(name: "Mon")
       xLabelTest.frame = CGRect(x: 50 * i, y: Int(rect.size.height) - 20, width: 60, height: 20)
@@ -223,10 +222,10 @@ open class LineChartView: UIView {
   func axisLabel(name: String) -> UILabel {
     let label = UILabel(frame: CGRect.zero)
     label.text = name
-    label.font = UIFont.boldSystemFont(ofSize: 10)
+    label.font = UIFont.systemFont(ofSize: 10)
     label.textColor = UIColor.black
     label.backgroundColor = backgroundColor
-    label.textAlignment = NSTextAlignment.center
+    label.textAlignment = NSTextAlignment.left
     
     return label
   }
