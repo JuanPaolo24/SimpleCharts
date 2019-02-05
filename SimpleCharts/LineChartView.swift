@@ -154,6 +154,7 @@ open class LineChartView: UIView {
     var actualDataScale = 0.0
     var windowCount = 0.0
     var frameScale = 0.0
+    let pointIncrement = Double(rect.size.width - 62) / Double(array.count)
     
     if let max = array.max() {
       let maxValue = max + 41
@@ -166,10 +167,7 @@ open class LineChartView: UIView {
   
     if isGridline == true {
       for i in 0...Int(windowCount) {
-        let firstGridLine = CGMutablePath()
-        firstGridLine.move(to: CGPoint(x: Double(40 * (i + 1)), y: 10))
-        firstGridLine.addLine(to: CGPoint(x: Double(40 * (i + 1)), y: Double(rect.size.height - 31)))
-        //context.addPath(firstGridLine)
+      
         let secondGridLine = CGMutablePath()
         secondGridLine.move(to: CGPoint(x: 30, y: Double(rect.size.height - 31) - (frameScale * Double(i))))
         secondGridLine.addLine(to: CGPoint(x: Double(rect.size.width - 31), y: Double(rect.size.height - 31) - (frameScale * Double(i))))
@@ -181,6 +179,22 @@ open class LineChartView: UIView {
         context.setLineWidth(1.0)
         
       }
+      
+      for i in 0...array.count - 1 {
+        
+        
+        let xValue = calculatexValue(pointIncrement: pointIncrement, i: i, sideMargin: 41.0)
+        
+        let firstGridLine = CGMutablePath()
+        firstGridLine.move(to: CGPoint(x: xValue, y: 10))
+        firstGridLine.addLine(to: CGPoint(x: xValue, y: Double(rect.size.height - 31)))
+        context.addPath(firstGridLine)
+        
+        context.setStrokeColor(UIColor.black.cgColor)
+        context.strokePath()
+        context.setLineWidth(1.0)
+      }
+      
     }
   
   }
