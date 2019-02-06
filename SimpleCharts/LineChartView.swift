@@ -17,17 +17,22 @@ extension FloatingPoint {
 
 open class LineChartView: UIView {
   
+  public let axisAccess: LineChartAxis
+  public let dataAccess: LineChartData
+  public var gridlinesEnable = true
   
-  
-  override init(frame: CGRect) {
+  public init(frame: CGRect, axis: LineChartAxis, data: LineChartData) {
+    self.axisAccess = axis
+    self.dataAccess = data
+    
     super.init(frame: frame)
     backgroundColor = UIColor.white
+    
   }
   
   required public init?(coder aDecoder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
-  
   
   override open func draw(_ rect: CGRect) {
     super.draw(rect)
@@ -37,72 +42,12 @@ open class LineChartView: UIView {
       return
     }
     
-    let valuetest: [Double] = [130, 55, 100, 50, 120]
-    
-    
-    
-    plotPoints(context: context, rect: rect, array: valuetest, circleEnabled: true, lineEnabled: true)
-    drawAxis(context: context, rect: rect)
-    drawAxisGridLines(context: context, rect: rect, array: valuetest, isEnabled: true)
-    axisMark(rect: rect, array: valuetest)
-    
-  }
   
-  
-  
-  func drawAxis(context: CGContext, rect: CGRect) {
-    let yAxisPadding = rect.size.height - 31
-    let xAxisPadding = rect.size.width - 31
+    axisAccess.drawAxis(context: context, rect: rect)
+    axisAccess.axisMark(rect: rect, view: self)
+    dataAccess.plotPoints(context: context, rect: rect)
+    drawAxisGridLines(context: context, rect: rect, array: dataAccess.arrayAccess)
     
-    let yAxisPath = CGMutablePath()
-    yAxisPath.move(to: CGPoint(x: 30, y: 10))
-    yAxisPath.addLine(to: CGPoint(x: 30, y: yAxisPadding))
-    
-    let xAxisPath = CGMutablePath()
-    xAxisPath.move(to: CGPoint(x: 30, y: yAxisPadding))
-    xAxisPath.addLine(to: CGPoint(x: xAxisPadding, y: yAxisPadding))
-    
-    context.addPath(yAxisPath)
-    context.addPath(xAxisPath)
-    context.setLineWidth(3.0)
-    context.setStrokeColor(UIColor.black.cgColor)
-    context.strokePath()
-    
-  }
-  
-  
-  func plotPoints(context: CGContext, rect: CGRect, array: [Double], circleEnabled: Bool, lineEnabled: Bool) {
-    let connection = CGMutablePath()
-    let yAxisPadding = Double(rect.size.height - 41)
-    let arrayCount = Double(array.count)
-    let pointIncrement = Double(rect.size.width - 62) / arrayCount
-    var maxValue = 0.0
-    
-    
-    if let max = array.max() {
-      maxValue = max + 41
-      if let firstValue = array.first {
-        let yValue = (yAxisPadding / maxValue) * firstValue
-        
-        connection.move(to: CGPoint(x: calculatexValue(pointIncrement: pointIncrement, distanceIncrement: 0, sideMargin: 41.0), y: yAxisPadding - yValue))
-      }
-    }
-    
-    for (i, value) in array.enumerated() {
-
-      let xValue = calculatexValue(pointIncrement: pointIncrement, distanceIncrement: i, sideMargin: 41.0)
-      let yValuePosition = (yAxisPadding / maxValue) * value
-      let yValue = yAxisPadding - yValuePosition
-      
-      
-      if circleEnabled == true {
-        drawCirclePoints(context: context, xValue: xValue, yValue: yValue, radius: 3, lineWidth: 1.0, colour: UIColor.black.cgColor)
-      }
-      
-      if lineEnabled == true {
-        drawLines(context: context, connection: connection, xValue: xValue, yValue: yValue, lineWidth: 1.0, colour: UIColor.black.cgColor)
-      }
-    }
   }
   
   
@@ -121,34 +66,14 @@ open class LineChartView: UIView {
     return xValue
   }
   
+
   
-  
-  func drawCirclePoints(context: CGContext, xValue: Double, yValue: Double, radius: CGFloat, lineWidth: CGFloat, colour: CGColor) {
-    context.addArc(center: CGPoint(x: xValue, y: yValue), radius: radius, startAngle: CGFloat(0).degreesToRadians, endAngle: CGFloat(360).degreesToRadians, clockwise: true)
-    context.setLineWidth(lineWidth)
-    context.setFillColor(colour)
-    context.fillPath()
-    
-  }
-  
-  
-  func drawLines(context: CGContext, connection: CGMutablePath, xValue: Double, yValue: Double, lineWidth: CGFloat, colour: CGColor) {
-    connection.addLine(to: CGPoint(x: xValue, y: yValue))
-    context.addPath(connection)
-    context.setStrokeColor(colour)
-    context.strokePath()
-    context.setLineWidth(lineWidth)
-  }
-  
-  
-  
-  
-  func drawAxisGridLines(context: CGContext, rect: CGRect, array: [Double], isEnabled: Bool) {
+  func drawAxisGridLines(context: CGContext, rect: CGRect, array: [Double]) {
     let numberofGridlines = 6
     let frameScale = (Double(rect.size.height - 41) / 6)
     let pointIncrement = Double(rect.size.width - 62) / Double(array.count)
     
-    if isEnabled == true {
+    if gridlinesEnable == true {
       for i in 0...numberofGridlines {
       
         let secondGridLine = CGMutablePath()
@@ -158,7 +83,8 @@ open class LineChartView: UIView {
         context.addPath(secondGridLine)
         context.setStrokeColor(UIColor.black.cgColor)
         context.strokePath()
-        context.setLineWidth(1.0)
+        //context.setLineWidth(1.0)
+        context.setLineDash(phase: 0, lengths: [1])
       }
       
       for i in 0...array.count - 1 {
@@ -172,56 +98,11 @@ open class LineChartView: UIView {
         
         context.setStrokeColor(UIColor.black.cgColor)
         context.strokePath()
-        context.setLineWidth(1.0)
+        //context.setLineWidth(1.0)
+        context.setLineDash(phase: 0, lengths: [1])
       }
     }
   }
-  
-
-  func axisMark(rect: CGRect, array: [Double]) {
-    var actualDataScale = 0.0
-    let numberofGridlines = 6
-    var frameScale = 0.0
-    let pointIncrement = Double(rect.size.width - 62) / Double(array.count)
-    
-    
-    if let max = array.max() {
-      actualDataScale =  max / 6
-
-      frameScale = (Double(rect.size.height - 41) / 6)
-      
-    }
-    
-    for i in 0...numberofGridlines {
-      let yLabelTest = axisLabel(name: String(i * Int(actualDataScale)))
-      yLabelTest.frame = CGRect(x: 0, y: Double(rect.size.height - 36) - (frameScale * Double(i)), width: 20, height: 20)
-    
-      addSubview(yLabelTest)
-    }
-    
-    for i in 0...array.count - 1 {
-      let xValue = calculatexValue(pointIncrement: pointIncrement, distanceIncrement: i, sideMargin: 41.0)
-      
-      let xLabelTest = axisLabel(name: String(i + 1))
-      xLabelTest.frame = CGRect(x: xValue, y: Double(rect.size.height) - 20, width: 20, height: 20)
-      addSubview(xLabelTest)
-    }
-    
-  }
-  
-
-
-  func axisLabel(name: String) -> UILabel {
-    let label = UILabel(frame: CGRect.zero)
-    label.text = name
-    label.font = UIFont.systemFont(ofSize: 8)
-    label.textColor = UIColor.black
-    label.backgroundColor = backgroundColor
-    label.textAlignment = NSTextAlignment.left
-    
-    return label
-  }
-
   
   
 }
