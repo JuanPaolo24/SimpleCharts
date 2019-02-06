@@ -7,11 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2868CAD8220AB9050016DFD3 /* LineChartData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2868CAD7220AB9050016DFD3 /* LineChartData.swift */; };
+		2868CADB220ABA200016DFD3 /* LineChartAxis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2868CADA220ABA200016DFD3 /* LineChartAxis.swift */; };
 		28DCBF9621FA23B6006BB48F /* SimpleCharts.h in Headers */ = {isa = PBXBuildFile; fileRef = 28DCBF9421FA23B6006BB48F /* SimpleCharts.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		28DCBF9E21FB4688006BB48F /* LineChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28DCBF9D21FB4688006BB48F /* LineChartView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2868CAD7220AB9050016DFD3 /* LineChartData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineChartData.swift; sourceTree = "<group>"; };
+		2868CADA220ABA200016DFD3 /* LineChartAxis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineChartAxis.swift; sourceTree = "<group>"; };
 		28DCBF9121FA23B6006BB48F /* SimpleCharts.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SimpleCharts.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		28DCBF9421FA23B6006BB48F /* SimpleCharts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimpleCharts.h; sourceTree = "<group>"; };
 		28DCBF9521FA23B6006BB48F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -51,6 +55,8 @@
 				28DCBF9521FA23B6006BB48F /* Info.plist */,
 				28DCBF9421FA23B6006BB48F /* SimpleCharts.h */,
 				28DCBF9D21FB4688006BB48F /* LineChartView.swift */,
+				2868CAD7220AB9050016DFD3 /* LineChartData.swift */,
+				2868CADA220ABA200016DFD3 /* LineChartAxis.swift */,
 			);
 			path = SimpleCharts;
 			sourceTree = "<group>";
@@ -134,7 +140,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2868CADB220ABA200016DFD3 /* LineChartAxis.swift in Sources */,
 				28DCBF9E21FB4688006BB48F /* LineChartView.swift in Sources */,
+				2868CAD8220AB9050016DFD3 /* LineChartData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
