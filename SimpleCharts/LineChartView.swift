@@ -46,6 +46,10 @@ open class LineChartView: UIView {
     axisAccess.drawAxis(context: context, rect: rect)
     axisAccess.axisMark(rect: rect, view: self)
     dataAccess.plotPoints(context: context, rect: rect)
+    
+    axisAccess.drawLegend(context: context, rect: rect, view: self)
+    
+    
     drawAxisGridLines(context: context, rect: rect, array: dataAccess.arrayAccess)
     
   }
@@ -78,7 +82,7 @@ open class LineChartView: UIView {
       
         let secondGridLine = CGMutablePath()
         secondGridLine.move(to: CGPoint(x: 30, y: Double(rect.size.height - 31) - (frameScale * Double(i))))
-        secondGridLine.addLine(to: CGPoint(x: Double(rect.size.width - 31), y: Double(rect.size.height - 31) - (frameScale * Double(i))))
+        secondGridLine.addLine(to: CGPoint(x: Double(rect.size.width - 62), y: Double(rect.size.height - 31) - (frameScale * Double(i))))
         
         context.addPath(secondGridLine)
         context.setStrokeColor(UIColor.black.cgColor)

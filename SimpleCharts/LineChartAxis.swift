@@ -36,7 +36,7 @@ open class LineChartAxis {
   
   func drawAxis(context: CGContext, rect: CGRect) {
     let yAxisPadding = rect.size.height - 31
-    let xAxisPadding = rect.size.width - 31
+    let xAxisPadding = rect.size.width - 62
     
     let yAxisPath = CGMutablePath()
     yAxisPath.move(to: CGPoint(x: 30, y: 10))
@@ -80,10 +80,38 @@ open class LineChartAxis {
       let xValue = calculatexValue(pointIncrement: pointIncrement, distanceIncrement: i, sideMargin: 41.0)
       
       let xLabelTest = axisLabel(name: String(i + 1))
-      xLabelTest.frame = CGRect(x: xValue, y: Double(rect.size.height) - 20, width: 20, height: 20)
+      xLabelTest.frame = CGRect(x: xValue, y: Double(rect.size.height) - 28, width: 20, height: 20)
       view.addSubview(xLabelTest)
     }
     
+  }
+  
+  
+  func drawLegend(context: CGContext, rect: CGRect, view: UIView) {
+    
+    let width = rect.size.width
+    
+    let lowerLeftCorner = CGPoint(x: width - 50, y: 30)
+    let lowerRightCorner = CGPoint(x: width - 40, y: 30)
+    let upperRightCorner = CGPoint(x: width - 40, y: 20)
+    let upperLeftCorner = CGPoint(x:width - 50, y: 20)
+    
+    context.move(to: lowerLeftCorner) //For some reason this line makes the first point disappear (
+    context.addLine(to: lowerLeftCorner)
+    context.addLine(to: lowerRightCorner)
+    context.addLine(to: upperRightCorner)
+    context.addLine(to: upperLeftCorner)
+    context.addLine(to: lowerLeftCorner)
+    
+    context.setLineCap(.square)
+    context.setLineWidth(1.0)
+    context.fillPath()
+    
+    
+    
+    let legendLabel = axisLabel(name: "Data 1")
+    legendLabel.frame = CGRect(x: width - 35, y: 15, width: 30, height: 20)
+    view.addSubview(legendLabel)
   }
   
   
