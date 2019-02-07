@@ -27,7 +27,6 @@ open class LineChartView: UIView {
     
     super.init(frame: frame)
     backgroundColor = UIColor.white
-    
   }
   
   required public init?(coder aDecoder: NSCoder) {
@@ -53,6 +52,7 @@ open class LineChartView: UIView {
     drawAxisGridLines(context: context, rect: rect, array: dataAccess.arrayAccess)
     
   }
+  
   
   
   //Ensures that there is sufficient padding at the start and end of the x axis

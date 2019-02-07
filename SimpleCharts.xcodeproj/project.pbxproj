@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2866D55F220C5C2D0009005A /* ChartRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2866D55E220C5C2D0009005A /* ChartRenderer.swift */; };
+		2866D563220C5C660009005A /* DataSetRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2866D562220C5C660009005A /* DataSetRenderer.swift */; };
 		2868CAD8220AB9050016DFD3 /* LineChartData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2868CAD7220AB9050016DFD3 /* LineChartData.swift */; };
 		2868CADB220ABA200016DFD3 /* LineChartAxis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2868CADA220ABA200016DFD3 /* LineChartAxis.swift */; };
 		28DCBF9621FA23B6006BB48F /* SimpleCharts.h in Headers */ = {isa = PBXBuildFile; fileRef = 28DCBF9421FA23B6006BB48F /* SimpleCharts.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -14,6 +16,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2866D55E220C5C2D0009005A /* ChartRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartRenderer.swift; sourceTree = "<group>"; };
+		2866D562220C5C660009005A /* DataSetRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSetRenderer.swift; sourceTree = "<group>"; };
 		2868CAD7220AB9050016DFD3 /* LineChartData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineChartData.swift; sourceTree = "<group>"; };
 		2868CADA220ABA200016DFD3 /* LineChartAxis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineChartAxis.swift; sourceTree = "<group>"; };
 		28DCBF9121FA23B6006BB48F /* SimpleCharts.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SimpleCharts.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -33,6 +37,29 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2866D556220C2BEB0009005A /* Bar Graph */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Bar Graph";
+			sourceTree = "<group>";
+		};
+		2866D557220C2BF70009005A /* Pie Chart */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Pie Chart";
+			sourceTree = "<group>";
+		};
+		2866D55D220C5C040009005A /* Base Class */ = {
+			isa = PBXGroup;
+			children = (
+				2866D55E220C5C2D0009005A /* ChartRenderer.swift */,
+				2866D562220C5C660009005A /* DataSetRenderer.swift */,
+			);
+			path = "Base Class";
+			sourceTree = "<group>";
+		};
 		28DCBF8721FA23B6006BB48F = {
 			isa = PBXGroup;
 			children = (
@@ -52,13 +79,24 @@
 		28DCBF9321FA23B6006BB48F /* SimpleCharts */ = {
 			isa = PBXGroup;
 			children = (
-				28DCBF9521FA23B6006BB48F /* Info.plist */,
 				28DCBF9421FA23B6006BB48F /* SimpleCharts.h */,
-				28DCBF9D21FB4688006BB48F /* LineChartView.swift */,
-				2868CAD7220AB9050016DFD3 /* LineChartData.swift */,
-				2868CADA220ABA200016DFD3 /* LineChartAxis.swift */,
+				28DCBF9521FA23B6006BB48F /* Info.plist */,
+				2866D55D220C5C040009005A /* Base Class */,
+				2866D557220C2BF70009005A /* Pie Chart */,
+				2866D556220C2BEB0009005A /* Bar Graph */,
+				28DEA45A220C2B4C00D2B583 /* Line Graph */,
 			);
 			path = SimpleCharts;
+			sourceTree = "<group>";
+		};
+		28DEA45A220C2B4C00D2B583 /* Line Graph */ = {
+			isa = PBXGroup;
+			children = (
+				28DCBF9D21FB4688006BB48F /* LineChartView.swift */,
+				2868CADA220ABA200016DFD3 /* LineChartAxis.swift */,
+				2868CAD7220AB9050016DFD3 /* LineChartData.swift */,
+			);
+			path = "Line Graph";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -143,6 +181,8 @@
 				2868CADB220ABA200016DFD3 /* LineChartAxis.swift in Sources */,
 				28DCBF9E21FB4688006BB48F /* LineChartView.swift in Sources */,
 				2868CAD8220AB9050016DFD3 /* LineChartData.swift in Sources */,
+				2866D563220C5C660009005A /* DataSetRenderer.swift in Sources */,
+				2866D55F220C5C2D0009005A /* ChartRenderer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

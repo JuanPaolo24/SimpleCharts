@@ -91,21 +91,14 @@ open class LineChartAxis {
     
     let width = rect.size.width
     
-    let lowerLeftCorner = CGPoint(x: width - 50, y: 30)
-    let lowerRightCorner = CGPoint(x: width - 40, y: 30)
-    let upperRightCorner = CGPoint(x: width - 40, y: 20)
-    let upperLeftCorner = CGPoint(x:width - 50, y: 20)
+    let rectangleLegend = CGRect(x: width - 50, y: 20, width: 10, height: 10)
     
-    context.move(to: lowerLeftCorner) //For some reason this line makes the first point disappear (
-    context.addLine(to: lowerLeftCorner)
-    context.addLine(to: lowerRightCorner)
-    context.addLine(to: upperRightCorner)
-    context.addLine(to: upperLeftCorner)
-    context.addLine(to: lowerLeftCorner)
-    
-    context.setLineCap(.square)
+    context.setFillColor(UIColor.black.cgColor)
+    context.setStrokeColor(UIColor.black.cgColor)
     context.setLineWidth(1.0)
-    context.fillPath()
+    
+    context.addRect(rectangleLegend)
+    context.drawPath(using: .fillStroke)
     
     
     
