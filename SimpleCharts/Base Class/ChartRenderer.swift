@@ -9,6 +9,11 @@
 import Foundation
 import CoreGraphics
 
+extension FloatingPoint {
+  var degreesToRadians: Self {return self * .pi / 180}
+}
+
+
 struct frameValues {
   
   ///Current Value = 31
@@ -24,17 +29,12 @@ struct frameValues {
 
 open class ChartRenderer: UIView {
   
-  /// Enable the grid on the chart
-  public var gridlinesEnable = true
+  //General
+  /// Enable the Y gridline on the chart
+  public var enableYGridline = true
   
-  /// Change the properties of the line chart to a dash TODO: Fix a bug where the dash line is changing everything else to dash
-  public var enableDash = true
-  
-  /// Enable the circle points
-  public var circlePointsEnable = true
-  
-  /// Enable the line 
-  public var lineEnable = true
+  /// Enable the X gridline on the chart
+  public var enableXGridline = true
   
   /// Set the Y Axis line colour
   public var setYAxisLineColour = UIColor.black.cgColor
@@ -48,6 +48,29 @@ open class ChartRenderer: UIView {
   /// Set Y Gridline colour
   public var setYGridLineColour = UIColor.black.cgColor
   
+  
+  //Bar Chart
+  /// Set Bar Graph inside colour (Default = Black)
+  public var setBarGraphFillColour = UIColor.black.cgColor
+  
+  /// Set Bar Graph outline colour (Default = Black)
+  public var setBarGraphStrokeColour = UIColor.black.cgColor
+  
+  /// Set Bar Graph Line Width (Default = 1.0)
+  public var setBarGraphLineWidth = CGFloat(1.0)
+  
+  
+  
+  //Line Chart
+  /// Enable the circle points
+  public var enableCirclePoint = true
+  
+  /// Change the properties of the line chart to a dash TODO: Fix a bug where the dash line is changing everything else to dash
+  public var enableDash = true
+  
+  /// Enable the line 
+  public var enableLine = true
+  
   /// Set Circle Point (Line Graph) colour
   public var setCirclePointColour = UIColor.black.cgColor
   
@@ -60,14 +83,7 @@ open class ChartRenderer: UIView {
   /// Set Line Point Width (Default = 1)
   public var setLinePointWidth = CGFloat(1.0)
   
-  /// Set Bar Graph inside colour (Default = Black)
-  public var setBarGraphInsideColour = UIColor.black.cgColor
-  
-  /// Set Bar Graph outline colour (Default = Black)
-  public var setBarGraphOutlineColour = UIColor.black.cgColor
-  
-  /// Set Bar Graph Line Width (Default = 1.0)
-  public var setBarGraphLineWidth = CGFloat(1.0)
+ 
   
   
   public override init(frame: CGRect) {
@@ -123,14 +139,18 @@ open class ChartRenderer: UIView {
       
       let valueIncrement = Double(i)
       let actualValue = frameScale * valueIncrement
-      let yGridLine = CGMutablePath()
-      yGridLine.move(to: CGPoint(x: 30, y: yAxisPadding - actualValue))
-      yGridLine.addLine(to: CGPoint(x: xAxisPadding, y: yAxisPadding - actualValue))
       
-      context.addPath(yGridLine)
-      context.setStrokeColor(setYGridLineColour)
-      context.strokePath()
-      context.setLineWidth(1.0)
+      if enableYGridline == true {
+        let yGridLine = CGMutablePath()
+        yGridLine.move(to: CGPoint(x: 30, y: yAxisPadding - actualValue))
+        yGridLine.addLine(to: CGPoint(x: xAxisPadding, y: yAxisPadding - actualValue))
+        
+        context.addPath(yGridLine)
+        context.setStrokeColor(setYGridLineColour)
+        context.strokePath()
+        context.setLineWidth(1.0)
+      }
+      
       
       if enableDash == true {
         context.setLineDash(phase: 0, lengths: [1])
@@ -170,13 +190,15 @@ open class ChartRenderer: UIView {
       
       let xValue = calculatexValue(pointIncrement: pointIncrement, distanceIncrement: i, sideMargin: frameValues.extraSidePadding)
       
-      let xAxisGridline = CGMutablePath()
-      xAxisGridline.move(to: CGPoint(x: xValue, y: 10))
-      xAxisGridline.addLine(to: CGPoint(x: xValue, y: yAxisPadding))
-      context.addPath(xAxisGridline)
-      context.setStrokeColor(setXGridlineColour)
-      context.strokePath()
-      context.setLineWidth(1.0)
+      if enableXGridline == true {
+        let xAxisGridline = CGMutablePath()
+        xAxisGridline.move(to: CGPoint(x: xValue, y: 10))
+        xAxisGridline.addLine(to: CGPoint(x: xValue, y: yAxisPadding))
+        context.addPath(xAxisGridline)
+        context.setStrokeColor(setXGridlineColour)
+        context.strokePath()
+        context.setLineWidth(1.0)
+      }
       
       if enableDash == true {
         context.setLineDash(phase: 0, lengths: [1])
@@ -216,22 +238,24 @@ open class ChartRenderer: UIView {
     return label
   }
   
-  func drawCirclePoints(context: CGContext, xValue: Double, yValue: Double, radius: CGFloat, lineWidth: CGFloat, colour: CGColor) {
-    context.addArc(center: CGPoint(x: xValue, y: yValue), radius: radius, startAngle: CGFloat(0).degreesToRadians, endAngle: CGFloat(360).degreesToRadians, clockwise: true)
-    context.setLineWidth(lineWidth)
-    context.setFillColor(colour)
+  /// Draws a circle on the destination coordinates (CGPoint)
+  func drawCirclePoints(context: CGContext, destination: CGPoint) {
+    context.addArc(center: destination, radius: setCirclePointRadius, startAngle: CGFloat(0).degreesToRadians, endAngle: CGFloat(360).degreesToRadians, clockwise: true)
+    context.setFillColor(setCirclePointColour)
     context.fillPath()
     
   }
   
-  
-  func drawLines(context: CGContext, connection: CGMutablePath, xValue: Double, yValue: Double, lineWidth: CGFloat, colour: CGColor) {
-    connection.addLine(to: CGPoint(x: xValue, y: yValue))
-    context.addPath(connection)
-    context.setStrokeColor(colour)
+  /// Draws a line from the a start point(Mutable Path) to a destination point (CGPoint)
+  func drawLines(context: CGContext, startingPoint: CGMutablePath, destinationPoint: CGPoint) {
+    
+    startingPoint.addLine(to: destinationPoint)
+    context.addPath(startingPoint)
+    context.setStrokeColor(setLinePointColour)
     context.strokePath()
-    context.setLineWidth(lineWidth)
+    context.setLineWidth(setLinePointWidth)
   }
+  
   
   /// Renders and plots the line graph (Both the line and the circle point)
   func renderLineGraph(context: CGContext, array: [Double]) {
@@ -256,13 +280,13 @@ open class ChartRenderer: UIView {
       let yValuePosition = (yAxisPadding / maxValue) * value
       let yValue = yAxisPadding - yValuePosition
       
-      print(yValue)
+      let destinationPoint = CGPoint(x: xValue, y: yValue)
       
-      if circlePointsEnable == true {
-        drawCirclePoints(context: context, xValue: xValue, yValue: yValue, radius: setCirclePointRadius, lineWidth: 1.0, colour: setCirclePointColour)
+      if enableCirclePoint == true {
+        drawCirclePoints(context: context, destination: destinationPoint)
       }
-      if lineEnable == true {
-        drawLines(context: context, connection: connection, xValue: xValue, yValue: yValue, lineWidth: setLinePointWidth, colour: setLinePointColour)
+      if enableLine == true {
+        drawLines(context: context, startingPoint: connection, destinationPoint: destinationPoint)
       }
       
     }
@@ -286,8 +310,8 @@ open class ChartRenderer: UIView {
       
       let bar = CGRect(x: 36 + (xValue * Double(i)), y: yValue, width: xValue - 5, height: (frameHeight() - frameValues.sidePadding) - yValue)
       
-      context.setFillColor(setBarGraphInsideColour)
-      context.setStrokeColor(setBarGraphOutlineColour)
+      context.setFillColor(setBarGraphFillColour)
+      context.setStrokeColor(setBarGraphStrokeColour)
       context.setLineWidth(setBarGraphLineWidth)
       
       context.addRect(bar)

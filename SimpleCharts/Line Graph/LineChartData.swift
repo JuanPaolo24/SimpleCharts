@@ -9,7 +9,7 @@
 import Foundation
 
 
-open class ChartData: DataSetRenderer {
+open class LineChartData: DataSetRenderer {
   
   var accessArray: [Double]
   

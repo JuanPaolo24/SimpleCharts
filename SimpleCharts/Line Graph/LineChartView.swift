@@ -9,7 +9,7 @@
 import Foundation
 
 
-open class ChartView: ChartRenderer {
+open class LineChartView: ChartRenderer {
   
   public var data: [Double]
   
