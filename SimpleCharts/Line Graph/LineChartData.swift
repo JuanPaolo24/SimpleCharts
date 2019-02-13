@@ -11,15 +11,15 @@ import Foundation
 
 open class LineChartData: DataSetRenderer {
   
-  var accessArray: [Double]
+  public var dataset: [Double]
   
   public override init(array: [Double]) {
-    self.accessArray = array
+    self.dataset = array
     super.init(array: array)
   }
   
   public func returnData() -> [Double] {
-    return accessArray
+    return dataset
   }
   
 }

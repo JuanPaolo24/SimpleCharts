@@ -33,12 +33,13 @@ open class LineChartView: ChartRenderer {
     }
     
     
-    
     xAxisBase(context: context)
     yAxisBase(context: context)
     renderLineGraph(context: context, array: data)
     yAxis(context: context, array: data)
     xAxis(context: context, array: data)
+    renderLegend(context: context, chartType: "Line")
+    
     
   }
   

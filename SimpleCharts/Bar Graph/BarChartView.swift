@@ -38,6 +38,9 @@ open class BarChartView: ChartRenderer {
     yAxis(context: context, array: data)
     
     renderVerticalBarGraph(context: context, array: data)
+    renderLegend(context: context, chartType: "Bar")
+   
+    
     
   }
   

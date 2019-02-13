@@ -48,6 +48,9 @@ open class ChartRenderer: UIView {
   /// Set Y Gridline colour
   public var setYGridLineColour = UIColor.black.cgColor
   
+  /// Set Gridline Line Width (Default = 0.5)
+  public var setGridlineWidth = CGFloat(0.5)
+  
   
   //Bar Chart
   /// Set Bar Graph inside colour (Default = Black)
@@ -81,7 +84,7 @@ open class ChartRenderer: UIView {
   public var setCirclePointRadius = CGFloat(3.0)
   
   /// Set Line Point Width (Default = 1)
-  public var setLinePointWidth = CGFloat(1.0)
+  public var setLineWidth = CGFloat(1.0)
   
  
   
@@ -95,13 +98,13 @@ open class ChartRenderer: UIView {
     fatalError("init(coder:) has not been implemented")
   }
   
-  func frameHeight() -> Double {
+  private func frameHeight() -> Double {
     let frameHeight = Double(frame.size.height)
     
     return frameHeight
   }
   
-  func frameWidth() -> Double {
+  private func frameWidth() -> Double {
     let frameWidth = Double(frame.size.width)
     
     return frameWidth
@@ -148,7 +151,7 @@ open class ChartRenderer: UIView {
         context.addPath(yGridLine)
         context.setStrokeColor(setYGridLineColour)
         context.strokePath()
-        context.setLineWidth(1.0)
+        context.setLineWidth(setGridlineWidth)
       }
       
       
@@ -197,7 +200,7 @@ open class ChartRenderer: UIView {
         context.addPath(xAxisGridline)
         context.setStrokeColor(setXGridlineColour)
         context.strokePath()
-        context.setLineWidth(1.0)
+        context.setLineWidth(setGridlineWidth)
       }
       
       if enableDash == true {
@@ -212,7 +215,7 @@ open class ChartRenderer: UIView {
   }
   
   // Make this function clear
-  func calculatexValue(pointIncrement: Double, distanceIncrement: Int, sideMargin: Double) -> Double {
+  private func calculatexValue(pointIncrement: Double, distanceIncrement: Int, sideMargin: Double) -> Double {
     var xValue = 0.0
     var marker = 0.0
     if pointIncrement > sideMargin {
@@ -226,20 +229,21 @@ open class ChartRenderer: UIView {
     return xValue
   }
   
-  
-  func axisLabel(name: String) -> UILabel {
+  /// Class for creating labels
+  private func axisLabel(name: String) -> UILabel {
     let label = UILabel(frame: CGRect.zero)
     label.text = name
     label.font = UIFont.systemFont(ofSize: 8)
     label.textColor = UIColor.black
     label.backgroundColor = UIColor.white
     label.textAlignment = NSTextAlignment.left
+    label.adjustsFontSizeToFitWidth = true
     
     return label
   }
   
   /// Draws a circle on the destination coordinates (CGPoint)
-  func drawCirclePoints(context: CGContext, destination: CGPoint) {
+  private func drawCirclePoints(context: CGContext, destination: CGPoint) {
     context.addArc(center: destination, radius: setCirclePointRadius, startAngle: CGFloat(0).degreesToRadians, endAngle: CGFloat(360).degreesToRadians, clockwise: true)
     context.setFillColor(setCirclePointColour)
     context.fillPath()
@@ -247,13 +251,60 @@ open class ChartRenderer: UIView {
   }
   
   /// Draws a line from the a start point(Mutable Path) to a destination point (CGPoint)
-  func drawLines(context: CGContext, startingPoint: CGMutablePath, destinationPoint: CGPoint) {
+  private func drawLines(context: CGContext, startingPoint: CGMutablePath, destinationPoint: CGPoint) {
     
     startingPoint.addLine(to: destinationPoint)
     context.addPath(startingPoint)
     context.setStrokeColor(setLinePointColour)
     context.strokePath()
-    context.setLineWidth(setLinePointWidth)
+    context.setLineWidth(setLineWidth)
+  }
+  
+  
+  /// This function will accept multiple arrays and ensure that the max value is returned
+  // For now it will only accept two arrays but once I found out how to properly handle multiple arrays then I will re implement this function
+  func returnMaxArray(arraySet1: [Double], arraySet2: [Double]) -> Double {
+    var max = 0.0
+    
+    if let max1 = arraySet1.max() {
+      if let max2 = arraySet2.max() {
+        if max1 > max2 {
+          max = max1
+        } else {
+          max = max2
+        }
+      }
+    }
+    return max + 41
+  }
+  
+  // Test this function with having one array max pass through and two different arrays passed through
+  func renderMultipleLineGraph(context: CGContext, array: [Double], maxValue: Double) {
+    let connection = CGMutablePath()
+    let yAxisPadding = frameHeight() - frameValues.extraSidePadding
+    let arrayCount = Double(array.count)
+    let pointIncrement = (frameWidth() - frameValues.leftAndRightSidePadding) / arrayCount
+    
+      if let firstValue = array.first {
+        let yValue = (yAxisPadding / maxValue) * firstValue
+        connection.move(to: CGPoint(x: calculatexValue(pointIncrement: pointIncrement, distanceIncrement: 0, sideMargin: 41.0), y: yAxisPadding - yValue))
+      }
+    
+    for (i, value) in array.enumerated() {
+      
+      let xValue = calculatexValue(pointIncrement: pointIncrement, distanceIncrement: i, sideMargin: 41.0)
+      let yValuePosition = (yAxisPadding / maxValue) * value
+      let yValue = yAxisPadding - yValuePosition
+      
+      let destinationPoint = CGPoint(x: xValue, y: yValue)
+      
+      if enableCirclePoint == true {
+        drawCirclePoints(context: context, destination: destinationPoint)
+      }
+      if enableLine == true {
+        drawLines(context: context, startingPoint: connection, destinationPoint: destinationPoint)
+      }
+    }
   }
   
   
@@ -317,6 +368,29 @@ open class ChartRenderer: UIView {
       context.addRect(bar)
       context.drawPath(using: .fillStroke)
     }
+  }
+  
+  /// Renders the legend - Chart Type is between (Line, Bar and Pie)
+  func renderLegend(context: CGContext, chartType: String) {
+    
+    let width = frameWidth()
+    
+    let rectangleLegend = CGRect(x: width - 50, y: 20, width: 10, height: 10)
+    
+    if chartType == "Line" {
+      context.setFillColor(setLinePointColour)
+    } else {
+      context.setFillColor(setBarGraphFillColour)
+    }
+    context.setLineWidth(1.0)
+    context.addRect(rectangleLegend)
+    context.drawPath(using: .fill)
+    
+    
+    
+    let legendLabel = axisLabel(name: "Dataset 1")
+    legendLabel.frame = CGRect(x: width - 35, y: 15, width: 30, height: 20)
+    addSubview(legendLabel)
   }
   
 }
