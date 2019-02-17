@@ -11,10 +11,10 @@ import Foundation
 
 open class LineChartView: ChartRenderer {
   
-  public var data: [Double]
+  public var data = LineChartData(dataset: [[0]])
   
   override public init(frame: CGRect) {
-    self.data = [0]
+    self.data = LineChartData(dataset: [[0]])
     super.init(frame: frame)
     backgroundColor = UIColor.white
   }
@@ -33,12 +33,18 @@ open class LineChartView: ChartRenderer {
     }
     
     
+    let maxValue = processMultipleArrays(array: data.array)
+    let arrayCount = findArrayCount(array: data.array)
+    
+    
     xAxisBase(context: context)
     yAxisBase(context: context)
-    renderLineGraph(context: context, array: data)
-    yAxis(context: context, array: data)
-    xAxis(context: context, array: data)
+    //renderLineGraph(context: context, array: array)
+    renderMultipleArrays(context: context, array: data.array)
+    yAxis(context: context, maxValue: maxValue)
+    xAxis(context: context, arrayCount: arrayCount)
     renderLegend(context: context, chartType: "Line")
+
     
     
   }

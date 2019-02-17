@@ -9,17 +9,15 @@
 import Foundation
 
 
-open class LineChartData: DataSetRenderer {
+open class LineChartData: DataSetHandler {
   
-  public var dataset: [Double]
-  
-  public override init(array: [Double]) {
-    self.dataset = array
-    super.init(array: array)
+  public required init(dataset: [[Double]]) {
+    super.init(dataset: dataset)
   }
   
-  public func returnData() -> [Double] {
-    return dataset
+  required public init?(coder aDecoder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
   }
+  
   
 }

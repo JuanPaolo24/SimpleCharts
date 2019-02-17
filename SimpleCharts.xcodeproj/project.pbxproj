@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2866D55F220C5C2D0009005A /* ChartRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2866D55E220C5C2D0009005A /* ChartRenderer.swift */; };
-		2866D563220C5C660009005A /* DataSetRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2866D562220C5C660009005A /* DataSetRenderer.swift */; };
+		2866D563220C5C660009005A /* DataSetHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2866D562220C5C660009005A /* DataSetHandler.swift */; };
 		2866D569220C72060009005A /* LineChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2866D568220C72060009005A /* LineChartView.swift */; };
 		2866D572220CB3110009005A /* LineChartData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2866D571220CB3110009005A /* LineChartData.swift */; };
 		2866D577220DB73D0009005A /* BarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2866D576220DB73D0009005A /* BarChartView.swift */; };
@@ -18,7 +18,7 @@
 
 /* Begin PBXFileReference section */
 		2866D55E220C5C2D0009005A /* ChartRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartRenderer.swift; sourceTree = "<group>"; };
-		2866D562220C5C660009005A /* DataSetRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSetRenderer.swift; sourceTree = "<group>"; };
+		2866D562220C5C660009005A /* DataSetHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSetHandler.swift; sourceTree = "<group>"; };
 		2866D568220C72060009005A /* LineChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineChartView.swift; sourceTree = "<group>"; };
 		2866D571220CB3110009005A /* LineChartData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineChartData.swift; sourceTree = "<group>"; };
 		2866D576220DB73D0009005A /* BarChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarChartView.swift; sourceTree = "<group>"; };
@@ -59,9 +59,16 @@
 			isa = PBXGroup;
 			children = (
 				2866D55E220C5C2D0009005A /* ChartRenderer.swift */,
-				2866D562220C5C660009005A /* DataSetRenderer.swift */,
+				2866D562220C5C660009005A /* DataSetHandler.swift */,
 			);
 			path = "Base Class";
+			sourceTree = "<group>";
+		};
+		287F1DF822199A7200A61908 /* Helper Class */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Helper Class";
 			sourceTree = "<group>";
 		};
 		28DCBF8721FA23B6006BB48F = {
@@ -85,6 +92,7 @@
 			children = (
 				28DCBF9421FA23B6006BB48F /* SimpleCharts.h */,
 				28DCBF9521FA23B6006BB48F /* Info.plist */,
+				287F1DF822199A7200A61908 /* Helper Class */,
 				2866D55D220C5C040009005A /* Base Class */,
 				2866D557220C2BF70009005A /* Pie Chart */,
 				2866D556220C2BEB0009005A /* Bar Graph */,
@@ -181,7 +189,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2866D563220C5C660009005A /* DataSetRenderer.swift in Sources */,
+				2866D563220C5C660009005A /* DataSetHandler.swift in Sources */,
 				2866D572220CB3110009005A /* LineChartData.swift in Sources */,
 				2866D55F220C5C2D0009005A /* ChartRenderer.swift in Sources */,
 				2866D569220C72060009005A /* LineChartView.swift in Sources */,

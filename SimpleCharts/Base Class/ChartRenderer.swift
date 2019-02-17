@@ -111,8 +111,6 @@ open class ChartRenderer: UIView {
   }
   
 
-  
-  
   func yAxisBase(context: CGContext) {
     let yAxisPadding = frameHeight() - frameValues.sidePadding
     
@@ -125,18 +123,12 @@ open class ChartRenderer: UIView {
     context.strokePath()
   }
   
-  func yAxis(context: CGContext, array: [Double]) {
+  func yAxis(context: CGContext, maxValue: Double) {
     let frameScale = (frameHeight() - frameValues.extraSidePadding) / Double(frameValues.yAxisGridlinesCount)
     let yAxisPadding = frameHeight() - frameValues.sidePadding
     let xAxisPadding = frameWidth() - frameValues.leftAndRightSidePadding
-    var maxValue = 0.0
-    var actualDataScale = 0
+    let actualDataScale = Int(maxValue / 6)
     
-    if let max = array.max() {
-      maxValue = max + 41
-      actualDataScale =  Int(maxValue / 6)
-
-    }
     
     for i in 0...frameValues.yAxisGridlinesCount {
       
@@ -159,11 +151,9 @@ open class ChartRenderer: UIView {
         context.setLineDash(phase: 0, lengths: [1])
       }
       
+      let textFrame = CGRect(x: 0, y: frameHeight() - 36 - actualValue, width: 20, height: 20)
       
-      let yAxisLabel = axisLabel(name: String(i * actualDataScale))
-      yAxisLabel.frame = CGRect(x: 0, y: frameHeight() - 36 - actualValue, width: 20, height: 20)
-      
-      addSubview(yAxisLabel)
+      createLabel(text: String(i * actualDataScale), textFrame: textFrame)
     }
     
   }
@@ -184,12 +174,12 @@ open class ChartRenderer: UIView {
   
   
   /// Renders the X axis gridline and axis labels
-  func xAxis(context: CGContext, array: [Double]) {
+  func xAxis(context: CGContext, arrayCount: Int) {
     let yAxisPadding = frameHeight() - frameValues.sidePadding
-    let pointIncrement = (frameWidth() - frameValues.leftAndRightSidePadding) / Double(array.count)
+    let pointIncrement = (frameWidth() - frameValues.leftAndRightSidePadding) / Double(arrayCount)
     
     
-    for i in 0...array.count - 1 {
+    for i in 0...arrayCount - 1 {
       
       let xValue = calculatexValue(pointIncrement: pointIncrement, distanceIncrement: i, sideMargin: frameValues.extraSidePadding)
       
@@ -207,9 +197,10 @@ open class ChartRenderer: UIView {
         context.setLineDash(phase: 0, lengths: [1])
       }
       
-      let xAxisLabel = axisLabel(name: String(i + 1))
-      xAxisLabel.frame = CGRect(x: xValue, y: frameHeight() - 28, width: 20, height: 20)
-      addSubview(xAxisLabel)
+      let textFrame = CGRect(x: xValue - 10, y: frameHeight() - 28, width: 20, height: 20)
+      createLabel(text: String(i + 1), textFrame: textFrame)
+      
+      
     }
     
   }
@@ -229,18 +220,24 @@ open class ChartRenderer: UIView {
     return xValue
   }
   
-  /// Class for creating labels
-  private func axisLabel(name: String) -> UILabel {
-    let label = UILabel(frame: CGRect.zero)
-    label.text = name
-    label.font = UIFont.systemFont(ofSize: 8)
-    label.textColor = UIColor.black
-    label.backgroundColor = UIColor.white
-    label.textAlignment = NSTextAlignment.left
-    label.adjustsFontSizeToFitWidth = true
+  /// Class for creating text labels
+  private func createLabel(text: String, textFrame: CGRect) {
+    let paragraphStyle = NSMutableParagraphStyle()
+    paragraphStyle.alignment = .center
     
-    return label
+    let attributes: [NSAttributedString.Key : Any] = [
+      .paragraphStyle: paragraphStyle,
+      .font: UIFont.systemFont(ofSize: 8.0),
+      .foregroundColor: UIColor.black
+    ]
+    
+    let attributedString = NSAttributedString(string: text, attributes: attributes)
+    
+    attributedString.draw(in: textFrame)
+    
   }
+  
+  
   
   /// Draws a circle on the destination coordinates (CGPoint)
   private func drawCirclePoints(context: CGContext, destination: CGPoint) {
@@ -261,22 +258,51 @@ open class ChartRenderer: UIView {
   }
   
   
-  /// This function will accept multiple arrays and ensure that the max value is returned
-  // For now it will only accept two arrays but once I found out how to properly handle multiple arrays then I will re implement this function
-  func returnMaxArray(arraySet1: [Double], arraySet2: [Double]) -> Double {
+  /// Takes in multiple arrays and determines the highest value within all arrays and returns it
+  func processMultipleArrays(array: [[Double]]) -> Double {
     var max = 0.0
+    var newArray: [Double] = []
     
-    if let max1 = arraySet1.max() {
-      if let max2 = arraySet2.max() {
-        if max1 > max2 {
-          max = max1
-        } else {
-          max = max2
-        }
+    for i in array {
+      if let maxValue = i.max() {
+        newArray.append(maxValue)
       }
     }
+    
+    if let newMax = newArray.max() {
+      max = newMax
+    }
+    
     return max + 41
   }
+  
+  /// Takes in multiple arrays and determines the array with the highest count and returns that count
+  func findArrayCount(array: [[Double]]) -> Int {
+    var arrayCount = 0
+    var newArray: [Int] = []
+    
+    for i in array {
+      newArray.append(i.count)
+    }
+    
+    if let newMax = newArray.max() {
+      arrayCount = newMax
+    }
+    
+    return arrayCount
+    
+  }
+  
+  
+  func renderMultipleArrays(context: CGContext, array: [[Double]]) {
+    let max = processMultipleArrays(array: array)
+    
+    for i in array {
+      renderMultipleLineGraph(context: context, array: i, maxValue: max)
+    }
+    
+  }
+  
   
   // Test this function with having one array max pass through and two different arrays passed through
   func renderMultipleLineGraph(context: CGContext, array: [Double], maxValue: Double) {
@@ -385,12 +411,12 @@ open class ChartRenderer: UIView {
     context.setLineWidth(1.0)
     context.addRect(rectangleLegend)
     context.drawPath(using: .fill)
+
+    let textFrame = CGRect(x: width - 35, y: 15, width: 30, height: 20)
+    
+    createLabel(text: "Dataset 1", textFrame: textFrame)
     
     
-    
-    let legendLabel = axisLabel(name: "Dataset 1")
-    legendLabel.frame = CGRect(x: width - 35, y: 15, width: 30, height: 20)
-    addSubview(legendLabel)
   }
   
 }
