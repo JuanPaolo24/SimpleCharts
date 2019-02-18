@@ -32,10 +32,11 @@ open class LineChartView: ChartRenderer {
       return
     }
     
+    let helper = RendererHelper()
     
-    let maxValue = processMultipleArrays(array: data.array)
-    let arrayCount = findArrayCount(array: data.array)
     
+    let maxValue = helper.processMultipleArrays(array: data.array)
+    let arrayCount = helper.findArrayCount(array: data.array)
     
     xAxisBase(context: context)
     yAxisBase(context: context)
