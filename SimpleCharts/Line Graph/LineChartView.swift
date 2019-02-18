@@ -40,8 +40,7 @@ open class LineChartView: ChartRenderer {
     
     xAxisBase(context: context)
     yAxisBase(context: context)
-    //renderLineGraph(context: context, array: array)
-    renderMultipleArrays(context: context, array: data.array)
+    lineGraph(context: context, array: data.array)
     yAxis(context: context, maxValue: maxValue)
     xAxis(context: context, arrayCount: arrayCount)
     renderLegend(context: context, chartType: "Line")
