@@ -49,7 +49,6 @@ open class ChartRenderer: UIView {
   open var enableGridLineDash = true
   
   
-  
   //Bar Chart
   /// Set Bar Graph inside colour (Default = Black)
   open var setBarGraphFillColour = UIColor.black.cgColor
@@ -59,8 +58,7 @@ open class ChartRenderer: UIView {
   
   /// Set Bar Graph Line Width (Default = 1.0)
   open var setBarGraphLineWidth = CGFloat(1.0)
-  
-  
+
   
   //Line Chart
   /// Enable the circle points
@@ -86,21 +84,21 @@ open class ChartRenderer: UIView {
   private var helper = RendererHelper()
   
   /// Returns the height of the current frame
-  private func frameHeight() -> Double {
+  func frameHeight() -> Double {
     let frameHeight = Double(frame.size.height)
     
     return frameHeight
   }
   
   /// Returns the width of the current frame
-  private func frameWidth() -> Double {
+  func frameWidth() -> Double {
     let frameWidth = Double(frame.size.width)
     
     return frameWidth
   }
   
   /// Base function for drawing axis bases
-  private func drawAxisBase(context: CGContext, start: CGPoint, end: CGPoint, strokeColour: CGColor, width: CGFloat) {
+  func drawAxisBase(context: CGContext, start: CGPoint, end: CGPoint, strokeColour: CGColor, width: CGFloat) {
     let axisBase = CGMutablePath()
     axisBase.move(to: start)
     axisBase.addLine(to: end)
@@ -112,7 +110,7 @@ open class ChartRenderer: UIView {
   
   
   /// Base function for drawing gridlines using the start and end points
-  private func drawGridLines(context: CGContext, start: CGPoint, end: CGPoint) {
+  func drawGridLines(context: CGContext, start: CGPoint, end: CGPoint) {
     
     let gridLine = CGMutablePath()
     gridLine.move(to: start)
@@ -129,14 +127,14 @@ open class ChartRenderer: UIView {
   }
   
   /// Base function for drawing Axis labels using the create label helper function
-  private func drawAxisLabels(x: Double, y: Double, text: String) {
+  func drawAxisLabels(x: Double, y: Double, text: String) {
     let textFrame = CGRect(x: x, y: y, width: 20, height: 20)
     helper.createLabel(text: text, textFrame: textFrame)
   }
   
   
   /// Base function for drawing circle on the destination coordinates (CGPoint)
-  private func drawCirclePoints(context: CGContext, destination: CGPoint) {
+  func drawCirclePoints(context: CGContext, destination: CGPoint) {
     context.addArc(center: destination, radius: setCirclePointRadius, startAngle: CGFloat(0).degreesToRadians, endAngle: CGFloat(360).degreesToRadians, clockwise: true)
     context.setFillColor(setCirclePointColour)
     context.fillPath()
@@ -144,7 +142,7 @@ open class ChartRenderer: UIView {
   }
   
   /// Base function for drawing lines from the a start point(Mutable Path) to a destination point (CGPoint)
-  private func drawLines(context: CGContext, startingPoint: CGMutablePath, destinationPoint: CGPoint) {
+  func drawLines(context: CGContext, startingPoint: CGMutablePath, destinationPoint: CGPoint) {
     startingPoint.addLine(to: destinationPoint)
     context.addPath(startingPoint)
     context.setStrokeColor(setLinePointColour)
@@ -153,19 +151,19 @@ open class ChartRenderer: UIView {
   }
   
   // Base function for drawing single line graphs. Requires context, the array to be plotted and the max value of the whole data set
-  private func drawLineGraph(context: CGContext, array: [Double], maxValue: Double) {
+  func drawLineGraph(context: CGContext, array: [Double], maxValue: Double) {
     let connection = CGMutablePath()
-    let yAxisPadding = frameHeight() - StaticVariables.extraSidePadding
+    let yAxisPadding = frameHeight() - StaticVariables.distanceFromBottom
     let arrayCount = Double(array.count)
     let pointIncrement = (frameWidth() - StaticVariables.leftAndRightSidePadding) / arrayCount
     
     if let firstValue = array.first {
       let yValue = (yAxisPadding / maxValue) * firstValue
-      connection.move(to: CGPoint(x: helper.calculatexValue(pointIncrement: pointIncrement, distanceIncrement: 0, sideMargin: 41.0), y: yAxisPadding - yValue))
+      connection.move(to: CGPoint(x: helper.calculatexValue(pointIncrement: pointIncrement, distanceIncrement: 0, sideMargin: StaticVariables.sidePadding), y: yAxisPadding - yValue))
     }
   
     for (i, value) in array.enumerated() {
-      let xValue = helper.calculatexValue(pointIncrement: pointIncrement, distanceIncrement: i, sideMargin: 41.0)
+      let xValue = helper.calculatexValue(pointIncrement: pointIncrement, distanceIncrement: i, sideMargin: StaticVariables.sidePadding)
       let yValuePosition = (yAxisPadding / maxValue) * value
       let yValue = yAxisPadding - yValuePosition
       let destinationPoint = CGPoint(x: xValue, y: yValue)
@@ -180,35 +178,64 @@ open class ChartRenderer: UIView {
   }
   
   
+  /// Base function for drawing legends
+  
+  func drawLegend(context: CGContext, x: Double, legendText: String, colour: CGColor) {
+    let height = frameHeight() - 30
+    
+    let rectangleLegend = CGRect(x: x - 20, y: height, width: 10, height: 10)
+    
+    context.setFillColor(colour)
+    context.setLineWidth(1.0)
+    context.addRect(rectangleLegend)
+    context.drawPath(using: .fill)
+    
+    let textFrame = CGRect(x: x - 10, y: height, width: 40, height: 10)
+    
+    helper.createLabel(text: legendText, textFrame: textFrame)
+    
+  }
+  
+  
   
   
   /// A function that draws the Y axis line used by Line and Bar Graph
   func yAxisBase(context: CGContext) {
-    let yAxisPadding = frameHeight() - StaticVariables.sidePadding
-    let startPoint = CGPoint(x: 30, y: 10)
-    let endPoint = CGPoint(x: 30, y: yAxisPadding)
+    let yAxisPadding = frameHeight() - StaticVariables.distanceFromBottom
+    let leftBaseStartPoint = CGPoint(x: 30, y: 10)
+    let leftBaseEndPoint = CGPoint(x: 30, y: yAxisPadding)
     
-    drawAxisBase(context: context, start: startPoint, end: endPoint, strokeColour: setYAxisBaseColour, width: 3.0)
+    let rightBaseStartPoint = CGPoint(x: frameWidth() - 30, y: 10)
+    let rightBaseEndPoint = CGPoint(x: frameWidth() - 30, y: yAxisPadding)
+    
+    drawAxisBase(context: context, start: leftBaseStartPoint, end: leftBaseEndPoint, strokeColour: setYAxisBaseColour, width: 3.0)
+    drawAxisBase(context: context, start: rightBaseStartPoint, end: rightBaseEndPoint, strokeColour: setYAxisBaseColour, width: 3.0)
   }
   
   /// A function that draw the X axis line used by Line and Bar Graph
   
   func xAxisBase(context: CGContext) {
     
-    let yAxisPadding = frameHeight() - StaticVariables.sidePadding
+    let yAxisPadding = frameHeight() - StaticVariables.distanceFromBottom
     let xAxisPadding = frameWidth() - StaticVariables.leftAndRightSidePadding
-    let startPoint = CGPoint(x: 30, y: yAxisPadding)
-    let endPoint = CGPoint(x: xAxisPadding, y: yAxisPadding)
     
-    drawAxisBase(context: context, start: startPoint, end: endPoint, strokeColour: setXAxisBaseColour, width: 3.0)
+    let bottomBaseStartPoint = CGPoint(x: 30, y: yAxisPadding)
+    let bottomBaseEndPoint = CGPoint(x: xAxisPadding, y: yAxisPadding)
+    
+    let upperBaseStartPoint = CGPoint(x: 30, y: 10)
+    let upperBaseEndPoint = CGPoint(x: xAxisPadding, y: 10)
+    
+    drawAxisBase(context: context, start: bottomBaseStartPoint, end: bottomBaseEndPoint, strokeColour: setXAxisBaseColour, width: 2.0)
+    drawAxisBase(context: context, start: upperBaseStartPoint, end: upperBaseEndPoint, strokeColour: setXAxisBaseColour, width: 2.0)
+    
   }
   
 
   
 /// Renders the Y axis gridline and axis labels
   func yAxis(context: CGContext, maxValue: Double) {
-    let frameScale = (frameHeight() - StaticVariables.extraSidePadding) / Double(StaticVariables.yAxisGridlinesCount)
-    let yAxisPadding = frameHeight() - StaticVariables.sidePadding
+    let frameScale = (frameHeight() - StaticVariables.distanceFromBottom) / Double(StaticVariables.yAxisGridlinesCount)
+    let yAxisPadding = frameHeight() - StaticVariables.distanceFromBottom
     let xAxisPadding = frameWidth() - StaticVariables.leftAndRightSidePadding
     let actualDataScale = Int(maxValue / 6)
     
@@ -223,19 +250,19 @@ open class ChartRenderer: UIView {
         drawGridLines(context: context, start: startPoint, end: endPoint)
       }
 
-      drawAxisLabels(x: 0, y: frameHeight() - 36 - actualValue, text: String(i * actualDataScale))
+      drawAxisLabels(x: 0, y: frameHeight() - 60 - actualValue, text: String(i * actualDataScale))
     }
   }
   
   
   /// Renders the X axis gridline and axis labels
   func xAxis(context: CGContext, arrayCount: Int) {
-    let yAxisPadding = frameHeight() - StaticVariables.sidePadding
+    let yAxisPadding = frameHeight() - StaticVariables.distanceFromBottom
     let pointIncrement = (frameWidth() - StaticVariables.leftAndRightSidePadding) / Double(arrayCount)
     
     for i in 0...arrayCount - 1 {
       
-      let xValue = helper.calculatexValue(pointIncrement: pointIncrement, distanceIncrement: i, sideMargin: StaticVariables.extraSidePadding)
+      let xValue = helper.calculatexValue(pointIncrement: pointIncrement, distanceIncrement: i, sideMargin: StaticVariables.sidePadding)
       
       let startPoint = CGPoint(x: xValue, y: 10)
       let endPoint = CGPoint(x: xValue, y: yAxisPadding)
@@ -243,10 +270,10 @@ open class ChartRenderer: UIView {
       if enableXGridline == true {
         drawGridLines(context: context, start: startPoint, end: endPoint)
       }
-      drawAxisLabels(x: xValue - 10, y: frameHeight() - 28, text: String(i + 1))
-      
+      drawAxisLabels(x: xValue - 5, y: frameHeight() - 55, text: String(i + 1))
     }
   }
+  
   
   /// Renders a line graph
   func lineGraph(context: CGContext, array: [[Double]]) {
@@ -286,30 +313,24 @@ open class ChartRenderer: UIView {
     
   }
   
-  
-  /// Renders the legend - Chart Type is between (Line, Bar and Pie)
-  func renderLegend(context: CGContext, chartType: String) {
-    
-    let width = frameWidth()
-    
-    let rectangleLegend = CGRect(x: width - 50, y: 20, width: 10, height: 10)
-    
-    if chartType == "Line" {
-      context.setFillColor(UIColor.black.cgColor)
-    } else {
-      context.setFillColor(UIColor.black.cgColor)
+  /// Takes the data from the array and creates legend depending on the amount of line there is on the graph
+  func renderLegends(context: CGContext, arrays: [ChartData]) {
+    for i in 1...arrays.count {
+      let sequence = Double(i)
+       drawLegend(context: context, x: 45 * sequence, legendText: arrays[i - 1].name, colour: setLinePointColour)
     }
-    context.setLineWidth(1.0)
-    context.addRect(rectangleLegend)
-    context.drawPath(using: .fill)
-    
-    let textFrame = CGRect(x: width - 35, y: 15, width: 30, height: 20)
-    
-    helper.createLabel(text: "Dataset 1", textFrame: textFrame)
-    
-    
+  
   }
   
+  /// Converts the chart data into double
+  func convert(chartData: [ChartData]) -> [[Double]] {
+    var array: [[Double]] = [[]]
+    for i in 0...chartData.count-1 {
+      array.append(chartData[i].array)
+    }
+    array.removeFirst()
+    return array
+  }
   
   
   

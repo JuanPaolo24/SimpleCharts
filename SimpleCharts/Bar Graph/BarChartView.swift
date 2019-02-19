@@ -32,9 +32,7 @@ open class BarChartView: ChartRenderer {
       return
     }
     
-    
-    
   }
-  
+
   
 }

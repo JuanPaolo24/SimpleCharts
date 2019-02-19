@@ -14,12 +14,13 @@ struct StaticVariables {
   
   ///Current Value = 31
   static let sidePadding = 31.0
-  ///Current Value = 62
-  static let leftAndRightSidePadding = 62.0
+  ///Current Value = 31
+  static let leftAndRightSidePadding = 31.0
   ///Current Value = 41
   static let extraSidePadding = 41.0
   ///Current Value = 6
   static let yAxisGridlinesCount = 6 //might introduce this as a customisation
-  
+  ///Current Value = 62
+  static let distanceFromBottom = 62.0
   
 }

@@ -11,13 +11,8 @@ import Foundation
 
 open class BarChartData: DataSetHandler {
   
-  
-  public required init(dataset: [[Double]]) {
+  override init(dataset: [ChartData]) {
     super.init(dataset: dataset)
-  }
-  
-  required public init?(coder aDecoder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
   }
   
   

@@ -15,6 +15,7 @@
 		2866D57E2211E7530009005A /* BarChartData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2866D57D2211E7530009005A /* BarChartData.swift */; };
 		287F1DFA221AA66200A61908 /* RendererHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 287F1DF9221AA66200A61908 /* RendererHelper.swift */; };
 		287F1DFF221B1ABE00A61908 /* StaticVariables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 287F1DFE221B1ABE00A61908 /* StaticVariables.swift */; };
+		287F1E04221C640F00A61908 /* ChartData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 287F1E03221C640F00A61908 /* ChartData.swift */; };
 		28DCBF9621FA23B6006BB48F /* SimpleCharts.h in Headers */ = {isa = PBXBuildFile; fileRef = 28DCBF9421FA23B6006BB48F /* SimpleCharts.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
@@ -27,6 +28,7 @@
 		2866D57D2211E7530009005A /* BarChartData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarChartData.swift; sourceTree = "<group>"; };
 		287F1DF9221AA66200A61908 /* RendererHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RendererHelper.swift; sourceTree = "<group>"; };
 		287F1DFE221B1ABE00A61908 /* StaticVariables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticVariables.swift; sourceTree = "<group>"; };
+		287F1E03221C640F00A61908 /* ChartData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartData.swift; sourceTree = "<group>"; };
 		28DCBF9121FA23B6006BB48F /* SimpleCharts.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SimpleCharts.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		28DCBF9421FA23B6006BB48F /* SimpleCharts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimpleCharts.h; sourceTree = "<group>"; };
 		28DCBF9521FA23B6006BB48F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -64,6 +66,7 @@
 			children = (
 				2866D55E220C5C2D0009005A /* ChartRenderer.swift */,
 				2866D562220C5C660009005A /* DataSetHandler.swift */,
+				287F1E03221C640F00A61908 /* ChartData.swift */,
 			);
 			path = "Base Class";
 			sourceTree = "<group>";
@@ -199,6 +202,7 @@
 				287F1DFF221B1ABE00A61908 /* StaticVariables.swift in Sources */,
 				2866D572220CB3110009005A /* LineChartData.swift in Sources */,
 				2866D55F220C5C2D0009005A /* ChartRenderer.swift in Sources */,
+				287F1E04221C640F00A61908 /* ChartData.swift in Sources */,
 				2866D569220C72060009005A /* LineChartView.swift in Sources */,
 				2866D57E2211E7530009005A /* BarChartData.swift in Sources */,
 				2866D577220DB73D0009005A /* BarChartView.swift in Sources */,

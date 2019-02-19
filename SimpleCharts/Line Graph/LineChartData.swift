@@ -11,12 +11,9 @@ import Foundation
 
 open class LineChartData: DataSetHandler {
   
-  public required init(dataset: [[Double]]) {
+
+  public override init(dataset: [ChartData]) {
     super.init(dataset: dataset)
-  }
-  
-  required public init?(coder aDecoder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
   }
   
   
