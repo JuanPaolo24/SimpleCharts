@@ -9,12 +9,32 @@
 import Foundation
 
 
-open class LineChartData: DataSetHandler {
+open class LineChartData: ChartData {
   
-
-  public override init(dataset: [ChartData]) {
-    super.init(dataset: dataset)
+  required public init(dataset: [Double], datasetName: String) {
+    super.init(dataset: dataset, datasetName: datasetName)
   }
+  
+  //Line Chart
+  /// Enable the circle points
+  open var enableCirclePoint = true
+  
+  /// Enable the line
+  open var enableLine = true
+  
+  /// Set Circle Point (Line Graph) colour
+  open var setCirclePointColour = UIColor.black.cgColor
+  
+  /// Set Line Point (Line Graph) colour
+  open var setLinePointColour = UIColor.black.cgColor
+  
+  /// Set Circle Point Radius (Default = 3)
+  open var setCirclePointRadius = CGFloat(3.0)
+  
+  /// Set Line Point Width (Default = 1)
+  open var setLineWidth = CGFloat(1.0)
+  
+  
   
   
 }

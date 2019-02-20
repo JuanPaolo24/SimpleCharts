@@ -49,9 +49,9 @@ open class LegendRenderer: UIView {
   }
   
   /// Takes the data from the array and creates legend depending on the amount of line there is on the graph
-  func renderLegends(context: CGContext, arrays: [ChartData]) {
+  func renderLegends(context: CGContext, arrays: [LineChartData]) {
     for i in 1...arrays.count {
-      drawLegend(context: context, x: Double(legendMaximumDistance), legendText: arrays[i - 1].name, colour: UIColor.black.cgColor)
+      drawLegend(context: context, x: Double(legendMaximumDistance), legendText: arrays[i - 1].name, colour: arrays[i - 1].setLinePointColour)
     }
     
   }

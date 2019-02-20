@@ -8,7 +8,7 @@
 
 import Foundation
 
-// Will be a class that will serve as a 
+// Will be a class that will serve as a base class for Bar and Line Chart Data
 open class ChartData {
   
   public var array: [Double]

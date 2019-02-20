@@ -60,24 +60,24 @@ open class ChartRenderer: UIView {
   open var setBarGraphLineWidth = CGFloat(1.0)
 
   
-  //Line Chart
-  /// Enable the circle points
-  open var enableCirclePoint = true
-  
-  /// Enable the line 
-  open var enableLine = true
-  
-  /// Set Circle Point (Line Graph) colour
-  open var setCirclePointColour = UIColor.black.cgColor
-  
-  /// Set Line Point (Line Graph) colour
-  open var setLinePointColour = UIColor.black.cgColor
-  
-  /// Set Circle Point Radius (Default = 3)
-  open var setCirclePointRadius = CGFloat(3.0)
-  
-  /// Set Line Point Width (Default = 1)
-  open var setLineWidth = CGFloat(1.0)
+//  //Line Chart
+//  /// Enable the circle points
+//  open var enableCirclePoint = true
+//
+//  /// Enable the line
+//  open var enableLine = true
+//
+//  /// Set Circle Point (Line Graph) colour
+//  open var setCirclePointColour = UIColor.black.cgColor
+//
+//  /// Set Line Point (Line Graph) colour
+//  open var setLinePointColour = UIColor.black.cgColor
+//
+//  /// Set Circle Point Radius (Default = 3)
+//  open var setCirclePointRadius = CGFloat(3.0)
+//
+//  /// Set Line Point Width (Default = 1)
+//  open var setLineWidth = CGFloat(1.0)
   
   
   /// An instance of the RendererHelper class for access to helper functions
@@ -134,24 +134,24 @@ open class ChartRenderer: UIView {
   
   
   /// Base function for drawing circle on the destination coordinates (CGPoint)
-  func drawCirclePoints(context: CGContext, destination: CGPoint) {
-    context.addArc(center: destination, radius: setCirclePointRadius, startAngle: CGFloat(0).degreesToRadians, endAngle: CGFloat(360).degreesToRadians, clockwise: true)
-    context.setFillColor(setCirclePointColour)
+  func drawCirclePoints(context: CGContext, destination: CGPoint, source: LineChartData) {
+    context.addArc(center: destination, radius: source.setCirclePointRadius, startAngle: CGFloat(0).degreesToRadians, endAngle: CGFloat(360).degreesToRadians, clockwise: true)
+    context.setFillColor(source.setCirclePointColour)
     context.fillPath()
     
   }
   
   /// Base function for drawing lines from the a start point(Mutable Path) to a destination point (CGPoint)
-  func drawLines(context: CGContext, startingPoint: CGMutablePath, destinationPoint: CGPoint) {
+  func drawLines(context: CGContext, startingPoint: CGMutablePath, destinationPoint: CGPoint, source: LineChartData) {
     startingPoint.addLine(to: destinationPoint)
     context.addPath(startingPoint)
-    context.setStrokeColor(setLinePointColour)
+    context.setStrokeColor(source.setLinePointColour)
     context.strokePath()
-    context.setLineWidth(setLineWidth)
+    context.setLineWidth(source.setLineWidth)
   }
   
   // Base function for drawing single line graphs. Requires context, the array to be plotted and the max value of the whole data set
-  func drawLineGraph(context: CGContext, array: [Double], maxValue: Double) {
+  func drawLineGraph(context: CGContext, array: [Double], maxValue: Double, source: LineChartData) {
     let connection = CGMutablePath()
     let yAxisPadding = frameHeight() - StaticVariables.distanceFromBottom
     let arrayCount = Double(array.count)
@@ -168,11 +168,11 @@ open class ChartRenderer: UIView {
       let yValue = yAxisPadding - yValuePosition
       let destinationPoint = CGPoint(x: xValue, y: yValue)
       
-      if enableCirclePoint == true {
-        drawCirclePoints(context: context, destination: destinationPoint)
+      if source.enableCirclePoint == true {
+        drawCirclePoints(context: context, destination: destinationPoint, source: source)
       }
-      if enableLine == true {
-        drawLines(context: context, startingPoint: connection, destinationPoint: destinationPoint)
+      if source.enableLine == true {
+        drawLines(context: context, startingPoint: connection, destinationPoint: destinationPoint, source: source)
       }
     }
   }
@@ -254,15 +254,6 @@ open class ChartRenderer: UIView {
   }
   
   
-  /// Renders a line graph
-  func lineGraph(context: CGContext, array: [[Double]]) {
-    let max = helper.processMultipleArrays(array: array)
-    
-    for i in array {
-      drawLineGraph(context: context, array: i, maxValue: max)
-    }
-    
-  }
   
   
   /// Renders a vertical bar graph
