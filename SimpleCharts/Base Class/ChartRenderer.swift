@@ -178,27 +178,6 @@ open class ChartRenderer: UIView {
   }
   
   
-  /// Base function for drawing legends
-  
-  func drawLegend(context: CGContext, x: Double, legendText: String, colour: CGColor) {
-    let height = frameHeight() - 30
-    
-    let rectangleLegend = CGRect(x: x - 20, y: height, width: 10, height: 10)
-    
-    context.setFillColor(colour)
-    context.setLineWidth(1.0)
-    context.addRect(rectangleLegend)
-    context.drawPath(using: .fill)
-    
-    let textFrame = CGRect(x: x - 10, y: height, width: 40, height: 10)
-    
-    helper.createLabel(text: legendText, textFrame: textFrame)
-    
-  }
-  
-  
-  
-  
   /// A function that draws the Y axis line used by Line and Bar Graph
   func yAxisBase(context: CGContext) {
     let yAxisPadding = frameHeight() - StaticVariables.distanceFromBottom
@@ -312,25 +291,7 @@ open class ChartRenderer: UIView {
     }
     
   }
-  
-  /// Takes the data from the array and creates legend depending on the amount of line there is on the graph
-  func renderLegends(context: CGContext, arrays: [ChartData]) {
-    for i in 1...arrays.count {
-      let sequence = Double(i)
-       drawLegend(context: context, x: 45 * sequence, legendText: arrays[i - 1].name, colour: setLinePointColour)
-    }
-  
-  }
-  
-  /// Converts the chart data into double
-  func convert(chartData: [ChartData]) -> [[Double]] {
-    var array: [[Double]] = [[]]
-    for i in 0...chartData.count-1 {
-      array.append(chartData[i].array)
-    }
-    array.removeFirst()
-    return array
-  }
+
   
   
   

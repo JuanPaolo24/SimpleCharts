@@ -35,8 +35,9 @@ open class LineChartView: ChartRenderer {
     
     let helper = RendererHelper()
     
+    let legend = LegendRenderer(frame: self.frame)
     
-    let convertedData = convert(chartData: data.array)
+    let convertedData = helper.convert(chartData: data.array)
     
     let maxValue = helper.processMultipleArrays(array: convertedData)
     let arrayCount = helper.findArrayCount(array: convertedData)
@@ -46,7 +47,7 @@ open class LineChartView: ChartRenderer {
     lineGraph(context: context, array: convertedData)
     yAxis(context: context, maxValue: maxValue)
     xAxis(context: context, arrayCount: arrayCount)
-    renderLegends(context: context, arrays: data.array)
+    legend.renderLegends(context: context, arrays: data.array)
     
     
   }

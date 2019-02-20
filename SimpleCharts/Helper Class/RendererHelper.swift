@@ -66,7 +66,7 @@ class RendererHelper {
   /// Class for creating text labels
   open func createLabel(text: String, textFrame: CGRect) {
     let paragraphStyle = NSMutableParagraphStyle()
-    paragraphStyle.alignment = .center
+    paragraphStyle.alignment = .justified
     
     let attributes: [NSAttributedString.Key : Any] = [
       .paragraphStyle: paragraphStyle,
@@ -78,6 +78,16 @@ class RendererHelper {
     
     attributedString.draw(in: textFrame)
     
+  }
+  
+  /// Converts the chart data into double
+  func convert(chartData: [ChartData]) -> [[Double]] {
+    var array: [[Double]] = [[]]
+    for i in 0...chartData.count-1 {
+      array.append(chartData[i].array)
+    }
+    array.removeFirst()
+    return array
   }
   
 }
