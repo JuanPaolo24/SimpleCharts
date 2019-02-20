@@ -18,6 +18,7 @@
 		287F1E04221C640F00A61908 /* ChartData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 287F1E03221C640F00A61908 /* ChartData.swift */; };
 		287F1E0A221D91EA00A61908 /* LegendRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 287F1E09221D91EA00A61908 /* LegendRenderer.swift */; };
 		287F1E10221DA22E00A61908 /* LineChartDataSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 287F1E0F221DA22E00A61908 /* LineChartDataSet.swift */; };
+		287F1E12221DB4D700A61908 /* BarChartDataSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 287F1E11221DB4D700A61908 /* BarChartDataSet.swift */; };
 		28DCBF9621FA23B6006BB48F /* SimpleCharts.h in Headers */ = {isa = PBXBuildFile; fileRef = 28DCBF9421FA23B6006BB48F /* SimpleCharts.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
@@ -33,6 +34,7 @@
 		287F1E03221C640F00A61908 /* ChartData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartData.swift; sourceTree = "<group>"; };
 		287F1E09221D91EA00A61908 /* LegendRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegendRenderer.swift; sourceTree = "<group>"; };
 		287F1E0F221DA22E00A61908 /* LineChartDataSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineChartDataSet.swift; sourceTree = "<group>"; };
+		287F1E11221DB4D700A61908 /* BarChartDataSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarChartDataSet.swift; sourceTree = "<group>"; };
 		28DCBF9121FA23B6006BB48F /* SimpleCharts.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SimpleCharts.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		28DCBF9421FA23B6006BB48F /* SimpleCharts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimpleCharts.h; sourceTree = "<group>"; };
 		28DCBF9521FA23B6006BB48F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -54,6 +56,7 @@
 			children = (
 				2866D576220DB73D0009005A /* BarChartView.swift */,
 				2866D57D2211E7530009005A /* BarChartData.swift */,
+				287F1E11221DB4D700A61908 /* BarChartDataSet.swift */,
 			);
 			path = "Bar Graph";
 			sourceTree = "<group>";
@@ -213,6 +216,7 @@
 				2866D569220C72060009005A /* LineChartView.swift in Sources */,
 				2866D57E2211E7530009005A /* BarChartData.swift in Sources */,
 				2866D577220DB73D0009005A /* BarChartView.swift in Sources */,
+				287F1E12221DB4D700A61908 /* BarChartDataSet.swift in Sources */,
 				287F1DFA221AA66200A61908 /* RendererHelper.swift in Sources */,
 				287F1E10221DA22E00A61908 /* LineChartDataSet.swift in Sources */,
 			);

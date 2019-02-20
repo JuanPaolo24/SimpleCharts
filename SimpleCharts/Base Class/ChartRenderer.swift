@@ -25,7 +25,6 @@ open class ChartRenderer: UIView {
   }
   
   
-  
   //General
   /// Enable the Y gridline on the chart
   open var enableYGridline = true
@@ -47,37 +46,6 @@ open class ChartRenderer: UIView {
   
   /// Set the Gridline stroke design (Default = False)
   open var enableGridLineDash = true
-  
-  
-  //Bar Chart
-  /// Set Bar Graph inside colour (Default = Black)
-  open var setBarGraphFillColour = UIColor.black.cgColor
-  
-  /// Set Bar Graph outline colour (Default = Black)
-  open var setBarGraphStrokeColour = UIColor.black.cgColor
-  
-  /// Set Bar Graph Line Width (Default = 1.0)
-  open var setBarGraphLineWidth = CGFloat(1.0)
-
-  
-//  //Line Chart
-//  /// Enable the circle points
-//  open var enableCirclePoint = true
-//
-//  /// Enable the line
-//  open var enableLine = true
-//
-//  /// Set Circle Point (Line Graph) colour
-//  open var setCirclePointColour = UIColor.black.cgColor
-//
-//  /// Set Line Point (Line Graph) colour
-//  open var setLinePointColour = UIColor.black.cgColor
-//
-//  /// Set Circle Point Radius (Default = 3)
-//  open var setCirclePointRadius = CGFloat(3.0)
-//
-//  /// Set Line Point Width (Default = 1)
-//  open var setLineWidth = CGFloat(1.0)
   
   
   /// An instance of the RendererHelper class for access to helper functions
@@ -178,6 +146,9 @@ open class ChartRenderer: UIView {
   }
   
   
+  
+  
+  
   /// A function that draws the Y axis line used by Line and Bar Graph
   func yAxisBase(context: CGContext) {
     let yAxisPadding = frameHeight() - StaticVariables.distanceFromBottom
@@ -252,37 +223,6 @@ open class ChartRenderer: UIView {
       drawAxisLabels(x: xValue - 5, y: frameHeight() - 55, text: String(i + 1))
     }
   }
-  
-  
-  
-  
-  /// Renders a vertical bar graph
-  func renderVerticalBarGraph(context: CGContext, array: [Double]) {
-    var maxValue = 0.0
-    let yAxisPadding = (frameHeight() - StaticVariables.extraSidePadding)
-    
-    if let max = array.max() {
-      maxValue = max + 41
-    }
-    
-    for (i, value) in array.enumerated() {
-      
-      let xValue = (frameWidth() - 93) / Double(array.count)
-      let yValuePosition = (yAxisPadding / maxValue) * value
-      let yValue = yAxisPadding - yValuePosition
-      
-      let bar = CGRect(x: 36 + (xValue * Double(i)), y: yValue, width: xValue - 5, height: (frameHeight() - StaticVariables.sidePadding) - yValue)
-      
-      context.setFillColor(setBarGraphFillColour)
-      context.setStrokeColor(setBarGraphStrokeColour)
-      context.setLineWidth(setBarGraphLineWidth)
-      
-      context.addRect(bar)
-      context.drawPath(using: .fillStroke)
-    }
-    
-  }
-
   
   
   

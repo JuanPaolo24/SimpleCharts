@@ -49,12 +49,18 @@ open class LegendRenderer: UIView {
   }
   
   /// Takes the data from the array and creates legend depending on the amount of line there is on the graph
-  func renderLegends(context: CGContext, arrays: [LineChartData]) {
+  func renderLineChartLegend(context: CGContext, arrays: [LineChartData]) {
     for i in 1...arrays.count {
       drawLegend(context: context, x: Double(legendMaximumDistance), legendText: arrays[i - 1].name, colour: arrays[i - 1].setLinePointColour)
     }
     
   }
   
+  /// Takes the data from the array and creates legend depending on the amount of bar there is on the graph
+  func renderBarChartLegend(context: CGContext, arrays: [BarChartData]) {
+    for i in 1...arrays.count {
+      drawLegend(context: context, x: Double(legendMaximumDistance), legendText: arrays[i - 1].name, colour: arrays[i - 1].setBarGraphFillColour)
+    }
+  }
   
 }

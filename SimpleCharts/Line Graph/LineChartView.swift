@@ -47,10 +47,8 @@ open class LineChartView: ChartRenderer {
     lineGraph(context: context, array: convertedData)
     yAxis(context: context, maxValue: maxValue)
     xAxis(context: context, arrayCount: arrayCount)
-    legend.renderLegends(context: context, arrays: data.array)
-//
+    legend.renderLineChartLegend(context: context, arrays: data.array)
   }
-  
   
   
   /// Renders a line graph
@@ -60,10 +58,9 @@ open class LineChartView: ChartRenderer {
 
     for (i, value) in array.enumerated() {
       drawLineGraph(context: context, array: value, maxValue: max, source: data.array[i])
-      print(i)
     }
-    
   }
+  
   
 }
 
