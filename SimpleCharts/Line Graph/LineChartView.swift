@@ -36,6 +36,7 @@ open class LineChartView: ChartRenderer {
     let helper = RendererHelper()
     
     let legend = LegendRenderer(frame: self.frame)
+    let axis = AxisRenderer(frame: self.frame)
     
     let convertedData = helper.convert(chartData: data.array)
     
@@ -45,8 +46,10 @@ open class LineChartView: ChartRenderer {
     xAxisBase(context: context)
     yAxisBase(context: context)
     lineGraph(context: context, array: convertedData)
-    yAxis(context: context, maxValue: maxValue)
-    xAxis(context: context, arrayCount: arrayCount)
+    yAxisGridlines(context: context)
+    xAxisGridlines(context: context, arrayCount: arrayCount)
+    axis.yAxis(context: context, maxValue: maxValue)
+    axis.xAxis(context: context, arrayCount: arrayCount)
     legend.renderLineChartLegend(context: context, arrays: data.array)
   }
   

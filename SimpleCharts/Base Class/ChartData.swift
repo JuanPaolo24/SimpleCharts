@@ -14,10 +14,10 @@ open class ChartData {
   public var array: [Double]
   public var name: String
   
+  
   required public init(dataset: [Double], datasetName: String) {
     self.array = dataset
     self.name = datasetName
   }
-  
-  
+
 }

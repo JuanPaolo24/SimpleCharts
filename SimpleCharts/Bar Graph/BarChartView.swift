@@ -36,45 +36,32 @@ open class BarChartView: ChartRenderer {
     let helper = RendererHelper()
     let legend = LegendRenderer(frame: self.frame)
     let convertedData = helper.convert(chartData: data.array)
+    let axis = AxisRenderer(frame: self.frame)
+    
     let maxValue = helper.processMultipleArrays(array: convertedData)
+    let arrayCount = helper.findArrayCount(array: convertedData)
     
     
     xAxisBase(context: context)
     yAxisBase(context: context)
-    renderVerticalBarGraph(context: context, array: data.array[0].array)
-    yAxis(context: context, maxValue: maxValue)
-    legend.renderBarChartLegend(context: context, arrays: data.array)
-    
+    barGraph(context: context, array: convertedData)
+//    yAxisGridlines(context: context)
+//    axis.yAxis(context: context, maxValue: maxValue)
+//    axis.xAxis(context: context, arrayCount: arrayCount)
+//    legend.renderBarChartLegend(context: context, arrays: data.array)
+    axis.horizontalBarGraphYAxis(context: context, arrayCount: arrayCount)
+    axis.horizontalBarGraphXAxis(context: context, maxValue: maxValue)
+    horizontalBarGraphYGridlines(context: context, arrayCount: arrayCount)
+    horizontalBarGraphXGridlines(context: context)
   }
   
   
-  /// Renders a vertical bar graph
-  func renderVerticalBarGraph(context: CGContext, array: [Double]) {
-    var maxValue = 0.0
-    let yAxisPadding = (frameHeight() - StaticVariables.distanceFromBottom)
-    
-    if let max = array.max() {
-      maxValue = max + 41
-    }
-    
+  func barGraph(context: CGContext, array: [[Double]]) {
     for (i, value) in array.enumerated() {
-      
-      let arrayAccess = data.array[0]
-      
-      
-      let xValue = (frameWidth() - 93) / Double(array.count)
-      let yValuePosition = (yAxisPadding / maxValue) * value
-      let yValue = yAxisPadding - yValuePosition
-      
-      let bar = CGRect(x: 36 + (xValue * Double(i)), y: yValue, width: xValue - 5, height: (frameHeight() - StaticVariables.sidePadding) - yValue)
-      
-      context.setFillColor(arrayAccess.setBarGraphFillColour)
-      context.setStrokeColor(arrayAccess.setBarGraphStrokeColour)
-      context.setLineWidth(arrayAccess.setBarGraphLineWidth)
-      
-      context.addRect(bar)
-      context.drawPath(using: .fillStroke)
+      //drawVerticalBarGraph(context: context, array: value, data: data.array[i])
+      drawHorizontalBarGraph(context: context, array: value, data: data.array[i])
     }
+    
     
   }
 
