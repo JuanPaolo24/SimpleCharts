@@ -112,19 +112,19 @@ open class ChartRenderer: UIView {
   }
   
   // Base function for drawing single line graphs. Requires context, the array to be plotted and the max value of the whole data set
-  func drawLineGraph(context: CGContext, array: [Double], maxValue: Double, source: LineChartData) {
+  func drawLineGraph(context: CGContext, array: [Double], maxValue: Double, source: LineChartData, initialValue: Double) {
     let connection = CGMutablePath()
     let yAxisPadding = frameHeight() - StaticVariables.distanceFromBottom
     let arrayCount = Double(array.count)
-    let pointIncrement = (frameWidth() - StaticVariables.leftAndRightSidePadding) / arrayCount
     
     if let firstValue = array.first {
       let yValue = (yAxisPadding / maxValue) * firstValue
-      connection.move(to: CGPoint(x: helper.calculatexValue(pointIncrement: pointIncrement, distanceIncrement: 0, sideMargin: StaticVariables.sidePadding), y: yAxisPadding - yValue))
+      connection.move(to: CGPoint(x: helper.calculatexValue(frameWidth: frameWidth(), arrayCount: arrayCount, distanceIncrement: 0, initialValue: initialValue), y: yAxisPadding - yValue))
     }
   
     for (i, value) in array.enumerated() {
-      let xValue = helper.calculatexValue(pointIncrement: pointIncrement, distanceIncrement: i, sideMargin: StaticVariables.sidePadding)
+      let xValue = helper.calculatexValue(frameWidth: frameWidth(), arrayCount: arrayCount, distanceIncrement: i, initialValue: initialValue)
+
       let yValuePosition = (yAxisPadding / maxValue) * value
       let yValue = yAxisPadding - yValuePosition
       let destinationPoint = CGPoint(x: xValue, y: yValue)
@@ -141,13 +141,13 @@ open class ChartRenderer: UIView {
   
   
   /// A function that draws the Y axis line used by Line and Bar Graph
-  func yAxisBase(context: CGContext) {
+  func yAxisBase(context: CGContext, padding: Double) {
     let yAxisPadding = frameHeight() - StaticVariables.distanceFromBottom
-    let leftBaseStartPoint = CGPoint(x: 30, y: 10)
-    let leftBaseEndPoint = CGPoint(x: 30, y: yAxisPadding)
+    let leftBaseStartPoint = CGPoint(x: padding, y: 10)
+    let leftBaseEndPoint = CGPoint(x: padding, y: yAxisPadding)
     
-    let rightBaseStartPoint = CGPoint(x: frameWidth() - 30, y: 10)
-    let rightBaseEndPoint = CGPoint(x: frameWidth() - 30, y: yAxisPadding)
+    let rightBaseStartPoint = CGPoint(x: frameWidth() - padding, y: 10)
+    let rightBaseEndPoint = CGPoint(x: frameWidth() - padding, y: yAxisPadding)
     
     drawAxisBase(context: context, start: leftBaseStartPoint, end: leftBaseEndPoint, strokeColour: setYAxisBaseColour, width: 3.0)
     drawAxisBase(context: context, start: rightBaseStartPoint, end: rightBaseEndPoint, strokeColour: setYAxisBaseColour, width: 3.0)
@@ -155,15 +155,15 @@ open class ChartRenderer: UIView {
   
   /// A function that draw the X axis line used by Line and Bar Graph
   
-  func xAxisBase(context: CGContext) {
+  func xAxisBase(context: CGContext, padding: Double) {
     
     let yAxisPadding = frameHeight() - StaticVariables.distanceFromBottom
-    let xAxisPadding = frameWidth() - StaticVariables.leftAndRightSidePadding
+    let xAxisPadding = frameWidth() - padding
     
-    let bottomBaseStartPoint = CGPoint(x: 30, y: yAxisPadding)
+    let bottomBaseStartPoint = CGPoint(x: padding, y: yAxisPadding)
     let bottomBaseEndPoint = CGPoint(x: xAxisPadding, y: yAxisPadding)
     
-    let upperBaseStartPoint = CGPoint(x: 30, y: 10)
+    let upperBaseStartPoint = CGPoint(x: padding, y: 10)
     let upperBaseEndPoint = CGPoint(x: xAxisPadding, y: 10)
     
     drawAxisBase(context: context, start: bottomBaseStartPoint, end: bottomBaseEndPoint, strokeColour: setXAxisBaseColour, width: 2.0)
@@ -173,16 +173,16 @@ open class ChartRenderer: UIView {
   
 
   /// Renders the Y axis Gridlines
-  func yAxisGridlines(context: CGContext) {
+  func yAxisGridlines(context: CGContext, padding: Double) {
     let frameScale = (frameHeight() - StaticVariables.distanceFromBottom) / Double(StaticVariables.yAxisGridlinesCount)
     let yAxisPadding = frameHeight() - StaticVariables.distanceFromBottom
-    let xAxisPadding = frameWidth() - StaticVariables.leftAndRightSidePadding
+    let xAxisPadding = frameWidth() - padding
     
     for i in 0...StaticVariables.yAxisGridlinesCount {
       let valueIncrement = Double(i)
       let actualValue = frameScale * valueIncrement
       
-      let yStartPoint = CGPoint(x: 30, y: yAxisPadding - actualValue)
+      let yStartPoint = CGPoint(x: padding, y: yAxisPadding - actualValue)
       let yEndPoint = CGPoint(x: xAxisPadding, y: yAxisPadding - actualValue)
       
       if enableYGridline == true {
@@ -191,12 +191,13 @@ open class ChartRenderer: UIView {
     }
   }
   
-  func xAxisGridlines(context: CGContext, arrayCount: Int) {
+  
+  
+  func xAxisGridlines(context: CGContext, arrayCount: Int, initialValue: Double) {
     let yAxisPadding = frameHeight() - StaticVariables.distanceFromBottom
-    let pointIncrement = (frameWidth() - StaticVariables.leftAndRightSidePadding) / Double(arrayCount)
     
     for i in 0...arrayCount - 1 {
-      let xValue = helper.calculatexValue(pointIncrement: pointIncrement, distanceIncrement: i, sideMargin: StaticVariables.sidePadding)
+      let xValue = helper.calculatexValue(frameWidth: frameWidth(),arrayCount: Double(arrayCount), distanceIncrement: i, initialValue: initialValue)
       
       let startPoint = CGPoint(x: xValue, y: 10)
       let endPoint = CGPoint(x: xValue, y: yAxisPadding)
@@ -205,13 +206,13 @@ open class ChartRenderer: UIView {
         drawGridLines(context: context, start: startPoint, end: endPoint)
       }
     }
-    
   }
   
-  
+
+
 
   /// Renders a vertical bar graph
-  func drawVerticalBarGraph(context: CGContext, array: [Double], data: BarChartData) {
+  func drawVerticalBarGraph(context: CGContext, array: [Double], data: BarChartData, initialValue: Double) {
     var maxValue = 0.0
     let yAxisPadding = (frameHeight() - StaticVariables.distanceFromBottom)
     
@@ -221,11 +222,12 @@ open class ChartRenderer: UIView {
     
     for (i, value) in array.enumerated() {
       
-      let xValue = (frameWidth() - 93) / Double(array.count)
+      let xValue = (frameWidth() - (initialValue * 2)) / Double(array.count)
+      
       let yValuePosition = (yAxisPadding / maxValue) * value
       let yValue = yAxisPadding - yValuePosition
       
-      let bar = CGRect(x: 31 + (xValue * Double(i)), y: yValue, width: xValue - 5, height: (frameHeight() - StaticVariables.distanceFromBottom) - yValue)
+      let bar = CGRect(x: initialValue + (xValue * Double(i)), y: yValue, width: xValue - 5, height: (frameHeight() - StaticVariables.distanceFromBottom) - yValue)
       
       context.setFillColor(data.setBarGraphFillColour)
       context.setStrokeColor(data.setBarGraphStrokeColour)
@@ -236,10 +238,10 @@ open class ChartRenderer: UIView {
     }
   }
   
-
-  func horizontalBarGraphYGridlines(context: CGContext, arrayCount: Int) {
+  /// Y Gridlines used by the horizontal bar graph
+  func horizontalBarGraphYGridlines(context: CGContext, arrayCount: Int, padding: Double) {
     let yAxisPadding = frameHeight() - StaticVariables.distanceFromBottom
-    let xAxisPadding = frameWidth() - StaticVariables.leftAndRightSidePadding
+    let xAxisPadding = frameWidth() - padding
     
     for i in 0...arrayCount {
       let valueIncrement = Double(i)
@@ -248,19 +250,19 @@ open class ChartRenderer: UIView {
 
       let actualValue = frameScale * valueIncrement
       
-      let yStartPoint = CGPoint(x: 30, y: yAxisPadding - actualValue)
+      let yStartPoint = CGPoint(x: padding, y: yAxisPadding - actualValue)
       let yEndPoint = CGPoint(x: xAxisPadding, y: yAxisPadding - actualValue)
       drawGridLines(context: context, start: yStartPoint, end: yEndPoint)
     }
     
   }
   
-  func horizontalBarGraphXGridlines(context: CGContext) {
+  /// X Gridlines used by the horizontal bar graph
+  func horizontalBarGraphXGridlines(context: CGContext, initialValue: Double) {
     let yAxisPadding = frameHeight() - StaticVariables.distanceFromBottom
-    let pointIncrement = (frameWidth() - StaticVariables.leftAndRightSidePadding) / Double(StaticVariables.yAxisGridlinesCount)
     
     for i in 0...StaticVariables.yAxisGridlinesCount {
-      let xValue = helper.calculatexValue(pointIncrement: pointIncrement, distanceIncrement: i, sideMargin: StaticVariables.sidePadding)
+      let xValue = helper.calculatexValue(frameWidth: frameWidth(), arrayCount: Double(StaticVariables.yAxisGridlinesCount + 1), distanceIncrement: i, initialValue: initialValue)
       
       let startPoint = CGPoint(x: xValue, y: 10)
       let endPoint = CGPoint(x: xValue, y: yAxisPadding)
@@ -271,7 +273,7 @@ open class ChartRenderer: UIView {
   
   
   /// Renders a vertical bar graph
-  func drawHorizontalBarGraph(context: CGContext, array: [Double], data: BarChartData) {
+  func drawHorizontalBarGraph(context: CGContext, array: [Double], data: BarChartData, initialValue: Double) {
     var maxValue = 0.0
     let xAxisPadding = (frameWidth() - StaticVariables.distanceFromBottom)
     
@@ -283,9 +285,10 @@ open class ChartRenderer: UIView {
       
       let yValue = (frameHeight() - 62) / Double(array.count)
       let xValuePosition = (xAxisPadding / maxValue) * value //Calculates the scale
-      let xValue = xAxisPadding - xValuePosition
+      let xValue = xValuePosition - (initialValue - 30) // Ensures that the extra padding on the landscape version gets added
       
-      let bar = CGRect(x: 31, y: 20 + (yValue * Double(i)), width: (frameWidth() - StaticVariables.distanceFromBottom) - xValue, height: yValue - 40)
+      
+      let bar = CGRect(x: initialValue, y: 20 + (yValue * Double(i)), width: xValue, height: yValue - 35)
       
       context.setFillColor(data.setBarGraphFillColour)
       context.setStrokeColor(data.setBarGraphStrokeColour)

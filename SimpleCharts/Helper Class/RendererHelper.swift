@@ -46,22 +46,19 @@ class RendererHelper {
     return arrayCount
     
   }
-  
-  
-  // Make this function clear
-  open func calculatexValue(pointIncrement: Double, distanceIncrement: Int, sideMargin: Double) -> Double {
-    var xValue = 0.0
-    var marker = 0.0
-    if pointIncrement > sideMargin {
-      marker = pointIncrement - sideMargin
-      xValue = Double((pointIncrement * (Double(distanceIncrement) + 1.0)) - marker)
-    } else {
-      marker = sideMargin - pointIncrement
-      xValue = Double((pointIncrement * (Double(distanceIncrement) + 1.0)) + marker)
-    }
+
+  // Calculates the increment diagonally. The initial value takes in consideration the initial padding which is 31 and then calculates the remaining space available to ensure that it does not go over the edge.
+  open func calculatexValue(frameWidth: Double, arrayCount: Double, distanceIncrement: Int, initialValue: Double) -> Double{
+    let spaceLeft = frameWidth - (initialValue * 2)
+    let increment = spaceLeft / (arrayCount - 1)
+    
+    let xValue = initialValue + (increment * Double(distanceIncrement))
     
     return xValue
+    
   }
+  
+
   
   /// Class for creating text labels
   open func createLabel(text: String, textFrame: CGRect) {
