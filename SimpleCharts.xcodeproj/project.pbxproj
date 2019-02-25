@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		282ABB0D22240EB200785C78 /* HorizontalBarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282ABB0C22240EB200785C78 /* HorizontalBarChartView.swift */; };
 		2866D55F220C5C2D0009005A /* ChartRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2866D55E220C5C2D0009005A /* ChartRenderer.swift */; };
 		2866D563220C5C660009005A /* DataSetHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2866D562220C5C660009005A /* DataSetHandler.swift */; };
 		2866D569220C72060009005A /* LineChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2866D568220C72060009005A /* LineChartView.swift */; };
@@ -24,6 +25,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		282ABB0C22240EB200785C78 /* HorizontalBarChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalBarChartView.swift; sourceTree = "<group>"; };
 		2866D55E220C5C2D0009005A /* ChartRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartRenderer.swift; sourceTree = "<group>"; };
 		2866D562220C5C660009005A /* DataSetHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSetHandler.swift; sourceTree = "<group>"; };
 		2866D568220C72060009005A /* LineChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineChartView.swift; sourceTree = "<group>"; };
@@ -59,6 +61,7 @@
 				2866D576220DB73D0009005A /* BarChartView.swift */,
 				2866D57D2211E7530009005A /* BarChartData.swift */,
 				287F1E11221DB4D700A61908 /* BarChartDataSet.swift */,
+				282ABB0C22240EB200785C78 /* HorizontalBarChartView.swift */,
 			);
 			path = "Bar Graph";
 			sourceTree = "<group>";
@@ -223,6 +226,7 @@
 				287F1E12221DB4D700A61908 /* BarChartDataSet.swift in Sources */,
 				287F1DFA221AA66200A61908 /* RendererHelper.swift in Sources */,
 				287F1E10221DA22E00A61908 /* LineChartDataSet.swift in Sources */,
+				282ABB0D22240EB200785C78 /* HorizontalBarChartView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

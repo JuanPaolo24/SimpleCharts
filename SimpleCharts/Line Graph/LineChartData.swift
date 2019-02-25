@@ -34,7 +34,7 @@ open class LineChartData: ChartData {
   /// Set Line Point Width (Default = 1)
   open var setLineWidth = CGFloat(1.0)
   
-  
-  
+  /// Enable the data point labels (Default = True)
+  open var enableDataPointLabel = true
   
 }

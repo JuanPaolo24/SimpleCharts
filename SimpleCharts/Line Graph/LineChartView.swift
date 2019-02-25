@@ -34,58 +34,32 @@ open class LineChartView: ChartRenderer {
     }
     
     if UIDevice.current.orientation.isLandscape {
-      print("Landscape")
-      renderLandscapeGraph(context: context)
+      renderLineGraph(context: context, padding: 70)
     } else {
-      print("Portrait")
-      renderGraph(context: context)
+      renderLineGraph(context: context, padding: 31)
     }
     
   }
   
-  
-  func renderGraph(context: CGContext) {
+  /// Takes all the required components from chartrenderer and renders the final line graph into the view
+  func renderLineGraph(context: CGContext, padding: Double) {
     let helper = RendererHelper()
-    
     let legend = LegendRenderer(frame: self.frame)
     let axis = AxisRenderer(frame: self.frame)
-    
     let convertedData = helper.convert(chartData: data.array)
-    
     let maxValue = helper.processMultipleArrays(array: convertedData)
     let arrayCount = helper.findArrayCount(array: convertedData)
     
-    xAxisBase(context: context, padding: 30)
-    yAxisBase(context: context, padding: 30)
-    lineGraph(context: context, array: convertedData, initialValue: 31)
-    yAxisGridlines(context: context, padding: 30)
-    xAxisGridlines(context: context, arrayCount: arrayCount, initialValue: 31)
-    axis.yAxis(context: context, maxValue: maxValue, padding: 20)
-    axis.xAxis(context: context, arrayCount: arrayCount, initialValue: 31)
+    xAxisBase(context: context, padding: padding)
+    yAxisBase(context: context, padding: padding)
+    lineGraph(context: context, array: convertedData, initialValue: padding)
+    yAxisGridlines(context: context, padding: padding)
+    xAxisGridlines(context: context, arrayCount: arrayCount, initialValue: padding)
+    axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10)
+    axis.xAxis(context: context, arrayCount: arrayCount, initialValue: padding)
     legend.renderLineChartLegend(context: context, arrays: data.array)
-  }
-  
-  func renderLandscapeGraph(context: CGContext) {
-    let helper = RendererHelper()
-    
-    let legend = LegendRenderer(frame: self.frame)
-    let axis = AxisRenderer(frame: self.frame)
-    
-    let convertedData = helper.convert(chartData: data.array)
-    
-    let maxValue = helper.processMultipleArrays(array: convertedData)
-    let arrayCount = helper.findArrayCount(array: convertedData)
-    
-    yAxisBase(context: context, padding: 70)
-    xAxisBase(context: context, padding: 70)
-    lineGraph(context: context, array: convertedData, initialValue: 70)
-    yAxisGridlines(context: context, padding: 70)
-    xAxisGridlines(context: context, arrayCount: arrayCount, initialValue: 70)
-    axis.xAxis(context: context, arrayCount: arrayCount, initialValue: 70)
-    axis.yAxis(context: context, maxValue: maxValue, padding: 60)
     
   }
-  
   
   /// Renders a line graph
   func lineGraph(context: CGContext, array: [[Double]], initialValue: Double) {

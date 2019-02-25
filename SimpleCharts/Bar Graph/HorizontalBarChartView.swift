@@ -1,15 +1,15 @@
 //
-//  BarChartView.swift
+//  HorizontalBarChartView.swift
 //  SimpleCharts
 //
-//  Created by Juan Paolo  Del Rosario on 08/02/2019.
+//  Created by Juan Paolo  Del Rosario on 25/02/2019.
 //  Copyright © 2019 Juan Paolo Del Rosario. All rights reserved.
 //
 
 import Foundation
 
 
-open class BarChartView: ChartRenderer {
+open class HorizontalBarChartView: ChartRenderer {
   
   public var data = BarChartDataSet(dataset: [BarChartData(dataset: [0], datasetName: "Test")])
   
@@ -33,17 +33,15 @@ open class BarChartView: ChartRenderer {
     }
     
     if UIDevice.current.orientation.isLandscape {
-      print("Landscape")
-      renderVerticalBarGraph(context: context, padding: 70)
+      renderHorizontalBarGraph(context: context, padding: 70)
     } else {
-      print("Portrait")
-      renderVerticalBarGraph(context: context, padding: 31)
+      renderHorizontalBarGraph(context: context, padding: 31)
     }
     
   }
   
   
-  func renderVerticalBarGraph(context: CGContext, padding: Double) {
+  func renderHorizontalBarGraph(context: CGContext, padding: Double) {
     let helper = RendererHelper()
     let legend = LegendRenderer(frame: self.frame)
     let convertedData = helper.convert(chartData: data.array)
@@ -54,14 +52,13 @@ open class BarChartView: ChartRenderer {
     
     xAxisBase(context: context, padding: padding)
     yAxisBase(context: context, padding: padding)
-    barGraph(context: context, array: convertedData, initialValue: padding, graphType: "Vertical", data: data)
-    yAxisGridlines(context: context, padding: padding)
-    axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10)
-    axis.xAxis(context: context, arrayCount: arrayCount, initialValue: padding)
+    barGraph(context: context, array: convertedData, initialValue: padding, graphType: "Horizontal", data: data)
+    horizontalBarGraphXGridlines(context: context, initialValue: padding)
+    horizontalBarGraphYGridlines(context: context, arrayCount: arrayCount, padding: padding)
+    axis.horizontalBarGraphYAxis(context: context, arrayCount: arrayCount, padding: padding - 10)
+    axis.horizontalBarGraphXAxis(context: context, maxValue: maxValue, initialValue: padding)
     
     legend.renderBarChartLegend(context: context, arrays: data.array)
   }
-  
-
   
 }

@@ -117,9 +117,11 @@ open class ChartRenderer: UIView {
     let yAxisPadding = frameHeight() - StaticVariables.distanceFromBottom
     let arrayCount = Double(array.count)
     
+    let xStartingPoint = helper.calculatexValue(frameWidth: frameWidth(), arrayCount: arrayCount, distanceIncrement: 0, initialValue: initialValue)
+    
     if let firstValue = array.first {
       let yValue = (yAxisPadding / maxValue) * firstValue
-      connection.move(to: CGPoint(x: helper.calculatexValue(frameWidth: frameWidth(), arrayCount: arrayCount, distanceIncrement: 0, initialValue: initialValue), y: yAxisPadding - yValue))
+      connection.move(to: CGPoint(x: xStartingPoint, y: yAxisPadding - yValue))
     }
   
     for (i, value) in array.enumerated() {
@@ -127,13 +129,19 @@ open class ChartRenderer: UIView {
 
       let yValuePosition = (yAxisPadding / maxValue) * value
       let yValue = yAxisPadding - yValuePosition
+      
       let destinationPoint = CGPoint(x: xValue, y: yValue)
+      
+      if source.enableLine == true {
+        drawLines(context: context, startingPoint: connection, destinationPoint: destinationPoint, source: source)
+      }
       
       if source.enableCirclePoint == true {
         drawCirclePoints(context: context, destination: destinationPoint, source: source)
       }
-      if source.enableLine == true {
-        drawLines(context: context, startingPoint: connection, destinationPoint: destinationPoint, source: source)
+      
+      if source.enableDataPointLabel == true {
+        helper.createLabel(text: "\(value)", textFrame: CGRect(x: xValue, y: yValue - 15, width: 40, height: 20))
       }
     }
   }
@@ -192,7 +200,7 @@ open class ChartRenderer: UIView {
   }
   
   
-  
+  /// Renders the X axis Gridlines
   func xAxisGridlines(context: CGContext, arrayCount: Int, initialValue: Double) {
     let yAxisPadding = frameHeight() - StaticVariables.distanceFromBottom
     
@@ -238,6 +246,34 @@ open class ChartRenderer: UIView {
     }
   }
   
+  
+  /// Renders a vertical bar graph
+  func drawHorizontalBarGraph(context: CGContext, array: [Double], data: BarChartData, initialValue: Double) {
+    var maxValue = 0.0
+    let xAxisPadding = (frameWidth() - StaticVariables.distanceFromBottom)
+    
+    if let max = array.max() {
+      maxValue = max + 41
+    }
+    
+    for (i, value) in array.enumerated() {
+      
+      let yValue = (frameHeight() - 62) / Double(array.count)
+      let xValuePosition = (xAxisPadding / maxValue) * value //Calculates the scale
+      let xValue = xValuePosition - (initialValue - 30) // Ensures that the extra padding on the landscape version gets added
+      
+      
+      let bar = CGRect(x: initialValue, y: 20 + (yValue * Double(i)), width: xValue, height: yValue - 35)
+      
+      context.setFillColor(data.setBarGraphFillColour)
+      context.setStrokeColor(data.setBarGraphStrokeColour)
+      context.setLineWidth(data.setBarGraphLineWidth)
+      context.addRect(bar)
+      context.drawPath(using: .fillStroke)
+      
+    }
+  }
+  
   /// Y Gridlines used by the horizontal bar graph
   func horizontalBarGraphYGridlines(context: CGContext, arrayCount: Int, padding: Double) {
     let yAxisPadding = frameHeight() - StaticVariables.distanceFromBottom
@@ -271,35 +307,17 @@ open class ChartRenderer: UIView {
     
   }
   
-  
-  /// Renders a vertical bar graph
-  func drawHorizontalBarGraph(context: CGContext, array: [Double], data: BarChartData, initialValue: Double) {
-    var maxValue = 0.0
-    let xAxisPadding = (frameWidth() - StaticVariables.distanceFromBottom)
-    
-    if let max = array.max() {
-      maxValue = max + 41
-    }
-    
+
+  func barGraph(context: CGContext, array: [[Double]], initialValue: Double, graphType: String, data: BarChartDataSet) {
     for (i, value) in array.enumerated() {
-      
-      let yValue = (frameHeight() - 62) / Double(array.count)
-      let xValuePosition = (xAxisPadding / maxValue) * value //Calculates the scale
-      let xValue = xValuePosition - (initialValue - 30) // Ensures that the extra padding on the landscape version gets added
-      
-      
-      let bar = CGRect(x: initialValue, y: 20 + (yValue * Double(i)), width: xValue, height: yValue - 35)
-      
-      context.setFillColor(data.setBarGraphFillColour)
-      context.setStrokeColor(data.setBarGraphStrokeColour)
-      context.setLineWidth(data.setBarGraphLineWidth)
-      context.addRect(bar)
-      context.drawPath(using: .fillStroke)
+      if graphType == "Vertical" {
+        drawVerticalBarGraph(context: context, array: value, data: data.array[i], initialValue: initialValue)
+      } else {
+        drawHorizontalBarGraph(context: context, array: value, data: data.array[i], initialValue: initialValue)
+      }
       
     }
   }
-  
-  
 
   
   
