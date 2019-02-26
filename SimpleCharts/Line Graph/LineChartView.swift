@@ -15,7 +15,6 @@ open class LineChartView: ChartRenderer {
   public var data = LineChartDataSet(dataset: [LineChartData(dataset: [0], datasetName: "Test")])
   
   override public init(frame: CGRect) {
-    self.data = LineChartDataSet(dataset: [LineChartData(dataset: [0], datasetName: "Test")])
     super.init(frame: frame)
     backgroundColor = UIColor.white
   }

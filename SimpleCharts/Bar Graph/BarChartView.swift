@@ -14,7 +14,6 @@ open class BarChartView: ChartRenderer {
   public var data = BarChartDataSet(dataset: [BarChartData(dataset: [0], datasetName: "Test")])
   
   override public init(frame: CGRect) {
-    self.data = BarChartDataSet(dataset: [BarChartData(dataset: [0], datasetName: "Test")])
     super.init(frame: frame)
     backgroundColor = UIColor.white
   }
@@ -54,7 +53,7 @@ open class BarChartView: ChartRenderer {
     
     xAxisBase(context: context, padding: padding)
     yAxisBase(context: context, padding: padding)
-    barGraph(context: context, array: convertedData, initialValue: padding, graphType: "Vertical", data: data)
+    barGraph(context: context, array: convertedData,initialValue: padding, graphType: "Vertical", data: data, max: maxValue)
     yAxisGridlines(context: context, padding: padding)
     axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10)
     axis.xAxis(context: context, arrayCount: arrayCount, initialValue: padding)

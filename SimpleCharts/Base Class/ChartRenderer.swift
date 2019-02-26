@@ -111,41 +111,41 @@ open class ChartRenderer: UIView {
     context.setLineWidth(source.setLineWidth)
   }
   
-  // Base function for drawing single line graphs. Requires context, the array to be plotted and the max value of the whole data set
+   /// Base function for drawing single line graphs. Requires context, the array to be plotted and the max value of the whole data set
   func drawLineGraph(context: CGContext, array: [Double], maxValue: Double, source: LineChartData, initialValue: Double) {
     let connection = CGMutablePath()
     let yAxisPadding = frameHeight() - StaticVariables.distanceFromBottom
     let arrayCount = Double(array.count)
-    
+
     let xStartingPoint = helper.calculatexValue(frameWidth: frameWidth(), arrayCount: arrayCount, distanceIncrement: 0, initialValue: initialValue)
-    
+
     if let firstValue = array.first {
       let yValue = (yAxisPadding / maxValue) * firstValue
       connection.move(to: CGPoint(x: xStartingPoint, y: yAxisPadding - yValue))
     }
-  
+
     for (i, value) in array.enumerated() {
       let xValue = helper.calculatexValue(frameWidth: frameWidth(), arrayCount: arrayCount, distanceIncrement: i, initialValue: initialValue)
 
       let yValuePosition = (yAxisPadding / maxValue) * value
       let yValue = yAxisPadding - yValuePosition
-      
+
       let destinationPoint = CGPoint(x: xValue, y: yValue)
-      
-      if source.enableLine == true {
-        drawLines(context: context, startingPoint: connection, destinationPoint: destinationPoint, source: source)
-      }
       
       if source.enableCirclePoint == true {
         drawCirclePoints(context: context, destination: destinationPoint, source: source)
       }
-      
+
+      if source.enableLine == true {
+        drawLines(context: context, startingPoint: connection, destinationPoint: destinationPoint, source: source)
+      }
+
       if source.enableDataPointLabel == true {
         helper.createLabel(text: "\(value)", textFrame: CGRect(x: xValue, y: yValue - 15, width: 40, height: 20))
       }
     }
   }
-  
+
   
   
   /// A function that draws the Y axis line used by Line and Bar Graph
@@ -220,13 +220,8 @@ open class ChartRenderer: UIView {
 
 
   /// Renders a vertical bar graph
-  func drawVerticalBarGraph(context: CGContext, array: [Double], data: BarChartData, initialValue: Double) {
-    var maxValue = 0.0
+  func drawVerticalBarGraph(context: CGContext, array: [Double], maxValue: Double, data: BarChartData, initialValue: Double) {
     let yAxisPadding = (frameHeight() - StaticVariables.distanceFromBottom)
-    
-    if let max = array.max() {
-      maxValue = max + 41
-    }
     
     for (i, value) in array.enumerated() {
       
@@ -243,6 +238,8 @@ open class ChartRenderer: UIView {
       context.addRect(bar)
       context.drawPath(using: .fillStroke)
       
+      
+      helper.createLabel(text: "\(value)", textFrame: CGRect(x: (initialValue + 5) + (xValue * Double(i)), y: yValue - 15, width: 40, height: 20))
     }
   }
   
@@ -251,9 +248,14 @@ open class ChartRenderer: UIView {
   func drawHorizontalBarGraph(context: CGContext, array: [Double], data: BarChartData, initialValue: Double) {
     var maxValue = 0.0
     let xAxisPadding = (frameWidth() - StaticVariables.distanceFromBottom)
+    var labelPadding = 25.0
     
     if let max = array.max() {
       maxValue = max + 41
+    }
+    
+    if initialValue == 70 {
+      labelPadding = 10.0
     }
     
     for (i, value) in array.enumerated() {
@@ -270,6 +272,8 @@ open class ChartRenderer: UIView {
       context.setLineWidth(data.setBarGraphLineWidth)
       context.addRect(bar)
       context.drawPath(using: .fillStroke)
+      
+      helper.createLabel(text: "\(value)", textFrame: CGRect(x: (initialValue + xValue) + 5, y: labelPadding + (yValue * Double(i)), width: 40, height: 20))
       
     }
   }
@@ -308,10 +312,10 @@ open class ChartRenderer: UIView {
   }
   
 
-  func barGraph(context: CGContext, array: [[Double]], initialValue: Double, graphType: String, data: BarChartDataSet) {
+  func barGraph(context: CGContext, array: [[Double]], initialValue: Double, graphType: String, data: BarChartDataSet, max: Double) {
     for (i, value) in array.enumerated() {
       if graphType == "Vertical" {
-        drawVerticalBarGraph(context: context, array: value, data: data.array[i], initialValue: initialValue)
+        drawVerticalBarGraph(context: context, array: value, maxValue: max, data: data.array[i], initialValue: initialValue)
       } else {
         drawHorizontalBarGraph(context: context, array: value, data: data.array[i], initialValue: initialValue)
       }

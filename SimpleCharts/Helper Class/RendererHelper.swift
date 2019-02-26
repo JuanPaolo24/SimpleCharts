@@ -30,6 +30,24 @@ class RendererHelper {
     return max + 41
   }
   
+  open func processArray(array: [Double]) -> Double {
+    var max = 0.0
+    var newArray: [Double] = []
+    
+    for _ in array {
+      if let maxValue = array.max() {
+        newArray.append(maxValue)
+      }
+    }
+    
+    if let newMax = newArray.max() {
+      max = newMax
+    }
+    
+    return max + 41
+  }
+  
+  
   /// Takes in multiple arrays and determines the array with the highest count and returns that count
   open func findArrayCount(array: [[Double]]) -> Int {
     var arrayCount = 0
@@ -84,6 +102,14 @@ class RendererHelper {
       array.append(chartData[i].array)
     }
     array.removeFirst()
+    return array
+  }
+  
+  func convertSingle(chartData: ChartData) -> [Double] {
+    var array: [Double] = []
+    for i in 0...chartData.array.count-1 {
+      array.append(chartData.array[i])
+    }
     return array
   }
   

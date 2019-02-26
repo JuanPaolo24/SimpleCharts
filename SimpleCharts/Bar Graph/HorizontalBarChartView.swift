@@ -52,7 +52,7 @@ open class HorizontalBarChartView: ChartRenderer {
     
     xAxisBase(context: context, padding: padding)
     yAxisBase(context: context, padding: padding)
-    barGraph(context: context, array: convertedData, initialValue: padding, graphType: "Horizontal", data: data)
+    barGraph(context: context, array: convertedData, initialValue: padding, graphType: "Horizontal", data: data, max: 0)
     horizontalBarGraphXGridlines(context: context, initialValue: padding)
     horizontalBarGraphYGridlines(context: context, arrayCount: arrayCount, padding: padding)
     axis.horizontalBarGraphYAxis(context: context, arrayCount: arrayCount, padding: padding - 10)

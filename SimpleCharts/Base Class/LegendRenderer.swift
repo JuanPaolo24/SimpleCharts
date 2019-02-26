@@ -28,10 +28,9 @@ open class LegendRenderer: UIView {
   
   /// Base function for drawing legends
   
-  func drawLegend(context: CGContext, x: Double, legendText: String, colour: CGColor) {
-    let height = Double(frame.size.height) - 30
+  func drawLegend(context: CGContext, x: Double, y: Double, legendText: String, colour: CGColor) {
     
-    let rectangleLegend = CGRect(x: x , y: height, width: 10, height: 10)
+    let rectangleLegend = CGRect(x: x , y: y, width: 10, height: 10)
     
     context.setFillColor(colour)
     context.setLineWidth(1.0)
@@ -40,7 +39,7 @@ open class LegendRenderer: UIView {
     
     let textCount = Double(6 * legendText.count)
     
-    let textFrame = CGRect(x: Double(rectangleLegend.maxX) + 5 , y: height, width: textCount, height: 10)
+    let textFrame = CGRect(x: Double(rectangleLegend.maxX) + 5 , y: y, width: textCount, height: 10)
     
     helper.createLabel(text: legendText, textFrame: textFrame)
     
@@ -51,7 +50,7 @@ open class LegendRenderer: UIView {
   /// Takes the data from the array and creates legend depending on the amount of line there is on the graph
   func renderLineChartLegend(context: CGContext, arrays: [LineChartData]) {
     for i in 1...arrays.count {
-      drawLegend(context: context, x: Double(legendMaximumDistance), legendText: arrays[i - 1].name, colour: arrays[i - 1].setLinePointColour)
+      drawLegend(context: context, x: Double(legendMaximumDistance), y: Double(frame.size.height) - 30, legendText: arrays[i - 1].name, colour: arrays[i - 1].setLinePointColour)
     }
     
   }
@@ -59,7 +58,14 @@ open class LegendRenderer: UIView {
   /// Takes the data from the array and creates legend depending on the amount of bar there is on the graph
   func renderBarChartLegend(context: CGContext, arrays: [BarChartData]) {
     for i in 1...arrays.count {
-      drawLegend(context: context, x: Double(legendMaximumDistance), legendText: arrays[i - 1].name, colour: arrays[i - 1].setBarGraphFillColour)
+      drawLegend(context: context, x: Double(legendMaximumDistance), y: Double(frame.size.height) - 30, legendText: arrays[i - 1].name, colour: arrays[i - 1].setBarGraphFillColour)
+    }
+  }
+  
+  
+  func renderPieChartLegend(context: CGContext, arrays: [PieChartData]) {
+    for i in 1...arrays.count {
+      drawLegend(context: context, x: Double(legendMaximumDistance), y: Double(frame.size.height) - 80, legendText: arrays[i - 1].name, colour: arrays[i - 1].color.cgColor)
     }
   }
   
