@@ -58,15 +58,32 @@ class RendererHelper {
 
   
   // Calculates the increment diagonally. The initial value takes in consideration the initial padding which is 31 and then calculates the remaining space available to ensure that it does not go over the edge.
-  open func calculatexValue(frameWidth: Double, arrayCount: Double, distanceIncrement: Int, initialValue: Double) -> Double{
+  open func calculatexValueIncrement(frameWidth: Double, arrayCount: Double, distanceIncrement: Int, initialValue: Double) -> Double{
     let spaceLeft = frameWidth - (initialValue * 2)
     let increment = spaceLeft / (arrayCount - 1)
-    
     let xValue = initialValue + (increment * Double(distanceIncrement))
     
     return xValue
     
   }
+  
+  // Similar function to calculatexValueIncrement but instead of returning values based on array count, this is based on a fix value which is 6
+  
+  open func calculatexValueSpace(frameWidth: Double, arrayCount: Double, distanceIncrement: Int, initialValue: Double) -> Double {
+    let spaceLeft = frameWidth - (initialValue * 2)
+    var increment = 0.0
+    
+    if arrayCount < 6 {
+      increment = spaceLeft / (arrayCount - 1)
+    } else {
+      increment = spaceLeft / 6
+    }
+    
+    let xValue = initialValue + (increment * Double(distanceIncrement))
+    
+    return xValue
+  }
+  
   
 
   

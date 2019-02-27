@@ -46,7 +46,7 @@ open class CombinedChartView: ChartRenderer {
     for i in 0...data.array.count - 1 {
       
       let helper = RendererHelper()
-      //let legend = LegendRenderer(frame: self.frame)
+      let legend = LegendRenderer(frame: self.frame)
       let barConvertedData = helper.convert(chartData: data.array[i].barData)
       let lineConvertedData = helper.convert(chartData: data.array[i].lineData)
       
@@ -69,9 +69,9 @@ open class CombinedChartView: ChartRenderer {
       drawLineGraph(context: context, array: lineConvertedData, maxValue: maxValue, source: data.array[i].lineData, initialValue: padding)
       yAxisGridlines(context: context, padding: padding)
       axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10)
-      axis.xAxis(context: context, arrayCount: arrayCount + 1, initialValue: padding)
-
-      //legend.renderBarChartLegend(context: context, arrays: data.array)
+      axis.barGraphxAxis(context: context, arrayCount: arrayCount, initialValue: padding)
+      legend.renderCombinedChartLegend(context: context, arrays: data.array)
+      
       
     }
     

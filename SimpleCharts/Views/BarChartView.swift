@@ -55,7 +55,7 @@ open class BarChartView: ChartRenderer {
     barGraph(context: context, array: convertedData,initialValue: padding, graphType: "Vertical", data: data, max: maxValue)
     yAxisGridlines(context: context, padding: padding)
     axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10)
-    axis.xAxis(context: context, arrayCount: arrayCount, initialValue: padding)
+    axis.barGraphxAxis(context: context, arrayCount: arrayCount, initialValue: padding)
     
     legend.renderBarChartLegend(context: context, arrays: data.array)
   }

@@ -42,7 +42,6 @@ open class LegendRenderer: UIView {
     
   }
   
-  /// Takes the data from the array and creates legend depending on the amount of line there is on the graph
   func renderLineChartLegend(context: CGContext, arrays: [LineChartData]) {
     for i in 1...arrays.count {
       drawLegend(context: context, x: Double(legendMaximumDistance), y: Double(frame.size.height) - 30, legendText: arrays[i - 1].name, colour: arrays[i - 1].setLinePointColour)
@@ -50,7 +49,6 @@ open class LegendRenderer: UIView {
     
   }
   
-  /// Takes the data from the array and creates legend depending on the amount of bar there is on the graph
   func renderBarChartLegend(context: CGContext, arrays: [BarChartData]) {
     for i in 1...arrays.count {
       drawLegend(context: context, x: Double(legendMaximumDistance), y: Double(frame.size.height) - 30, legendText: arrays[i - 1].name, colour: arrays[i - 1].setBarGraphFillColour)
@@ -63,5 +61,15 @@ open class LegendRenderer: UIView {
       drawLegend(context: context, x: Double(legendMaximumDistance), y: Double(frame.size.height) - 80, legendText: arrays[i - 1].name, colour: arrays[i - 1].color.cgColor)
     }
   }
+  
+  func renderCombinedChartLegend(context: CGContext, arrays: [CombinedChartData]) {
+    var legendName:[String] = [arrays[0].barData.name, arrays[0].lineData.name]
+    var legendColour:[CGColor] = [arrays[0].barData.setBarGraphFillColour, arrays[0].lineData.setLinePointColour]
+    
+    for i in 0...arrays.count {
+      drawLegend(context: context, x: Double(legendMaximumDistance), y: Double(frame.size.height) - 30, legendText: legendName[i], colour: legendColour[i])
+    }
+  }
+  
   
 }

@@ -128,7 +128,7 @@ open class ChartRenderer: UIView {
     let yAxisPadding = frameHeight() - currentFrame.distanceFromBottom
     let arrayCount = Double(array.count)
 
-    let xStartingPoint = helper.calculatexValue(frameWidth: frameWidth(), arrayCount: arrayCount, distanceIncrement: 0, initialValue: initialValue)
+    let xStartingPoint = helper.calculatexValueIncrement(frameWidth: frameWidth(), arrayCount: arrayCount, distanceIncrement: 0, initialValue: initialValue)
 
     if let firstValue = array.first {
       let yValue = (yAxisPadding / maxValue) * firstValue
@@ -136,7 +136,7 @@ open class ChartRenderer: UIView {
     }
 
     for (i, value) in array.enumerated() {
-      let xValue = helper.calculatexValue(frameWidth: frameWidth(), arrayCount: arrayCount, distanceIncrement: i, initialValue: initialValue)
+      let xValue = helper.calculatexValueIncrement(frameWidth: frameWidth(), arrayCount: arrayCount, distanceIncrement: i, initialValue: initialValue)
 
       let yValue = yAxisPadding - ((yAxisPadding / maxValue) * value)
       
@@ -213,7 +213,7 @@ open class ChartRenderer: UIView {
     let yAxisPadding = frameHeight() - currentFrame.distanceFromBottom
     
     for i in 0...arrayCount - 1 {
-      let xValue = helper.calculatexValue(frameWidth: frameWidth(),arrayCount: Double(arrayCount), distanceIncrement: i, initialValue: initialValue)
+      let xValue = helper.calculatexValueSpace(frameWidth: frameWidth(),arrayCount: Double(arrayCount), distanceIncrement: i, initialValue: initialValue)
       
       let startPoint = CGPoint(x: xValue, y: 10)
       let endPoint = CGPoint(x: xValue, y: yAxisPadding)
@@ -279,7 +279,7 @@ open class ChartRenderer: UIView {
     let yAxisPadding = frameHeight() - currentFrame.distanceFromBottom
     
     for i in 0...currentFrame.yAxisGridlinesCount {
-      let xValue = helper.calculatexValue(frameWidth: frameWidth(), arrayCount: Double(currentFrame.yAxisGridlinesCount + 1), distanceIncrement: i, initialValue: initialValue)
+      let xValue = helper.calculatexValueIncrement(frameWidth: frameWidth(), arrayCount: Double(currentFrame.yAxisGridlinesCount + 1), distanceIncrement: i, initialValue: initialValue)
       
       let startPoint = CGPoint(x: xValue, y: 10)
       let endPoint = CGPoint(x: xValue, y: yAxisPadding)

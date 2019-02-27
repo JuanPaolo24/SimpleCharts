@@ -54,7 +54,7 @@ open class HorizontalBarChartView: ChartRenderer {
     barGraph(context: context, array: convertedData, initialValue: padding, graphType: "Horizontal", data: data, max: maxValue)
     horizontalBarGraphXGridlines(context: context, initialValue: padding)
     horizontalBarGraphYGridlines(context: context, arrayCount: arrayCount, padding: padding)
-    axis.horizontalBarGraphYAxis(context: context, arrayCount: arrayCount, padding: padding - 10)
+    axis.horizontalBarGraphYAxis(context: context, arrayCount: arrayCount, padding: padding)
     axis.horizontalBarGraphXAxis(context: context, maxValue: maxValue, initialValue: padding)
     
     legend.renderBarChartLegend(context: context, arrays: data.array)
