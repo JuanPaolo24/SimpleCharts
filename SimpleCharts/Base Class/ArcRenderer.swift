@@ -23,7 +23,6 @@ open class ArcRenderer: UIView {
   }
   
 
-  
   func drawPieArc(context: CGContext, radiusPercentage: CGFloat, segments: PieChartDataSet) {
     
     let radius = min(frame.size.width, frame.size.height) * radiusPercentage

@@ -9,7 +9,7 @@
 import Foundation
 
 
-struct StaticVariables {
+struct currentFrame {
   
   ///Current Value = 31
   static let leftAndRightSidePadding = 31.0

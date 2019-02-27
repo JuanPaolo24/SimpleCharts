@@ -27,22 +27,17 @@ open class LegendRenderer: UIView {
   
   
   /// Base function for drawing legends
-  
   func drawLegend(context: CGContext, x: Double, y: Double, legendText: String, colour: CGColor) {
-    
     let rectangleLegend = CGRect(x: x , y: y, width: 10, height: 10)
-    
     context.setFillColor(colour)
     context.setLineWidth(1.0)
     context.addRect(rectangleLegend)
     context.drawPath(using: .fill)
     
     let textCount = Double(6 * legendText.count)
-    
     let textFrame = CGRect(x: Double(rectangleLegend.maxX) + 5 , y: y, width: textCount, height: 10)
     
-    helper.createLabel(text: legendText, textFrame: textFrame)
-    
+    helper.renderText(text: legendText, textFrame: textFrame)
     legendMaximumDistance = textFrame.maxX + 5
     
   }

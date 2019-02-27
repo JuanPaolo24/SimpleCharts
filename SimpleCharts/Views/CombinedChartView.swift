@@ -47,14 +47,14 @@ open class CombinedChartView: ChartRenderer {
       
       let helper = RendererHelper()
       //let legend = LegendRenderer(frame: self.frame)
-      let barConvertedData = helper.convertSingle(chartData: data.array[i].barData)
-      let lineConvertedData = helper.convertSingle(chartData: data.array[i].lineData)
+      let barConvertedData = helper.convert(chartData: data.array[i].barData)
+      let lineConvertedData = helper.convert(chartData: data.array[i].lineData)
       
       
       let axis = AxisRenderer(frame: self.frame)
       
-      let lineMax = helper.processArray(array: lineConvertedData)
-      let barMax = helper.processArray(array: barConvertedData)
+      let lineMax = helper.returnMaxValueFrom(array: lineConvertedData)
+      let barMax = helper.returnMaxValueFrom(array: barConvertedData)
       
       let maxValue = max(lineMax, barMax)
       let barArrayCount = barConvertedData.count

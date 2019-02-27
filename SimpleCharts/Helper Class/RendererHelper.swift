@@ -30,41 +30,33 @@ class RendererHelper {
     return max + 41
   }
   
-  open func processArray(array: [Double]) -> Double {
+  /// Returns the max value from an array
+  open func returnMaxValueFrom(array: [Double]) -> Double {
     var max = 0.0
-    var newArray: [Double] = []
-    
-    for _ in array {
-      if let maxValue = array.max() {
-        newArray.append(maxValue)
-      }
+    if let maxValue = array.max() {
+      max = maxValue
     }
-    
-    if let newMax = newArray.max() {
-      max = newMax
-    }
-    
     return max + 41
   }
   
   
-  /// Takes in multiple arrays and determines the array with the highest count and returns that count
-  open func findArrayCount(array: [[Double]]) -> Int {
+  /// Takes in multiple arrays and within those array determine the array with the highest count and returns that count
+  open func findArrayCountFrom(array: [[Double]]) -> Int {
     var arrayCount = 0
-    var newArray: [Int] = []
+    var countArray: [Int] = []
     
     for i in array {
-      newArray.append(i.count)
+      countArray.append(i.count)
     }
     
-    if let newMax = newArray.max() {
+    if let newMax = countArray.max() {
       arrayCount = newMax
     }
     
     return arrayCount
-    
   }
 
+  
   // Calculates the increment diagonally. The initial value takes in consideration the initial padding which is 31 and then calculates the remaining space available to ensure that it does not go over the edge.
   open func calculatexValue(frameWidth: Double, arrayCount: Double, distanceIncrement: Int, initialValue: Double) -> Double{
     let spaceLeft = frameWidth - (initialValue * 2)
@@ -78,8 +70,8 @@ class RendererHelper {
   
 
   
-  /// Class for creating text labels
-  open func createLabel(text: String, textFrame: CGRect) {
+  /// Function for rendering text in the view
+  open func renderText(text: String, textFrame: CGRect) {
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.alignment = .justified
     
@@ -95,17 +87,18 @@ class RendererHelper {
     
   }
   
-  /// Converts the chart data into double
-  func convert(chartData: [ChartData]) -> [[Double]] {
-    var array: [[Double]] = [[]]
+  
+  /// Converts the an array of chart data into an array of array doubles
+  open func convert(chartData: [ChartData]) -> [[Double]] {
+    var array: [[Double]] = []
     for i in 0...chartData.count-1 {
       array.append(chartData[i].array)
     }
-    array.removeFirst()
     return array
   }
   
-  func convertSingle(chartData: ChartData) -> [Double] {
+  /// Converts chart data into an array of doubles
+  open func convert(chartData: ChartData) -> [Double] {
     var array: [Double] = []
     for i in 0...chartData.array.count-1 {
       array.append(chartData.array[i])

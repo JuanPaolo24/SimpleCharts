@@ -40,7 +40,6 @@ open class HorizontalBarChartView: ChartRenderer {
     
   }
   
-  
   func renderHorizontalBarGraph(context: CGContext, padding: Double) {
     let helper = RendererHelper()
     let legend = LegendRenderer(frame: self.frame)
@@ -48,11 +47,11 @@ open class HorizontalBarChartView: ChartRenderer {
     let axis = AxisRenderer(frame: self.frame)
     
     let maxValue = helper.processMultipleArrays(array: convertedData)
-    let arrayCount = helper.findArrayCount(array: convertedData)
+    let arrayCount = helper.findArrayCountFrom(array: convertedData)
     
     xAxisBase(context: context, padding: padding)
     yAxisBase(context: context, padding: padding)
-    barGraph(context: context, array: convertedData, initialValue: padding, graphType: "Horizontal", data: data, max: 0)
+    barGraph(context: context, array: convertedData, initialValue: padding, graphType: "Horizontal", data: data, max: maxValue)
     horizontalBarGraphXGridlines(context: context, initialValue: padding)
     horizontalBarGraphYGridlines(context: context, arrayCount: arrayCount, padding: padding)
     axis.horizontalBarGraphYAxis(context: context, arrayCount: arrayCount, padding: padding - 10)

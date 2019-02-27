@@ -1,17 +1,18 @@
 //
-//  BarChartView.swift
+//  ChartView.swift
 //  SimpleCharts
 //
-//  Created by Juan Paolo  Del Rosario on 08/02/2019.
+//  Created by Juan Paolo  Del Rosario on 07/02/2019.
 //  Copyright © 2019 Juan Paolo Del Rosario. All rights reserved.
 //
 
 import Foundation
 
 
-open class BarChartView: ChartRenderer {
+open class LineChartView: ChartRenderer {
   
-  public var data = BarChartDataSet(dataset: [BarChartData(dataset: [0], datasetName: "Test")])
+  
+  public var data = LineChartDataSet(dataset: [LineChartData(dataset: [0], datasetName: "Test")])
   
   override public init(frame: CGRect) {
     super.init(frame: frame)
@@ -32,35 +33,45 @@ open class BarChartView: ChartRenderer {
     }
     
     if UIDevice.current.orientation.isLandscape {
-      print("Landscape")
-      renderVerticalBarGraph(context: context, padding: 70)
+      renderLineGraph(context: context, padding: 70)
     } else {
-      print("Portrait")
-      renderVerticalBarGraph(context: context, padding: 31)
+      renderLineGraph(context: context, padding: 31)
     }
     
   }
   
-  
-  func renderVerticalBarGraph(context: CGContext, padding: Double) {
+  func renderLineGraph(context: CGContext, padding: Double) {
     let helper = RendererHelper()
     let legend = LegendRenderer(frame: self.frame)
-    let convertedData = helper.convert(chartData: data.array)
     let axis = AxisRenderer(frame: self.frame)
-    
+    let convertedData = helper.convert(chartData: data.array)
     let maxValue = helper.processMultipleArrays(array: convertedData)
-    let arrayCount = helper.findArrayCount(array: convertedData)
+    let arrayCount = helper.findArrayCountFrom(array: convertedData)
+    
     
     xAxisBase(context: context, padding: padding)
     yAxisBase(context: context, padding: padding)
-    barGraph(context: context, array: convertedData,initialValue: padding, graphType: "Vertical", data: data, max: maxValue)
+    lineGraph(context: context, array: convertedData, initialValue: padding)
     yAxisGridlines(context: context, padding: padding)
+    xAxisGridlines(context: context, arrayCount: arrayCount, initialValue: padding)
     axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10)
     axis.xAxis(context: context, arrayCount: arrayCount, initialValue: padding)
+    legend.renderLineChartLegend(context: context, arrays: data.array)
     
-    legend.renderBarChartLegend(context: context, arrays: data.array)
   }
   
+  /// Renders a line graph
+  func lineGraph(context: CGContext, array: [[Double]], initialValue: Double) {
+    let helper = RendererHelper()
+    let max = helper.processMultipleArrays(array: array)
 
+    for (i, value) in array.enumerated() {
+      drawLineGraph(context: context, array: value, maxValue: max, source: data.array[i], initialValue: initialValue)
+    }
+  }
+  
   
 }
+
+
+

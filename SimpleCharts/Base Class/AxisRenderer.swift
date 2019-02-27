@@ -24,20 +24,19 @@ open class AxisRenderer: UIView {
   }
   
   
-  
   /// Base function for drawing Axis labels using the create label helper function
-  func drawAxisLabels(x: Double, y: Double, text: String) {
+  private func drawAxisLabels(x: Double, y: Double, text: String) {
     let textFrame = CGRect(x: x, y: y, width: 20, height: 40)
-    helper.createLabel(text: text, textFrame: textFrame)
+    helper.renderText(text: text, textFrame: textFrame)
   }
   
   
   /// Renders the Y axis labels
   func yAxis(context: CGContext, maxValue: Double, padding: Double) {
-    let frameScale = (Double(frame.size.height) - StaticVariables.distanceFromBottom) / Double(StaticVariables.yAxisGridlinesCount)
+    let frameScale = (Double(frame.size.height) - currentFrame.distanceFromBottom) / Double(currentFrame.yAxisGridlinesCount)
     let actualDataScale = Int(maxValue / 6)
     
-    for i in 0...StaticVariables.yAxisGridlinesCount {
+    for i in 0...currentFrame.yAxisGridlinesCount {
       let valueIncrement = Double(i)
       let actualValue = frameScale * valueIncrement
       drawAxisLabels(x: padding - 10, y: Double(frame.size.height) - 60 - actualValue, text: String(i * actualDataScale))
@@ -47,7 +46,6 @@ open class AxisRenderer: UIView {
   
   /// Renders the X axis labels
   func xAxis(context: CGContext, arrayCount: Int, initialValue: Double) {
-    
     for i in 0...arrayCount - 1 {
       let xValue = helper.calculatexValue(frameWidth: Double(frame.size.width), arrayCount: Double(arrayCount), distanceIncrement: i, initialValue: initialValue)
       drawAxisLabels(x: xValue - 5, y: Double(frame.size.height) - 55, text: String(i + 1))
@@ -55,12 +53,11 @@ open class AxisRenderer: UIView {
   }
   
   
-  
   /// Renders the horizontal bar graphs Y axis labels
   func horizontalBarGraphYAxis(context: CGContext, arrayCount: Int, padding: Double) {
     
     for i in 0...arrayCount {
-      let frameScale = (Double(frame.size.height) - StaticVariables.distanceFromBottom) / Double(arrayCount)
+      let frameScale = (Double(frame.size.height) - currentFrame.distanceFromBottom) / Double(arrayCount)
       
       let valueIncrement = Double(i)
       let actualValue = frameScale * valueIncrement
@@ -73,8 +70,8 @@ open class AxisRenderer: UIView {
   func horizontalBarGraphXAxis(context: CGContext, maxValue: Double, initialValue: Double) {
     let actualDataScale = Int(maxValue / 6)
     
-    for i in 0...StaticVariables.yAxisGridlinesCount {
-      let xValue = helper.calculatexValue(frameWidth: Double(frame.size.width), arrayCount: Double(StaticVariables.yAxisGridlinesCount + 1), distanceIncrement: i, initialValue: initialValue)
+    for i in 0...currentFrame.yAxisGridlinesCount {
+      let xValue = helper.calculatexValue(frameWidth: Double(frame.size.width), arrayCount: Double(currentFrame.yAxisGridlinesCount + 1), distanceIncrement: i, initialValue: initialValue)
       
       
       drawAxisLabels(x: xValue, y: Double(frame.size.height) - 55, text: String(i * actualDataScale))
