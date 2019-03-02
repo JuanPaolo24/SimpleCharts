@@ -23,6 +23,20 @@ open class AxisRenderer: UIView {
     fatalError("init(coder:) has not been implemented")
   }
   
+  /// Returns the height of the current frame
+  func frameHeight() -> Double {
+    let frameHeight = Double(frame.size.height)
+    
+    return frameHeight
+  }
+  
+  /// Returns the width of the current frame
+  func frameWidth() -> Double {
+    let frameWidth = Double(frame.size.width)
+    
+    return frameWidth
+  }
+  
   
   /// Base function for drawing Axis labels using the create label helper function
   private func drawAxisLabels(x: Double, y: Double, text: String) {
@@ -33,73 +47,70 @@ open class AxisRenderer: UIView {
   
   /// Renders the Y axis labels
   func yAxis(context: CGContext, maxValue: Double, padding: Double) {
-    let frameScale = (Double(frame.size.height) - currentFrame.distanceFromBottom) / Double(currentFrame.yAxisGridlinesCount)
-    let actualDataScale = Int(maxValue / 6)
+    let calc = LineGraphCalculation(arrayCount: 0, maxValue: maxValue, initialValue: padding, frameWidth: frameWidth(), frameHeight: frameHeight())
     
     for i in 0...currentFrame.yAxisGridlinesCount {
-      let valueIncrement = Double(i)
-      let actualValue = frameScale * valueIncrement
-      drawAxisLabels(x: padding - 10, y: Double(frame.size.height) - 60 - actualValue, text: String(i * actualDataScale))
+      let xValue = calc.yAxisLabelxValue()
+      let yValue = calc.yAxisLabelyValue(i: i)
+      let label = calc.yAxisLabelText(i: i)
+      drawAxisLabels(x: xValue, y: yValue, text: label)
     }
   }
   
   
   /// Renders the X axis labels
   func xAxis(context: CGContext, arrayCount: Int, initialValue: Double) {
-    var scale = 0
-   
-    if arrayCount < 6 {
-      scale = arrayCount / (arrayCount - 1)
-    } else {
-      scale = arrayCount / 6
-    }
-
+    let calc = LineGraphCalculation(arrayCount: arrayCount, maxValue: 0, initialValue: initialValue, frameWidth: frameWidth(), frameHeight: frameHeight())
+    
     for i in 0...arrayCount {
-      let xValue = helper.calculatexValueSpace(frameWidth: Double(frame.size.width), arrayCount: Double(arrayCount), distanceIncrement: i, initialValue: initialValue)
-      drawAxisLabels(x: xValue, y: Double(frame.size.height) - 55, text: String(scale * i))
+      let xValue = calc.xAxisLabelxValue(i: i)
+      let yValue = calc.xAxisLabelyValue()
+      let label = calc.xAxisLabelText(i: i)
+      
+      drawAxisLabels(x: xValue, y: yValue, text: label)
     }
   }
+  
   
   /// Renders the X axis label for the bar graph
   func barGraphxAxis(context: CGContext, arrayCount: Int, initialValue: Double) {
-    let initial = initialValue + 5
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), initialValue: initialValue, arrayCount: Double(arrayCount))
     for i in 0...arrayCount - 1 {
-      let xValue = (Double(frame.size.width - 62) - (initialValue * 2)) / Double(arrayCount - 1)
-      drawAxisLabels(x: initial + (Double(i) * xValue), y: Double(frame.size.height) - 55, text: String(i + 1))
+      let xValue = calc.xVerticalGraphxAxisLabel(i: i)
+      print(xValue)
+      let yValue = calc.xVerticalGraphyAxisLabel()
+      drawAxisLabels(x: xValue, y: yValue, text: String(i + 1))
     }
-    
+
   }
   
-  
+
   
   /// Renders the horizontal bar graphs Y axis labels
   func horizontalBarGraphYAxis(context: CGContext, arrayCount: Int, padding: Double) {
-    var xValue = 0.0
-    var pad = 0.0
-    
-    //Landscape requires a different calculation
-    if padding == 70 {
-      xValue = ((Double(frame.size.height) - 52) - (padding / 2)) / Double(arrayCount - 1)
-      pad = 60
-    } else {
-      xValue = ((Double(frame.size.height) - 62) - (padding * 2)) / Double(arrayCount - 1)
-    }
-    
+
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), initialValue: padding, arrayCount: Double(arrayCount))
+
     for i in 0...arrayCount - 1 {
-      drawAxisLabels(x: padding - 20, y: (padding - pad) + (xValue * Double(i)), text: String(i + 1))
+      let xValue = calc.horizontalYAxisLabelxPoint()
+      let yValue = calc.horizontalYAxisLabelyPoint(i: i)
+      drawAxisLabels(x: xValue, y: yValue, text: String(i + 1))
+      
+      
     }
   }
   
   
   /// Renders the horizontal bar graphs X axis labels
   func horizontalBarGraphXAxis(context: CGContext, maxValue: Double, initialValue: Double) {
-    let actualDataScale = Int(maxValue / 6)
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, initialValue: initialValue, arrayCount: Double(currentFrame.yAxisGridlinesCount + 1))
     
     for i in 0...currentFrame.yAxisGridlinesCount {
-      let xValue = helper.calculatexValueIncrement(frameWidth: Double(frame.size.width), arrayCount: Double(currentFrame.yAxisGridlinesCount + 1), distanceIncrement: i, initialValue: initialValue)
-      
-      
-      drawAxisLabels(x: xValue, y: Double(frame.size.height) - 55, text: String(i * actualDataScale))
+      let xValue = calc.horizontalXAxisLabelxPoint(i: i)
+      let yValue = calc.horizontalXAxisLabelyPoint()
+      let label = calc.horizontalXAxisText(i: i)
+
+      drawAxisLabels(x: xValue, y: yValue, text: label)
     }
     
   }

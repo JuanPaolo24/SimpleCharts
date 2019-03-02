@@ -41,7 +41,7 @@ open class ArcRenderer: UIView {
       context.addArc(center: viewCenter, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: false)
       context.fillPath()
       
-      //helper.createLabel(text: "\(segment.value)", textFrame: CGRect(x: radius + (segment.value / valueCount) , y: radius + (segment.value / valueCount) , width: 40, height: 20))
+      //helper.renderText(text: "\(segment.value)", textFrame: CGRect(x: radius + (segment.value / valueCount) , y: radius + (segment.value / valueCount) , width: 40, height: 20))
       
       startAngle = endAngle
     

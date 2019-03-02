@@ -24,6 +24,17 @@ open class LineChartView: ChartRenderer {
     fatalError("init(coder:) has not been implemented")
   }
   
+  //Axis
+  /// X axis labels visibility (Default = True)
+  open var xAxisVisibility = true
+  
+  /// Y axis labels visibility (Default = True)
+  open var yAxisVisibility = true
+  
+  /// Legend visibility (Default = True)
+  open var legendVisibility = true
+  
+  
   override open func draw(_ rect: CGRect) {
     super.draw(rect)
     
@@ -37,7 +48,7 @@ open class LineChartView: ChartRenderer {
     } else {
       renderLineGraph(context: context, padding: 31)
     }
-    
+    //renderBezierGraph(context: context, padding: 31)
   }
   
   func renderLineGraph(context: CGContext, padding: Double) {
@@ -54,11 +65,42 @@ open class LineChartView: ChartRenderer {
     lineGraph(context: context, array: convertedData, initialValue: padding)
     yAxisGridlines(context: context, padding: padding)
     xAxisGridlines(context: context, arrayCount: arrayCount, initialValue: padding)
+    
+    if yAxisVisibility == true {
+      axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10)
+    }
+  
+    if xAxisVisibility == true {
+      axis.xAxis(context: context, arrayCount: arrayCount, initialValue: padding)
+    }
+    
+    if legendVisibility == true {
+      legend.renderLineChartLegend(context: context, arrays: data.array)
+    }
+    
+  }
+  
+  
+  
+  func renderBezierGraph(context: CGContext, padding: Double) {
+    let helper = RendererHelper()
+    let legend = LegendRenderer(frame: self.frame)
+    let axis = AxisRenderer(frame: self.frame)
+    let convertedData = helper.convert(chartData: data.array)
+    let maxValue = helper.processMultipleArrays(array: convertedData)
+    let arrayCount = helper.findArrayCountFrom(array: convertedData)
+   
+    xAxisBase(context: context, padding: padding)
+    yAxisBase(context: context, padding: padding)
+    drawBezierCurve(context: context)
+    yAxisGridlines(context: context, padding: padding)
+    xAxisGridlines(context: context, arrayCount: arrayCount, initialValue: padding)
     axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10)
     axis.xAxis(context: context, arrayCount: arrayCount, initialValue: padding)
     legend.renderLineChartLegend(context: context, arrays: data.array)
     
   }
+  
   
   /// Renders a line graph
   func lineGraph(context: CGContext, array: [[Double]], initialValue: Double) {

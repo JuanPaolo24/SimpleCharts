@@ -121,39 +121,78 @@ open class ChartRenderer: UIView {
     context.drawPath(using: .fillStroke)
   }
   
-  
-   /// Base function for drawing single line graphs. Requires context, the array to be plotted and the max value of the whole data set
-  func drawLineGraph(context: CGContext, array: [Double], maxValue: Double, source: LineChartData, initialValue: Double) {
+
+  func pathStartPoint(startingXValue: Double, startingYValue: Double) -> CGMutablePath{
     let connection = CGMutablePath()
-    let yAxisPadding = frameHeight() - currentFrame.distanceFromBottom
-    let arrayCount = Double(array.count)
+    connection.move(to: CGPoint(x: startingXValue, y: startingYValue))
+    return connection
+  }
+  
+  
+  /// Base function for drawing single line graphs. Requires context, the array to be plotted and the max value of the whole data set
+  func drawLineGraph(context: CGContext, array: [Double], maxValue: Double, source: LineChartData, initialValue: Double) {
+    let calc = LineGraphCalculation(array: array, maxValue: maxValue, initialValue: initialValue, frameWidth: frameWidth(), frameHeight: frameHeight())
+    
+    let startingYValue = calc.ylineGraphStartPoint()
+    let startingXValue = calc.xlineGraphStartPoint()
 
-    let xStartingPoint = helper.calculatexValueIncrement(frameWidth: frameWidth(), arrayCount: arrayCount, distanceIncrement: 0, initialValue: initialValue)
-
-    if let firstValue = array.first {
-      let yValue = (yAxisPadding / maxValue) * firstValue
-      connection.move(to: CGPoint(x: xStartingPoint, y: yAxisPadding - yValue))
-    }
-
+    let path = pathStartPoint(startingXValue: startingXValue, startingYValue: startingYValue)
+    
     for (i, value) in array.enumerated() {
-      let xValue = helper.calculatexValueIncrement(frameWidth: frameWidth(), arrayCount: arrayCount, distanceIncrement: i, initialValue: initialValue)
+      let xValue = calc.xlineGraphPoint(i: i)
+      let yValue = calc.ylineGraphPoint(value: value)
 
-      let yValue = yAxisPadding - ((yAxisPadding / maxValue) * value)
-      
       if source.enableCirclePoint == true {
         drawCirclePoints(context: context, destination: CGPoint(x: xValue, y: yValue), source: source)
       }
-
       if source.enableLine == true {
-        drawLines(context: context, startingPoint: connection, destinationPoint: CGPoint(x: xValue, y: yValue), source: source)
+        drawLines(context: context, startingPoint: path, destinationPoint: CGPoint(x: xValue, y: yValue), source: source)
       }
-
       if source.enableDataPointLabel == true {
         helper.renderText(text: "\(value)", textFrame: CGRect(x: xValue, y: yValue - 15, width: 40, height: 20))
       }
     }
   }
-
+  
+  
+  // A function that draws a nice curve
+  
+  func drawBezierCurve(context: CGContext) {
+    
+    let arrayX = [31, 100, 169, 238, 307]
+    let arrayY = [40.0, 30.0, 50.0, 60.0, 100.0]
+    
+    let initialPadding = frameHeight() - 62
+    
+    let path = CGMutablePath()
+    let point = CGPoint(x: 31, y: initialPadding - 40)
+    path.move(to: point)
+    
+    for (i, value) in arrayY.enumerated() {
+      let xPoint = 31.0 + (69.0 * Double(i))
+      let yPoint = initialPadding - value
+      
+      let point2 = CGPoint(x: xPoint, y: yPoint)
+      let control1 = CGPoint(x: xPoint + 30, y: yPoint + 10)
+      let control2 = CGPoint(x: xPoint - 30, y: yPoint - 10)
+      
+      
+      
+      path.addCurve(to: point2, control1: control1, control2: control2)
+      //path.addEllipse(in: CGRect(x: xPoint - 5, y: yPoint - 5, width: 10, height: 10)) //When adding ellipse it is just -5 to both the x and y axis to ensure that it is in the middle.
+      //context.fillEllipse(in: CGRect(x: xPoint - 5, y: yPoint - 5, width: 10, height: 10))
+      context.addPath(path)
+      context.setStrokeColor(UIColor.black.cgColor)
+      context.strokePath()
+      
+    }
+    
+    
+    
+    
+  }
+  
+  
   
   
   /// A function that draws the Y axis line used by Line and Bar Graph
@@ -190,17 +229,11 @@ open class ChartRenderer: UIView {
 
   /// Renders the Y axis Gridlines
   func yAxisGridlines(context: CGContext, padding: Double) {
-    let frameScale = (frameHeight() - currentFrame.distanceFromBottom) / Double(currentFrame.yAxisGridlinesCount)
-    let yAxisPadding = frameHeight() - currentFrame.distanceFromBottom
-    let xAxisPadding = frameWidth() - padding
-    
+    let calc = GeneralGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), initialValue: padding)
     for i in 0...currentFrame.yAxisGridlinesCount {
-      let valueIncrement = Double(i)
-      let actualValue = frameScale * valueIncrement
-      
-      let yStartPoint = CGPoint(x: padding, y: yAxisPadding - actualValue)
-      let yEndPoint = CGPoint(x: xAxisPadding, y: yAxisPadding - actualValue)
-      
+      let yStartPoint = calc.yGridlineStartPoint(i: i)
+      let yEndPoint = calc.yGridlineEndPoint(i: i)
+
       if enableYGridline == true {
         drawGridLines(context: context, start: yStartPoint, end: yEndPoint)
       }
@@ -210,79 +243,74 @@ open class ChartRenderer: UIView {
   
   /// Renders the X axis Gridlines
   func xAxisGridlines(context: CGContext, arrayCount: Int, initialValue: Double) {
-    let yAxisPadding = frameHeight() - currentFrame.distanceFromBottom
+    let calc = GeneralGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), initialValue: initialValue, arrayCount: Double(arrayCount))
     
     for i in 0...arrayCount - 1 {
-      let xValue = helper.calculatexValueSpace(frameWidth: frameWidth(),arrayCount: Double(arrayCount), distanceIncrement: i, initialValue: initialValue)
-      
-      let startPoint = CGPoint(x: xValue, y: 10)
-      let endPoint = CGPoint(x: xValue, y: yAxisPadding)
+      let startPoint = calc.xGridlineStartPoint(distanceIncrement: i)
+      let endPoint = calc.xGridlineEndPoint(distanceIncrement: i)
       
       if enableXGridline == true {
         drawGridLines(context: context, start: startPoint, end: endPoint)
       }
+      
     }
   }
   
+  
   /// Renders a vertical bar graph
   func drawVerticalBarGraph(context: CGContext, array: [Double], maxValue: Double, data: BarChartData, initialValue: Double) {
-    let yAxisPadding = (frameHeight() - currentFrame.distanceFromBottom)
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, initialValue: initialValue, arrayCount: Double(array.count))
     
     for (i, value) in array.enumerated() {
-      let xValue = (frameWidth() - (initialValue * 2)) / Double(array.count)
-      let yValuePosition = (yAxisPadding / maxValue) * value
-      let yValue = yAxisPadding - yValuePosition
+      let xValue = calc.xVerticalValue(i: i)
+      let yValue = calc.yVerticalValue(value: value)
+      let width = calc.verticalWidth()
+      let height = calc.verticalHeight(value: value)
+      let xFrame = calc.xVerticalTextFrame(i: i)
+      let yFrame = calc.yVerticalTextFrame(value: value)
 
-      drawRectangle(context: context, x: initialValue + (xValue * Double(i)), y: yValue, width: xValue - 5, height: (frameHeight() - currentFrame.distanceFromBottom) - yValue, source: data)
-      helper.renderText(text: "\(value)", textFrame: CGRect(x: (initialValue + 5) + (xValue * Double(i)), y: yValue - 15, width: 40, height: 20))
+      drawRectangle(context: context, x: xValue, y: yValue, width: width, height: height, source: data)
+      helper.renderText(text: "\(value)", textFrame: CGRect(x: xFrame, y: yFrame, width: 40, height: 20))
     }
   }
   
   
   /// Renders a horizontal bar graph
   func drawHorizontalBarGraph(context: CGContext, array: [Double], maxValue: Double, data: BarChartData, initialValue: Double) {
-    let xAxisPadding = (frameWidth() - currentFrame.distanceFromBottom)
-    var labelPadding = 25.0
-    
-    if initialValue == 70 {
-      labelPadding = 10.0
-    }
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, initialValue: initialValue, arrayCount: Double(array.count))
 
     for (i, value) in array.enumerated() {
-      let yValue = (frameHeight() - 62) / Double(array.count)
-      let xValue = ((xAxisPadding / maxValue) * value) - (initialValue - 30) // Ensures that the extra padding on the landscape version gets added
+      let yValue = calc.yHorizontalValue(i: i)
+      let xValue = calc.xHorizontalValue()
+      let width = calc.horizontalWidth(value: value)
+      let height = calc.horizontalHeight()
+      let xFrame = calc.xHorizontalTextFrame(value: value)
+      let yFrame = calc.yHorizontalTextFrame(i: i)
       
-      drawRectangle(context: context, x: initialValue, y: 20 + (yValue * Double(i)), width: xValue, height: yValue - 35, source: data)
-      helper.renderText(text: "\(value)", textFrame: CGRect(x: (initialValue + xValue) + 5, y: labelPadding + (yValue * Double(i)), width: 40, height: 20))
+      drawRectangle(context: context, x: xValue, y: yValue, width: width, height: height, source: data)
+      helper.renderText(text: "\(value)", textFrame: CGRect(x: xFrame, y: yFrame, width: 40, height: 20))
     }
     
   }
   
-  
   /// Y Gridlines used by the horizontal bar graph
   func horizontalBarGraphYGridlines(context: CGContext, arrayCount: Int, padding: Double) {
-    let yAxisPadding = frameHeight() - currentFrame.distanceFromBottom
-    let xAxisPadding = frameWidth() - padding
-    
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), initialValue: 0, arrayCount: Double(arrayCount))
     for i in 0...arrayCount {
-      let frameScale = (frameHeight() - currentFrame.distanceFromBottom) / Double(arrayCount)
-      let actualValue = frameScale * Double(i)
-      
-      let yStartPoint = CGPoint(x: padding, y: yAxisPadding - actualValue)
-      let yEndPoint = CGPoint(x: xAxisPadding, y: yAxisPadding - actualValue)
+      let yStartPoint = calc.yHorizontalStartGridlines(i: i)
+      let yEndPoint = calc.yHorizontalEndGridlines(i: i)
       drawGridLines(context: context, start: yStartPoint, end: yEndPoint)
     }
   }
   
   /// X Gridlines used by the horizontal bar graph
   func horizontalBarGraphXGridlines(context: CGContext, initialValue: Double) {
-    let yAxisPadding = frameHeight() - currentFrame.distanceFromBottom
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), initialValue: initialValue, arrayCount: Double(currentFrame.yAxisGridlinesCount))
     
     for i in 0...currentFrame.yAxisGridlinesCount {
-      let xValue = helper.calculatexValueIncrement(frameWidth: frameWidth(), arrayCount: Double(currentFrame.yAxisGridlinesCount + 1), distanceIncrement: i, initialValue: initialValue)
-      
-      let startPoint = CGPoint(x: xValue, y: 10)
-      let endPoint = CGPoint(x: xValue, y: yAxisPadding)
+      let startPoint = calc.xHorizontalStartGridlines(i: i)
+      let endPoint = calc.xHorizontalEndGridlines(i: i)
+
       drawGridLines(context: context, start: startPoint, end: endPoint)
     }
   }
