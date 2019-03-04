@@ -92,4 +92,14 @@ class RendererHelper {
     return array
   }
   
+  
+  /// Check if the bounds of the array has been reached
+  func checkBounds(_ i: Int, array: [Double]) -> Double? {
+    guard i >= array.startIndex, i < array.endIndex else {
+      return nil
+    }
+    return array[i]
+    
+  }
+
 }

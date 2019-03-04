@@ -35,6 +35,10 @@ open class LineChartView: ChartRenderer {
   open var legendVisibility = true
   
   
+  /// Line type
+  open var enableBezierCurve = true
+  
+  
   override open func draw(_ rect: CGRect) {
     super.draw(rect)
     
@@ -43,12 +47,22 @@ open class LineChartView: ChartRenderer {
       return
     }
     
-    if UIDevice.current.orientation.isLandscape {
-      renderLineGraph(context: context, padding: 70)
+    if enableBezierCurve {
+      if UIDevice.current.orientation.isLandscape {
+        renderBezierGraph(context: context, padding: 70)
+      } else {
+        renderBezierGraph(context: context, padding: 31)
+      }
     } else {
-      renderLineGraph(context: context, padding: 31)
+      if UIDevice.current.orientation.isLandscape {
+        renderLineGraph(context: context, padding: 70)
+      } else {
+        renderLineGraph(context: context, padding: 31)
+      }
+      
     }
-    //renderBezierGraph(context: context, padding: 31)
+    
+    
   }
   
   func renderLineGraph(context: CGContext, padding: Double) {
@@ -92,7 +106,7 @@ open class LineChartView: ChartRenderer {
    
     xAxisBase(context: context, padding: padding)
     yAxisBase(context: context, padding: padding)
-    drawBezierCurve(context: context)
+    lineBezierGraph(context: context, array: convertedData, initialValue: padding)
     yAxisGridlines(context: context, padding: padding)
     xAxisGridlines(context: context, arrayCount: arrayCount, initialValue: padding)
     axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10)
@@ -106,9 +120,20 @@ open class LineChartView: ChartRenderer {
   func lineGraph(context: CGContext, array: [[Double]], initialValue: Double) {
     let helper = RendererHelper()
     let max = helper.processMultipleArrays(array: array)
-
+    
     for (i, value) in array.enumerated() {
       drawLineGraph(context: context, array: value, maxValue: max, source: data.array[i], initialValue: initialValue)
+    }
+  }
+  
+  
+  /// Renders a line graph
+  func lineBezierGraph(context: CGContext, array: [[Double]], initialValue: Double) {
+    let helper = RendererHelper()
+    let max = helper.processMultipleArrays(array: array)
+
+    for (i, value) in array.enumerated() {
+      drawBezierCurve(context: context, array: value, maxValue: max, source: data.array[i] ,initialValue: initialValue)
     }
   }
   

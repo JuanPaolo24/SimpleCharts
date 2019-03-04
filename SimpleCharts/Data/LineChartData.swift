@@ -37,4 +37,8 @@ open class LineChartData: ChartData {
   /// Enable the data point labels (Default = True)
   open var enableDataPointLabel = true
   
+  /// Set the intensity of the bezier curve (Default 0.2)
+  open var setBezierCurveIntensity = 0.2
+  
+  
 }

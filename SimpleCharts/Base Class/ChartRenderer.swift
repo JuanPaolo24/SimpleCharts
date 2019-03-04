@@ -121,8 +121,18 @@ open class ChartRenderer: UIView {
     context.drawPath(using: .fillStroke)
   }
   
-
-  func pathStartPoint(startingXValue: Double, startingYValue: Double) -> CGMutablePath{
+  private func addBezierCurve(context: CGContext, startingPoint: CGMutablePath, point: CGPoint, control1: CGPoint, control2: CGPoint, source: LineChartData) {
+    startingPoint.addCurve(to: point, control1: control1, control2: control2)
+    context.addArc(center: point, radius: 5.0, startAngle: CGFloat(0).degreesToRadians, endAngle: CGFloat(360).degreesToRadians, clockwise: true)
+    context.setFillColor(source.setCirclePointColour)
+    context.fillPath()
+    context.addPath(startingPoint)
+    context.setStrokeColor(source.setLinePointColour)
+    context.strokePath()
+  }
+  
+  
+  private func pathStartPoint(startingXValue: Double, startingYValue: Double) -> CGMutablePath{
     let connection = CGMutablePath()
     connection.move(to: CGPoint(x: startingXValue, y: startingYValue))
     return connection
@@ -135,13 +145,14 @@ open class ChartRenderer: UIView {
     
     let startingYValue = calc.ylineGraphStartPoint()
     let startingXValue = calc.xlineGraphStartPoint()
-
+    
     let path = pathStartPoint(startingXValue: startingXValue, startingYValue: startingYValue)
     
     for (i, value) in array.enumerated() {
       let xValue = calc.xlineGraphPoint(i: i)
       let yValue = calc.ylineGraphPoint(value: value)
-
+      
+      
       if source.enableCirclePoint == true {
         drawCirclePoints(context: context, destination: CGPoint(x: xValue, y: yValue), source: source)
       }
@@ -155,43 +166,29 @@ open class ChartRenderer: UIView {
   }
   
   
-  // A function that draws a nice curve
   
-  func drawBezierCurve(context: CGContext) {
+  
+  /// Base function for drawing line graphs with bezier curve. Requires context, the array to be plotted and the max value of the whole data set
+  func drawBezierCurve(context: CGContext, array: [Double], maxValue: Double, source: LineChartData, initialValue: Double) {
+    let calc = LineGraphCalculation(array: array, maxValue: maxValue, initialValue: initialValue, frameWidth: frameWidth(), frameHeight: frameHeight())
     
-    let arrayX = [31, 100, 169, 238, 307]
-    let arrayY = [40.0, 30.0, 50.0, 60.0, 100.0]
+    let startingYValue = calc.ylineGraphStartPoint()
+    let startingXValue = calc.xlineGraphStartPoint()
     
-    let initialPadding = frameHeight() - 62
+    let path = pathStartPoint(startingXValue: startingXValue, startingYValue: startingYValue)
+    let index = Array(array.dropFirst())
     
-    let path = CGMutablePath()
-    let point = CGPoint(x: 31, y: initialPadding - 40)
-    path.move(to: point)
-    
-    for (i, value) in arrayY.enumerated() {
-      let xPoint = 31.0 + (69.0 * Double(i))
-      let yPoint = initialPadding - value
+    for (i, value) in index.enumerated() {
       
-      let point2 = CGPoint(x: xPoint, y: yPoint)
-      let control1 = CGPoint(x: xPoint + 30, y: yPoint + 10)
-      let control2 = CGPoint(x: xPoint - 30, y: yPoint - 10)
+      let point2 = calc.bezierGraphPoint(i: i, value: value)
+      let control1 = calc.bezierControlPoint1(i: i, value: value, intensity: source.setBezierCurveIntensity)
+      let control2 = calc.bezierControlPoint2(i: i, value: value, intensity: source.setBezierCurveIntensity)
       
-      
-      
-      path.addCurve(to: point2, control1: control1, control2: control2)
-      //path.addEllipse(in: CGRect(x: xPoint - 5, y: yPoint - 5, width: 10, height: 10)) //When adding ellipse it is just -5 to both the x and y axis to ensure that it is in the middle.
-      //context.fillEllipse(in: CGRect(x: xPoint - 5, y: yPoint - 5, width: 10, height: 10))
-      context.addPath(path)
-      context.setStrokeColor(UIColor.black.cgColor)
-      context.strokePath()
+      addBezierCurve(context: context, startingPoint: path, point: point2, control1: control1, control2: control2, source: source)
       
     }
     
-    
-    
-    
   }
-  
   
   
   
@@ -226,14 +223,14 @@ open class ChartRenderer: UIView {
     
   }
   
-
+  
   /// Renders the Y axis Gridlines
   func yAxisGridlines(context: CGContext, padding: Double) {
     let calc = GeneralGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), initialValue: padding)
     for i in 0...currentFrame.yAxisGridlinesCount {
       let yStartPoint = calc.yGridlineStartPoint(i: i)
       let yEndPoint = calc.yGridlineEndPoint(i: i)
-
+      
       if enableYGridline == true {
         drawGridLines(context: context, start: yStartPoint, end: yEndPoint)
       }
@@ -268,7 +265,7 @@ open class ChartRenderer: UIView {
       let height = calc.verticalHeight(value: value)
       let xFrame = calc.xVerticalTextFrame(i: i)
       let yFrame = calc.yVerticalTextFrame(value: value)
-
+      
       drawRectangle(context: context, x: xValue, y: yValue, width: width, height: height, source: data)
       helper.renderText(text: "\(value)", textFrame: CGRect(x: xFrame, y: yFrame, width: 40, height: 20))
     }
@@ -278,7 +275,7 @@ open class ChartRenderer: UIView {
   /// Renders a horizontal bar graph
   func drawHorizontalBarGraph(context: CGContext, array: [Double], maxValue: Double, data: BarChartData, initialValue: Double) {
     let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, initialValue: initialValue, arrayCount: Double(array.count))
-
+    
     for (i, value) in array.enumerated() {
       let yValue = calc.yHorizontalValue(i: i)
       let xValue = calc.xHorizontalValue()
@@ -310,12 +307,12 @@ open class ChartRenderer: UIView {
     for i in 0...currentFrame.yAxisGridlinesCount {
       let startPoint = calc.xHorizontalStartGridlines(i: i)
       let endPoint = calc.xHorizontalEndGridlines(i: i)
-
+      
       drawGridLines(context: context, start: startPoint, end: endPoint)
     }
   }
   
-
+  
   func barGraph(context: CGContext, array: [[Double]], initialValue: Double, graphType: String, data: BarChartDataSet, max: Double) {
     for (i, value) in array.enumerated() {
       if graphType == "Vertical" {
@@ -325,7 +322,7 @@ open class ChartRenderer: UIView {
       }
     }
   }
-
+  
   
 }
 

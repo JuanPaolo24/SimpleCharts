@@ -39,6 +39,8 @@ open class LineGraphCalculation {
   }
   
   
+  // Normal Line Graph
+  
   func ylineGraphStartPoint() -> Double {
     let yAxisPadding = frameHeight - currentFrame.distanceFromBottom
     var yValue = 0.0
@@ -76,8 +78,71 @@ open class LineGraphCalculation {
   
   
   
+  // Bezier Curve Graph
   
-
+  
+  func bezierGraphPoint(i: Int, value: Double) -> CGPoint {
+    
+    let arrayCount = Double(array.count)
+    let spaceLeft = frameWidth - (initialValue * 2)
+    let yOffSet = frameHeight - 62
+    let increment = spaceLeft / (arrayCount - 1)
+    let xPoint = initialValue + (increment * Double(i + 1))
+    let yPoint = yOffSet - ((yOffSet / maxValue) * value)
+    
+    let point = CGPoint(x: xPoint, y: yPoint)
+    
+    return point
+  }
+  
+  func bezierControlPoint1(i: Int, value: Double, intensity: Double) -> CGPoint {
+    let arrayCount = Double(array.count)
+    let start = Array(array.dropLast())
+    
+    let spaceLeft = frameWidth - (initialValue * 2)
+    let increment = spaceLeft / (arrayCount - 1)
+    let yOffSet = frameHeight - 62
+    let xPoint = initialValue + (increment * Double(i + 1))
+    let prevPoint = xPoint - increment
+    let yPoint = yOffSet - ((yOffSet / maxValue) * start[i])
+    let nextValue = yOffSet - ((yOffSet / maxValue) * value)
+    
+    
+    let xIntensity = (xPoint - prevPoint) * intensity
+    let yIntensity = (yPoint - nextValue) * intensity
+    
+    let control1 = CGPoint(x: prevPoint + xIntensity, y: yPoint + yIntensity)
+    
+    return control1
+    
+  }
+  
+  func bezierControlPoint2(i: Int, value: Double, intensity: Double) -> CGPoint {
+    let arrayCount = Double(array.count)
+    let start = Array(array.dropLast())
+    
+    let spaceLeft = frameWidth - (initialValue * 2)
+    let increment = spaceLeft / (arrayCount - 1)
+    let yOffSet = frameHeight - 62
+    let xPoint = initialValue + (increment * Double(i + 1))
+    let prevPoint = xPoint - increment
+    let yPoint = yOffSet - ((yOffSet / maxValue) * start[i])
+    let nextValue = yOffSet - ((yOffSet / maxValue) * value)
+    
+    
+    let xIntensity = (xPoint - prevPoint) * intensity
+    let yIntensity = (yPoint - nextValue) * intensity
+    
+    let control2 = CGPoint(x: xPoint - xIntensity, y: nextValue - yIntensity)
+    
+    return control2
+    
+  }
+  
+  
+  
+  
+// Axis Label
   func xAxisLabelxValue(i: Int) -> Double {
     let spaceLeft = (frameWidth - 8) - (initialValue * 2)
     var increment = 0.0
