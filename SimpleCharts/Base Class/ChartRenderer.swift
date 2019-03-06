@@ -333,7 +333,7 @@ open class ChartRenderer: UIView {
   
   /// Y Gridlines used by the horizontal bar graph
   func horizontalBarGraphYGridlines(context: CGContext, arrayCount: Int, padding: Double) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), offSet: 0, arrayCount: Double(arrayCount))
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), offSet: padding, arrayCount: Double(arrayCount))
     for i in 0...arrayCount {
       let yStartPoint = calc.yHorizontalStartGridlines(i: i)
       let yEndPoint = calc.yHorizontalEndGridlines(i: i)

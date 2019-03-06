@@ -44,6 +44,28 @@ open class LegendRenderer: UIView {
     
   }
   
+  
+  func drawPieLegend(context: CGContext, y: Double, legendText: String, colour: CGColor, offset: Double) {
+    let x = Double(frame.size.width) - offset
+    
+    let rectangleLegend = CGRect(x: x, y: y, width: 10, height: 10)
+    context.setFillColor(colour)
+    context.setLineWidth(1.0)
+    context.addRect(rectangleLegend)
+    context.drawPath(using: .fill)
+    
+    let textCount = Double(6 * legendText.count)
+    let textFrame = CGRect(x: Double(rectangleLegend.maxX) + 5, y: y, width: textCount, height: 10)
+    
+    let paragraphStyle = NSMutableParagraphStyle()
+    paragraphStyle.alignment = .justified
+    let textRenderer = TextRenderer(paragraphStyle: paragraphStyle, font: UIFont.systemFont(ofSize: 8.0), foreGroundColor: UIColor.black)
+    
+    textRenderer.renderText(text: legendText, textFrame: textFrame)
+    
+  }
+  
+  
   func renderLineChartLegend(context: CGContext, arrays: [LineChartData]) {
     for i in 1...arrays.count {
       drawLegend(context: context, x: Double(legendMaximumDistance), y: Double(frame.size.height) - 30, legendText: arrays[i - 1].name, colour: arrays[i - 1].setLineColour)
@@ -58,9 +80,10 @@ open class LegendRenderer: UIView {
   }
   
   
-  func renderPieChartLegend(context: CGContext, arrays: [PieChartData]) {
+  func renderPieChartLegend(context: CGContext, arrays: [PieChartData], padding: Double) {
     for i in 1...arrays.count {
-      drawLegend(context: context, x: Double(legendMaximumDistance), y: Double(frame.size.height) - 80, legendText: arrays[i - 1].name, colour: arrays[i - 1].color.cgColor)
+      drawPieLegend(context: context, y: 30 + (Double(i) * 15), legendText: arrays[i - 1].name, colour: arrays[i - 1].color.cgColor, offset: padding)
+      
     }
   }
   

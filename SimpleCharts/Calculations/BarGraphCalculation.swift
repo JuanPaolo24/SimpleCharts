@@ -107,8 +107,8 @@ open class BarGraphCalculation {
   }
   
   func horizontalHeight() -> Double {
-    let scale = (frameHeight - currentFrame.distanceFromBottom) / arrayCount
-    let height = scale - 35
+    let scale = (frameHeight - currentFrame.distanceFromBottom - 10) / arrayCount
+    let height = scale - 30
     
     return height
   }
@@ -166,7 +166,7 @@ open class BarGraphCalculation {
   
   func yHorizontalStartGridlines(i: Int) -> CGPoint {
     let yAxisPadding = frameHeight - currentFrame.distanceFromBottom
-    let frameScale = (frameHeight - currentFrame.distanceFromBottom) / Double(arrayCount)
+    let frameScale = (frameHeight - currentFrame.distanceFromBottom - 10) / Double(arrayCount)
     let actualValue = frameScale * Double(i)
     let yPoint = yAxisPadding - actualValue
     
@@ -192,9 +192,8 @@ open class BarGraphCalculation {
   //A special calculation for the vertical bar graph
   func xVerticalGraphxAxisLabel(i: Int) -> Double {
     let scale = (frameWidth - (offSet * 2)) / arrayCount
-    let barWidth = scale - 5.0
-    let position = barWidth / 2
-    let startPoint = offSet + ((barWidth + 5) * Double(i))
+    let position = scale / 2
+    let startPoint = offSet + ((scale) * Double(i))
 
     let xValue = startPoint + position
    
@@ -214,8 +213,16 @@ open class BarGraphCalculation {
   // Horizontal Bar Graph Label Calculation
   
   func horizontalXAxisLabelxPoint(i: Int) -> Double {
-    let spaceLeft = frameWidth - (offSet * 2)
-    let increment = spaceLeft / (arrayCount)
+    let spaceLeft = (frameWidth - 8) - (offSet * 2)
+    var increment = 0.0
+    let count = Double(arrayCount)
+    
+    if count < 6 {
+      increment = spaceLeft / (count - 1)
+    } else {
+      increment = spaceLeft / 6
+    }
+    
     let xValue = offSet + (increment * Double(i))
     
     return xValue
@@ -245,18 +252,19 @@ open class BarGraphCalculation {
   
   
   func horizontalYAxisLabelyPoint(i: Int) -> Double {
-    var scale = 0.0
+    let spaceLeft = (frameHeight - currentFrame.distanceFromBottom - 10) / arrayCount
+    var startingPadding = 0.0
     var pad = 0.0
     
     //Landscape requires a different calculation
     if offSet == 70 {
-      scale = (frameHeight - 52) - (offSet / 2) / Double(arrayCount - 1)
       pad = 60
+      startingPadding = offSet + 10
     } else {
-      scale = (frameHeight - 62) - (offSet * 2) / Double(arrayCount - 1)
+      startingPadding = offSet + 30
     }
-    
-    let yValue = (offSet - pad) + (scale * Double(i))
+
+    let yValue = (startingPadding - pad) + (spaceLeft * Double(i))
     
     return yValue
     

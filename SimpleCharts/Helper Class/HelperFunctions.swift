@@ -27,7 +27,10 @@ class HelperFunctions {
       max = newMax
     }
     
-    return max + 41
+    // This padding is to make sure that the graph does not go off axis. Currently adds 20%
+    let maxPadding = max * 0.2
+    
+    return max + maxPadding
   }
   
   /// Returns the max value from an array
@@ -36,7 +39,11 @@ class HelperFunctions {
     if let maxValue = array.max() {
       max = maxValue
     }
-    return max + 41
+    
+    // This padding is to make sure that the graph does not go off axis. Currently adds 20%
+    let maxPadding = max * 0.2
+    
+    return max + maxPadding
   }
   
   

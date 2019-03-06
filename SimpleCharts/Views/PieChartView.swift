@@ -29,16 +29,20 @@ open class PieChartView: ArcRenderer {
       return
     }
     
+    let legend = LegendRenderer(frame: self.frame)
+    
+    
+    
     if UIDevice.current.orientation.isLandscape {
       drawPieArc(context: context, radiusPercentage: 0.4, segments: data)
+      legend.renderPieChartLegend(context: context, arrays: data.array, padding: 220)
     } else {
       drawPieArc(context: context, radiusPercentage: 0.4, segments: data)
+      legend.renderPieChartLegend(context: context, arrays: data.array, padding: 100)
     }
   
     
-    let legend = LegendRenderer(frame: self.frame)
     
-    legend.renderPieChartLegend(context: context, arrays: data.array)
   }
   
 }
