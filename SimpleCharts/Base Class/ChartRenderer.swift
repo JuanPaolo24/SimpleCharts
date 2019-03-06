@@ -29,36 +29,41 @@ open class ChartRenderer: UIView {
   /// Enable the Y gridline on the chart
   open var enableYGridline = true
   
+  /// Returns true if Y gridline is visible
+  open var isYGridlineVisible: Bool { get {return enableYGridline} }
+  
   /// Enable the X gridline on the chart
   open var enableXGridline = true
   
-  /// Set the Y Axis base colour
+  /// Returns true if X gridline is visible
+  open var isXGridlineVisible: Bool { get {return enableXGridline} }
+  
+  /// Set the Y Axis base colour (Default = Black)
   open var setYAxisBaseColour = UIColor.black.cgColor
   
-  /// Set the X Axis base colour
+  /// Set the X Axis base colour (Default = Black)
   open var setXAxisBaseColour = UIColor.black.cgColor
   
-  /// Set Gridline colour
+  /// Set Gridline colour (Default = Black)
   open var setGridlineColour = UIColor.black.cgColor
   
   /// Set Gridline Line Width (Default = 0.5)
   open var setGridlineWidth = CGFloat(0.5)
   
-  /// Set the Gridline stroke design (Default = False)
+  /// Set the Gridline stroke design (Default = True)
   open var enableGridLineDash = true
   
+  /// Returns true if gridline dash is enabled
+  open var isGridlineDashEnabled: Bool { get {return enableGridLineDash} }
   
-  /// An instance of the RendererHelper class for access to helper functions
-  private var helper = RendererHelper()
-  
-  /// Returns the height of the current frame
+  /// Returns the height of the current frame as a double
   func frameHeight() -> Double {
     let frameHeight = Double(frame.size.height)
     
     return frameHeight
   }
   
-  /// Returns the width of the current frame
+  /// Returns the width of the current frame as a double
   func frameWidth() -> Double {
     let frameWidth = Double(frame.size.width)
     
@@ -106,11 +111,12 @@ open class ChartRenderer: UIView {
   private func drawLines(context: CGContext, startingPoint: CGMutablePath, destinationPoint: CGPoint, source: LineChartData) {
     startingPoint.addLine(to: destinationPoint)
     context.addPath(startingPoint)
-    context.setStrokeColor(source.setLinePointColour)
+    context.setStrokeColor(source.setLineColour)
     context.strokePath()
     context.setLineWidth(source.setLineWidth)
   }
   
+  /// Base function for drawing rectangles
   private func drawRectangle(context: CGContext, x: Double, y: Double, width: Double, height: Double, source: BarChartData) {
     let rectangle = CGRect(x: x, y: y, width: width, height: height)
     
@@ -121,27 +127,43 @@ open class ChartRenderer: UIView {
     context.drawPath(using: .fillStroke)
   }
   
+  /// Base function for adding bezier curves to a line graph. This should be called by itself and not with drawLines
   private func addBezierCurve(context: CGContext, startingPoint: CGMutablePath, point: CGPoint, control1: CGPoint, control2: CGPoint, source: LineChartData) {
     startingPoint.addCurve(to: point, control1: control1, control2: control2)
-    context.addArc(center: point, radius: 5.0, startAngle: CGFloat(0).degreesToRadians, endAngle: CGFloat(360).degreesToRadians, clockwise: true)
-    context.setFillColor(source.setCirclePointColour)
-    context.fillPath()
     context.addPath(startingPoint)
-    context.setStrokeColor(source.setLinePointColour)
+    context.setStrokeColor(source.setLineColour)
     context.strokePath()
   }
   
-  
+  /// Base function for starting a path.
   private func pathStartPoint(startingXValue: Double, startingYValue: Double) -> CGMutablePath{
     let connection = CGMutablePath()
     connection.move(to: CGPoint(x: startingXValue, y: startingYValue))
     return connection
   }
   
+  // Add fill to the current path - TODO: It is stil not behaving as intended
+  private func addFill(context: CGContext, path: CGPath) {
+    context.saveGState()
+    context.addPath(path)
+    
+    // filled is usually drawn with less alpha
+    context.setAlpha(0.33)
+    
+    context.setFillColor(UIColor.black.cgColor)
+    context.fillPath()
+    
+    context.restoreGState()
+    
+  }
   
   /// Base function for drawing single line graphs. Requires context, the array to be plotted and the max value of the whole data set
   func drawLineGraph(context: CGContext, array: [Double], maxValue: Double, source: LineChartData, initialValue: Double) {
-    let calc = LineGraphCalculation(array: array, maxValue: maxValue, initialValue: initialValue, frameWidth: frameWidth(), frameHeight: frameHeight())
+    let calc = LineGraphCalculation(array: array, maxValue: maxValue, offSet: initialValue, frameWidth: frameWidth(), frameHeight: frameHeight())
+    let paragraphStyle = NSMutableParagraphStyle()
+    paragraphStyle.alignment = .justified
+    
+    let textRenderer = TextRenderer(paragraphStyle: paragraphStyle, font: UIFont.systemFont(ofSize: source.setTextLabelFont), foreGroundColor: source.setTextLabelColour)
     
     let startingYValue = calc.ylineGraphStartPoint()
     let startingXValue = calc.xlineGraphStartPoint()
@@ -153,14 +175,14 @@ open class ChartRenderer: UIView {
       let yValue = calc.ylineGraphPoint(value: value)
       
       
-      if source.enableCirclePoint == true {
+      if source.enableCirclePointVisibility == true {
         drawCirclePoints(context: context, destination: CGPoint(x: xValue, y: yValue), source: source)
       }
-      if source.enableLine == true {
+      if source.enableLineVisibility == true {
         drawLines(context: context, startingPoint: path, destinationPoint: CGPoint(x: xValue, y: yValue), source: source)
       }
       if source.enableDataPointLabel == true {
-        helper.renderText(text: "\(value)", textFrame: CGRect(x: xValue, y: yValue - 15, width: 40, height: 20))
+        textRenderer.renderText(text: "\(value)", textFrame: CGRect(x: xValue, y: yValue - 15, width: 40, height: 20))
       }
     }
   }
@@ -170,7 +192,12 @@ open class ChartRenderer: UIView {
   
   /// Base function for drawing line graphs with bezier curve. Requires context, the array to be plotted and the max value of the whole data set
   func drawBezierCurve(context: CGContext, array: [Double], maxValue: Double, source: LineChartData, initialValue: Double) {
-    let calc = LineGraphCalculation(array: array, maxValue: maxValue, initialValue: initialValue, frameWidth: frameWidth(), frameHeight: frameHeight())
+    let calc = LineGraphCalculation(array: array, maxValue: maxValue, offSet: initialValue, frameWidth: frameWidth(), frameHeight: frameHeight())
+    
+    let paragraphStyle = NSMutableParagraphStyle()
+    paragraphStyle.alignment = .justified
+    
+    let textRenderer = TextRenderer(paragraphStyle: paragraphStyle, font: UIFont.systemFont(ofSize: source.setTextLabelFont), foreGroundColor: source.setTextLabelColour)
     
     let startingYValue = calc.ylineGraphStartPoint()
     let startingXValue = calc.xlineGraphStartPoint()
@@ -180,16 +207,24 @@ open class ChartRenderer: UIView {
     
     for (i, value) in index.enumerated() {
       
-      let point2 = calc.bezierGraphPoint(i: i, value: value)
+      let destination = calc.bezierGraphPoint(i: i, value: value)
       let control1 = calc.bezierControlPoint1(i: i, value: value, intensity: source.setBezierCurveIntensity)
       let control2 = calc.bezierControlPoint2(i: i, value: value, intensity: source.setBezierCurveIntensity)
       
-      addBezierCurve(context: context, startingPoint: path, point: point2, control1: control1, control2: control2, source: source)
+      if source.enableLineVisibility == true {
+        addBezierCurve(context: context, startingPoint: path, point: destination, control1: control1, control2: control2, source: source)
+      }
       
-    }
+      if source.enableCirclePointVisibility == true {
+        drawCirclePoints(context: context, destination: destination, source: source)
+      }
+      
+      if source.enableDataPointLabel == true {
+        textRenderer.renderText(text: "\(value)", textFrame: CGRect(x: destination.x, y: destination.y - 15, width: 40, height: 20))
+      }
     
+    }
   }
-  
   
   
   /// A function that draws the Y axis line used by Line and Bar Graph
@@ -226,7 +261,7 @@ open class ChartRenderer: UIView {
   
   /// Renders the Y axis Gridlines
   func yAxisGridlines(context: CGContext, padding: Double) {
-    let calc = GeneralGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), initialValue: padding)
+    let calc = GeneralGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), offSet: padding)
     for i in 0...currentFrame.yAxisGridlinesCount {
       let yStartPoint = calc.yGridlineStartPoint(i: i)
       let yEndPoint = calc.yGridlineEndPoint(i: i)
@@ -240,7 +275,7 @@ open class ChartRenderer: UIView {
   
   /// Renders the X axis Gridlines
   func xAxisGridlines(context: CGContext, arrayCount: Int, initialValue: Double) {
-    let calc = GeneralGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), initialValue: initialValue, arrayCount: Double(arrayCount))
+    let calc = GeneralGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), offSet: initialValue, arrayCount: Double(arrayCount))
     
     for i in 0...arrayCount - 1 {
       let startPoint = calc.xGridlineStartPoint(distanceIncrement: i)
@@ -256,7 +291,10 @@ open class ChartRenderer: UIView {
   
   /// Renders a vertical bar graph
   func drawVerticalBarGraph(context: CGContext, array: [Double], maxValue: Double, data: BarChartData, initialValue: Double) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, initialValue: initialValue, arrayCount: Double(array.count))
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, offSet: initialValue, arrayCount: Double(array.count))
+    let paragraphStyle = NSMutableParagraphStyle()
+    paragraphStyle.alignment = .justified
+    let textRenderer = TextRenderer(paragraphStyle: paragraphStyle, font: UIFont.systemFont(ofSize: data.setTextLabelFont), foreGroundColor: data.setTextLabelColour)
     
     for (i, value) in array.enumerated() {
       let xValue = calc.xVerticalValue(i: i)
@@ -267,14 +305,17 @@ open class ChartRenderer: UIView {
       let yFrame = calc.yVerticalTextFrame(value: value)
       
       drawRectangle(context: context, x: xValue, y: yValue, width: width, height: height, source: data)
-      helper.renderText(text: "\(value)", textFrame: CGRect(x: xFrame, y: yFrame, width: 40, height: 20))
+      textRenderer.renderText(text: "\(value)", textFrame: CGRect(x: xFrame, y: yFrame, width: 40, height: 20))
     }
   }
   
   
   /// Renders a horizontal bar graph
   func drawHorizontalBarGraph(context: CGContext, array: [Double], maxValue: Double, data: BarChartData, initialValue: Double) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, initialValue: initialValue, arrayCount: Double(array.count))
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, offSet: initialValue, arrayCount: Double(array.count))
+    let paragraphStyle = NSMutableParagraphStyle()
+    paragraphStyle.alignment = .justified
+    let textRenderer = TextRenderer(paragraphStyle: paragraphStyle, font: UIFont.systemFont(ofSize: data.setTextLabelFont), foreGroundColor: data.setTextLabelColour)
     
     for (i, value) in array.enumerated() {
       let yValue = calc.yHorizontalValue(i: i)
@@ -285,14 +326,14 @@ open class ChartRenderer: UIView {
       let yFrame = calc.yHorizontalTextFrame(i: i)
       
       drawRectangle(context: context, x: xValue, y: yValue, width: width, height: height, source: data)
-      helper.renderText(text: "\(value)", textFrame: CGRect(x: xFrame, y: yFrame, width: 40, height: 20))
+      textRenderer.renderText(text: "\(value)", textFrame: CGRect(x: xFrame, y: yFrame, width: 40, height: 20))
     }
     
   }
   
   /// Y Gridlines used by the horizontal bar graph
   func horizontalBarGraphYGridlines(context: CGContext, arrayCount: Int, padding: Double) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), initialValue: 0, arrayCount: Double(arrayCount))
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), offSet: 0, arrayCount: Double(arrayCount))
     for i in 0...arrayCount {
       let yStartPoint = calc.yHorizontalStartGridlines(i: i)
       let yEndPoint = calc.yHorizontalEndGridlines(i: i)
@@ -302,7 +343,7 @@ open class ChartRenderer: UIView {
   
   /// X Gridlines used by the horizontal bar graph
   func horizontalBarGraphXGridlines(context: CGContext, initialValue: Double) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), initialValue: initialValue, arrayCount: Double(currentFrame.yAxisGridlinesCount))
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), offSet: initialValue, arrayCount: Double(currentFrame.yAxisGridlinesCount))
     
     for i in 0...currentFrame.yAxisGridlinesCount {
       let startPoint = calc.xHorizontalStartGridlines(i: i)

@@ -11,6 +11,25 @@ import Foundation
 
 open class BarChartView: ChartRenderer {
   
+  //Axis
+  /// X axis labels visibility (Default = True)
+  open var xAxisVisibility = true
+  
+  /// Returns true if X Axis label is visible
+  open var isxAxisLabelVisible: Bool { get {return xAxisVisibility} }
+  
+  /// Y axis labels visibility (Default = True)
+  open var yAxisVisibility = true
+  
+  /// Returns true if Y Axis label is visible
+  open var isyAxisLabelVisible: Bool { get {return yAxisVisibility} }
+  
+  /// Legend visibility (Default = True)
+  open var legendVisibility = true
+  
+  /// Returns true if legend is visible
+  open var isLegendVisible: Bool { get {return legendVisibility} }
+  
   public var data = BarChartDataSet(dataset: [BarChartData(dataset: [0], datasetName: "Test")])
   
   override public init(frame: CGRect) {
@@ -41,7 +60,7 @@ open class BarChartView: ChartRenderer {
   
   
   func renderVerticalBarGraph(context: CGContext, padding: Double) {
-    let helper = RendererHelper()
+    let helper = HelperFunctions()
     let legend = LegendRenderer(frame: self.frame)
     let convertedData = helper.convert(chartData: data.array)
     
@@ -54,10 +73,19 @@ open class BarChartView: ChartRenderer {
     yAxisBase(context: context, padding: padding)
     barGraph(context: context, array: convertedData,initialValue: padding, graphType: "Vertical", data: data, max: maxValue)
     yAxisGridlines(context: context, padding: padding)
-    axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10)
-    axis.barGraphxAxis(context: context, arrayCount: arrayCount, initialValue: padding)
     
-    legend.renderBarChartLegend(context: context, arrays: data.array)
+    if yAxisVisibility == true {
+      axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10)
+    }
+    
+    if xAxisVisibility == true {
+      axis.barGraphxAxis(context: context, arrayCount: arrayCount, initialValue: padding)
+    }
+    
+    if legendVisibility == true {
+      legend.renderBarChartLegend(context: context, arrays: data.array)
+    }
+    
   }
   
 }

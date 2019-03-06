@@ -8,9 +8,8 @@
 
 import Foundation
 
+
 open class ArcRenderer: UIView {
-  
-  let helper = RendererHelper()
   
   public override init(frame: CGRect) {
     super.init(frame: frame)
@@ -29,19 +28,30 @@ open class ArcRenderer: UIView {
     let viewCenter = CGPoint(x: bounds.size.width * 0.5, y: bounds.size.height * 0.5)
     let valueCount = segments.array.reduce(0, {$0 + $1.value})
     
+    let paragraphStyle = NSMutableParagraphStyle()
+    paragraphStyle.alignment = .justified
+    let textRenderer = TextRenderer(paragraphStyle: paragraphStyle, font: UIFont.systemFont(ofSize: 12.0), foreGroundColor: UIColor.black)
+    
     var startAngle = -CGFloat.pi * 0.5
-    print(startAngle)
     
     for segment in segments.array {
       context.setFillColor(segment.color.cgColor)
       
       let endAngle = startAngle + 2 * .pi * (segment.value / valueCount)
       
+      let halfAngle = startAngle + (endAngle - startAngle) * 0.5
+      let labelPosition = CGFloat(0.8)
+      let labelXPosition = viewCenter.x + (radius * labelPosition) * cos(halfAngle)
+      let labelYPosition = viewCenter.y + (radius * labelPosition) * sin(halfAngle)
+      
+
       context.move(to: viewCenter)
       context.addArc(center: viewCenter, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: false)
       context.fillPath()
       
-      //helper.renderText(text: "\(segment.value)", textFrame: CGRect(x: radius + (segment.value / valueCount) , y: radius + (segment.value / valueCount) , width: 40, height: 20))
+      
+      
+      textRenderer.renderText(text: "\(segment.value)", textFrame: CGRect(x: labelXPosition, y: labelYPosition , width: 40, height: 20))
       
       startAngle = endAngle
     

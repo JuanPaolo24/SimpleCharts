@@ -16,26 +16,41 @@ open class LineChartData: ChartData {
   }
   
   //Line Chart
-  /// Enable the circle points
-  open var enableCirclePoint = true
+  /// Make the circle points on the line graph visible (Default = True)
+  open var enableCirclePointVisibility = true
   
-  /// Enable the line
-  open var enableLine = true
+  /// Returns true if circle point is visible
+  open var isCirclePointVisible: Bool { get {return enableCirclePointVisibility} }
+  
+  /// Make the line graphs line visible (Default = True)
+  open var enableLineVisibility = true
+  
+  /// Returns true if line is visible
+  open var isLineVisible: Bool { get {return enableLineVisibility} }
   
   /// Set Circle Point (Line Graph) colour
   open var setCirclePointColour = UIColor.black.cgColor
   
-  /// Set Line Point (Line Graph) colour
-  open var setLinePointColour = UIColor.black.cgColor
+  /// Set Line (Line Graph) colour
+  open var setLineColour = UIColor.black.cgColor
   
   /// Set Circle Point Radius (Default = 3)
-  open var setCirclePointRadius = CGFloat(3.0)
+  open var setCirclePointRadius: CGFloat = 3.0
   
   /// Set Line Point Width (Default = 1)
-  open var setLineWidth = CGFloat(1.0)
+  open var setLineWidth: CGFloat = 1.0
   
   /// Enable the data point labels (Default = True)
   open var enableDataPointLabel = true
+  
+  /// Returns true if data point label is visible
+  open var isDataLabelVisible: Bool { get {return enableDataPointLabel} }
+  
+  /// Set the Text Label Point for line graphs (Default = 8.0)
+  open var setTextLabelFont: CGFloat = 8.0
+  
+  /// Set the Text Label Color for line graphs (Default = Black)
+  open var setTextLabelColour: UIColor = UIColor.black
   
   /// Set the intensity of the bezier curve (Default 0.2)
   open var setBezierCurveIntensity = 0.2

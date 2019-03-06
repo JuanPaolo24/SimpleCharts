@@ -10,9 +10,7 @@ import Foundation
 
 
 open class LegendRenderer: UIView {
-  
-  let helper = RendererHelper()
-  
+
   public override init(frame: CGRect) {
     super.init(frame: frame)
   }
@@ -37,14 +35,18 @@ open class LegendRenderer: UIView {
     let textCount = Double(6 * legendText.count)
     let textFrame = CGRect(x: Double(rectangleLegend.maxX) + 5 , y: y, width: textCount, height: 10)
     
-    helper.renderText(text: legendText, textFrame: textFrame)
+    let paragraphStyle = NSMutableParagraphStyle()
+    paragraphStyle.alignment = .justified
+    let textRenderer = TextRenderer(paragraphStyle: paragraphStyle, font: UIFont.systemFont(ofSize: 8.0), foreGroundColor: UIColor.black)
+    
+    textRenderer.renderText(text: legendText, textFrame: textFrame)
     legendMaximumDistance = textFrame.maxX + 5
     
   }
   
   func renderLineChartLegend(context: CGContext, arrays: [LineChartData]) {
     for i in 1...arrays.count {
-      drawLegend(context: context, x: Double(legendMaximumDistance), y: Double(frame.size.height) - 30, legendText: arrays[i - 1].name, colour: arrays[i - 1].setLinePointColour)
+      drawLegend(context: context, x: Double(legendMaximumDistance), y: Double(frame.size.height) - 30, legendText: arrays[i - 1].name, colour: arrays[i - 1].setLineColour)
     }
     
   }
@@ -64,7 +66,7 @@ open class LegendRenderer: UIView {
   
   func renderCombinedChartLegend(context: CGContext, arrays: [CombinedChartData]) {
     var legendName:[String] = [arrays[0].barData.name, arrays[0].lineData.name]
-    var legendColour:[CGColor] = [arrays[0].barData.setBarGraphFillColour, arrays[0].lineData.setLinePointColour]
+    var legendColour:[CGColor] = [arrays[0].barData.setBarGraphFillColour, arrays[0].lineData.setLineColour]
     
     for i in 0...arrays.count {
       drawLegend(context: context, x: Double(legendMaximumDistance), y: Double(frame.size.height) - 30, legendText: legendName[i], colour: legendColour[i])

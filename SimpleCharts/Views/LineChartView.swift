@@ -12,6 +12,30 @@ import Foundation
 open class LineChartView: ChartRenderer {
   
   
+  //Axis
+  /// X axis labels visibility (Default = True)
+  open var xAxisVisibility = true
+  
+  /// Returns true if X Axis label is visible
+  open var isxAxisLabelVisible: Bool { get {return xAxisVisibility} }
+  
+  /// Y axis labels visibility (Default = True)
+  open var yAxisVisibility = true
+  
+  /// Returns true if Y Axis label is visible
+  open var isyAxisLabelVisible: Bool { get {return yAxisVisibility} }
+  
+  /// Legend visibility (Default = True)
+  open var legendVisibility = true
+  
+  /// Returns true if legend is visible
+  open var isLegendVisible: Bool { get {return legendVisibility} }
+  
+  
+  /// Line type
+  open var enableBezierCurve = true
+  
+  
   public var data = LineChartDataSet(dataset: [LineChartData(dataset: [0], datasetName: "Test")])
   
   override public init(frame: CGRect) {
@@ -24,21 +48,7 @@ open class LineChartView: ChartRenderer {
     fatalError("init(coder:) has not been implemented")
   }
   
-  //Axis
-  /// X axis labels visibility (Default = True)
-  open var xAxisVisibility = true
-  
-  /// Y axis labels visibility (Default = True)
-  open var yAxisVisibility = true
-  
-  /// Legend visibility (Default = True)
-  open var legendVisibility = true
-  
-  
-  /// Line type
-  open var enableBezierCurve = true
-  
-  
+
   override open func draw(_ rect: CGRect) {
     super.draw(rect)
     
@@ -66,7 +76,7 @@ open class LineChartView: ChartRenderer {
   }
   
   func renderLineGraph(context: CGContext, padding: Double) {
-    let helper = RendererHelper()
+    let helper = HelperFunctions()
     let legend = LegendRenderer(frame: self.frame)
     let axis = AxisRenderer(frame: self.frame)
     let convertedData = helper.convert(chartData: data.array)
@@ -97,7 +107,7 @@ open class LineChartView: ChartRenderer {
   
   
   func renderBezierGraph(context: CGContext, padding: Double) {
-    let helper = RendererHelper()
+    let helper = HelperFunctions()
     let legend = LegendRenderer(frame: self.frame)
     let axis = AxisRenderer(frame: self.frame)
     let convertedData = helper.convert(chartData: data.array)
@@ -118,7 +128,7 @@ open class LineChartView: ChartRenderer {
   
   /// Renders a line graph
   func lineGraph(context: CGContext, array: [[Double]], initialValue: Double) {
-    let helper = RendererHelper()
+    let helper = HelperFunctions()
     let max = helper.processMultipleArrays(array: array)
     
     for (i, value) in array.enumerated() {
@@ -129,7 +139,7 @@ open class LineChartView: ChartRenderer {
   
   /// Renders a line graph
   func lineBezierGraph(context: CGContext, array: [[Double]], initialValue: Double) {
-    let helper = RendererHelper()
+    let helper = HelperFunctions()
     let max = helper.processMultipleArrays(array: array)
 
     for (i, value) in array.enumerated() {

@@ -9,7 +9,7 @@
 import Foundation
 
 
-class RendererHelper {
+class HelperFunctions {
   
   
   /// Takes in multiple arrays and determines the highest value within all arrays and returns it
@@ -56,24 +56,6 @@ class RendererHelper {
     return arrayCount
   }
 
-  /// Function for rendering text in the view
-  open func renderText(text: String, textFrame: CGRect) {
-    let paragraphStyle = NSMutableParagraphStyle()
-    paragraphStyle.alignment = .justified
-    
-    let attributes: [NSAttributedString.Key : Any] = [
-      .paragraphStyle: paragraphStyle,
-      .font: UIFont.systemFont(ofSize: 8.0),
-      .foregroundColor: UIColor.black
-    ]
-    
-    let attributedString = NSAttributedString(string: text, attributes: attributes)
-    
-    attributedString.draw(in: textFrame)
-    
-  }
-  
-  
   /// Converts the an array of chart data into an array of array doubles
   open func convert(chartData: [ChartData]) -> [[Double]] {
     var array: [[Double]] = []

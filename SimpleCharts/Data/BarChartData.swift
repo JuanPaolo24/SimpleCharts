@@ -24,6 +24,12 @@ open class BarChartData: ChartData {
   
   /// Set Bar Graph Line Width (Default = 1.0)
   open var setBarGraphLineWidth = CGFloat(1.0)
-
+  
+  /// Set the Text Label Point for bar graphs (Default = 8.0)
+  open var setTextLabelFont: CGFloat = 8.0
+  
+  /// Set the Text Label Color for bar graphs (Default = Black)
+  open var setTextLabelColour: UIColor = UIColor.black
+  
   
 }

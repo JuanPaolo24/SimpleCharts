@@ -11,6 +11,25 @@ import Foundation
 
 open class HorizontalBarChartView: ChartRenderer {
   
+  //Axis
+  /// X axis labels visibility (Default = True)
+  open var xAxisVisibility = true
+  
+  /// Returns true if X Axis label is visible
+  open var isxAxisLabelVisible: Bool { get {return xAxisVisibility} }
+  
+  /// Y axis labels visibility (Default = True)
+  open var yAxisVisibility = true
+  
+  /// Returns true if Y Axis label is visible
+  open var isyAxisLabelVisible: Bool { get {return yAxisVisibility} }
+  
+  /// Legend visibility (Default = True)
+  open var legendVisibility = true
+  
+  /// Returns true if legend is visible
+  open var isLegendVisible: Bool { get {return legendVisibility} }
+  
   public var data = BarChartDataSet(dataset: [BarChartData(dataset: [0], datasetName: "Test")])
   
   override public init(frame: CGRect) {
@@ -41,7 +60,7 @@ open class HorizontalBarChartView: ChartRenderer {
   }
   
   func renderHorizontalBarGraph(context: CGContext, padding: Double) {
-    let helper = RendererHelper()
+    let helper = HelperFunctions()
     let legend = LegendRenderer(frame: self.frame)
     let convertedData = helper.convert(chartData: data.array)
     let axis = AxisRenderer(frame: self.frame)
@@ -54,10 +73,19 @@ open class HorizontalBarChartView: ChartRenderer {
     barGraph(context: context, array: convertedData, initialValue: padding, graphType: "Horizontal", data: data, max: maxValue)
     horizontalBarGraphXGridlines(context: context, initialValue: padding)
     horizontalBarGraphYGridlines(context: context, arrayCount: arrayCount, padding: padding)
-    axis.horizontalBarGraphYAxis(context: context, arrayCount: arrayCount, padding: padding)
-    axis.horizontalBarGraphXAxis(context: context, maxValue: maxValue, initialValue: padding)
     
-    legend.renderBarChartLegend(context: context, arrays: data.array)
+    if yAxisVisibility == true {
+      axis.horizontalBarGraphYAxis(context: context, arrayCount: arrayCount, padding: padding)
+    }
+    
+    if xAxisVisibility == true {
+      axis.horizontalBarGraphXAxis(context: context, maxValue: maxValue, initialValue: padding)
+    }
+    
+    if legendVisibility == true {
+      legend.renderBarChartLegend(context: context, arrays: data.array)
+    }
+    
   }
   
 }
