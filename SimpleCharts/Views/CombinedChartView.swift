@@ -82,7 +82,7 @@ open class CombinedChartView: ChartRenderer {
       
       xAxisBase(context: context, padding: padding)
       yAxisBase(context: context, padding: padding)
-      drawVerticalBarGraph(context: context, array: barConvertedData, maxValue: maxValue, data: data.array[i].barData, initialValue: padding)
+      drawVerticalBarGraph(context: context, array: barConvertedData, maxValue: maxValue, data: data.array[i].barData, initialValue: padding, overallCount: Double(i), arrayCount: 1)
       drawLineGraph(context: context, array: lineConvertedData, maxValue: maxValue, source: data.array[i].lineData, initialValue: padding)
       yAxisGridlines(context: context, padding: padding)
       

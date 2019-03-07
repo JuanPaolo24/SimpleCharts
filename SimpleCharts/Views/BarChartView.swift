@@ -58,7 +58,7 @@ open class BarChartView: ChartRenderer {
     
   }
   
-  
+
   func renderVerticalBarGraph(context: CGContext, padding: Double) {
     let helper = HelperFunctions()
     let legend = LegendRenderer(frame: self.frame)
@@ -73,6 +73,7 @@ open class BarChartView: ChartRenderer {
     yAxisBase(context: context, padding: padding)
     barGraph(context: context, array: convertedData,initialValue: padding, graphType: "Vertical", data: data, max: maxValue)
     yAxisGridlines(context: context, padding: padding)
+    xAxisGridlines(context: context, arrayCount: arrayCount, initialValue: padding)
     
     if yAxisVisibility == true {
       axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10)

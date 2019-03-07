@@ -31,5 +31,10 @@ open class BarChartData: ChartData {
   /// Set the Text Label Color for bar graphs (Default = Black)
   open var setTextLabelColour: UIColor = UIColor.black
   
+  /// Enable the data point labels (Default = True)
+  open var enableDataPointLabel = true
+  
+  /// Returns true if data point label is visible
+  open var isDataLabelVisible: Bool { get {return enableDataPointLabel} }
   
 }

@@ -289,27 +289,6 @@ open class ChartRenderer: UIView {
   }
   
   
-  /// Renders a vertical bar graph
-  func drawVerticalBarGraph(context: CGContext, array: [Double], maxValue: Double, data: BarChartData, initialValue: Double) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, offSet: initialValue, arrayCount: Double(array.count))
-    let paragraphStyle = NSMutableParagraphStyle()
-    paragraphStyle.alignment = .justified
-    let textRenderer = TextRenderer(paragraphStyle: paragraphStyle, font: UIFont.systemFont(ofSize: data.setTextLabelFont), foreGroundColor: data.setTextLabelColour)
-    
-    for (i, value) in array.enumerated() {
-      let xValue = calc.xVerticalValue(i: i)
-      let yValue = calc.yVerticalValue(value: value)
-      let width = calc.verticalWidth()
-      let height = calc.verticalHeight(value: value)
-      let xFrame = calc.xVerticalTextFrame(i: i)
-      let yFrame = calc.yVerticalTextFrame(value: value)
-      
-      drawRectangle(context: context, x: xValue, y: yValue, width: width, height: height, source: data)
-      textRenderer.renderText(text: "\(value)", textFrame: CGRect(x: xFrame, y: yFrame, width: 40, height: 20))
-    }
-  }
-  
-  
   /// Renders a horizontal bar graph
   func drawHorizontalBarGraph(context: CGContext, array: [Double], maxValue: Double, data: BarChartData, initialValue: Double) {
     let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, offSet: initialValue, arrayCount: Double(array.count))
@@ -330,6 +309,36 @@ open class ChartRenderer: UIView {
     }
     
   }
+  
+  
+  // Renders a vertical bar graph with support for multiple data sets
+  func drawVerticalBarGraph(context: CGContext, array: [Double], maxValue: Double, data: BarChartData, initialValue: Double, overallCount: Double, arrayCount: Double) {
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, offSet: initialValue, arrayCount: Double(array.count))
+    let paragraphStyle = NSMutableParagraphStyle()
+    paragraphStyle.alignment = .justified
+    let textRenderer = TextRenderer(paragraphStyle: paragraphStyle, font: UIFont.systemFont(ofSize: data.setTextLabelFont), foreGroundColor: data.setTextLabelColour)
+    
+    for (i, value) in array.enumerated() {
+      
+      let width = calc.verticalWidth(count: arrayCount)
+      let xValue = calc.xVerticalValue(i: i, dataSetCount: overallCount, count: arrayCount)
+      let yValue = calc.yVerticalValue(value: value)
+      
+      let height = calc.verticalHeight(value: value)
+      let xFrame = calc.xVerticalTextFrame(i: i)
+      let yFrame = calc.yVerticalTextFrame(value: value)
+      
+      drawRectangle(context: context, x: xValue, y: yValue, width: width, height: height, source: data)
+      
+      if data.enableDataPointLabel == true {
+        textRenderer.renderText(text: "\(value)", textFrame: CGRect(x: xFrame, y: yFrame, width: 40, height: 20))
+      }
+      
+    }
+  }
+  
+  
+  
   
   /// Y Gridlines used by the horizontal bar graph
   func horizontalBarGraphYGridlines(context: CGContext, arrayCount: Int, padding: Double) {
@@ -357,7 +366,7 @@ open class ChartRenderer: UIView {
   func barGraph(context: CGContext, array: [[Double]], initialValue: Double, graphType: String, data: BarChartDataSet, max: Double) {
     for (i, value) in array.enumerated() {
       if graphType == "Vertical" {
-        drawVerticalBarGraph(context: context, array: value, maxValue: max, data: data.array[i], initialValue: initialValue)
+        drawVerticalBarGraph(context: context, array: value, maxValue: max, data: data.array[i], initialValue: initialValue, overallCount: Double(i), arrayCount: Double(array.count))
       } else {
         drawHorizontalBarGraph(context: context, array: value, maxValue: max, data: data.array[i], initialValue: initialValue)
       }

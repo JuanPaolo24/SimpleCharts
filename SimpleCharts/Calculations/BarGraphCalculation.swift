@@ -36,14 +36,17 @@ open class BarGraphCalculation {
     self.arrayCount = arrayCount
   }
   
-  // Vertical graph calculations
-  
-  func xVerticalValue(i: Int) -> Double {
-    let scale = (frameWidth - (offSet * 2)) / arrayCount
-    let xValue = offSet + (scale * Double(i))
+  func xVerticalValue(i: Int, dataSetCount: Double, count: Double) -> Double {
+    let spaceLeft = frameWidth - (offSet * 2)
+    let scale = spaceLeft / (arrayCount * count)
+    let increment = (scale * count)
+    let start = offSet + (scale * dataSetCount)
+    let xValue = start + (increment * Double(i))
+    
     
     return xValue
   }
+  
   
   func yVerticalValue(value: Double) -> Double {
     let yAxisPadding = frameHeight - currentFrame.distanceFromBottom
@@ -53,11 +56,16 @@ open class BarGraphCalculation {
     return yValue
   }
   
-  func verticalWidth() -> Double {
-    let scale = (frameWidth - (offSet * 2)) / arrayCount
+  
+  func verticalWidth(count: Double) -> Double {
+    let spaceLeft = frameWidth - (offSet * 2)
+    let scale = spaceLeft / (arrayCount * count)
     let width = scale - 5.0
+    
+    
     return width
   }
+  
   
   func verticalHeight(value: Double) -> Double {
     let yAxisPadding = frameHeight - currentFrame.distanceFromBottom
@@ -81,6 +89,36 @@ open class BarGraphCalculation {
     
     return yValue
   }
+  
+  
+  ////This calculation works for the multiple data sets gridline - calculation vertical bar graph
+  
+  
+//  func xGridlineStartCalculation(distanceIncrement: Int) -> CGPoint{
+//    let spaceLeft = frameWidth - (offSet * 2)
+//    let scale = spaceLeft / (arrayCount * 2)
+//    let increment = (scale * 2)
+//    let start = offSet + (increment * Double(distanceIncrement))
+//
+//    let xValue = CGPoint(x: start, y: 10)
+//
+//    return xValue
+//
+//  }
+//
+//  func xGridlineEndCalculation(distanceIncrement: Int) -> CGPoint{
+//    let yAxisPadding = frameHeight - currentFrame.distanceFromBottom
+//    let spaceLeft = frameWidth - (offSet * 2)
+//    let scale = spaceLeft / (arrayCount * 2)
+//    let increment = (scale * 2)
+//    let start = offSet + (increment * Double(distanceIncrement))
+//
+//    let xValue = CGPoint(x: start, y: yAxisPadding)
+//
+//    return xValue
+//  }
+//
+  
   
   
   
@@ -171,6 +209,7 @@ open class BarGraphCalculation {
     let yPoint = yAxisPadding - actualValue
     
     let yStartPoint = CGPoint(x: offSet, y: yPoint)
+    
     
     return yStartPoint
   }
