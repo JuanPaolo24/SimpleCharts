@@ -72,8 +72,8 @@ open class BarChartView: ChartRenderer {
     xAxisBase(context: context, padding: padding)
     yAxisBase(context: context, padding: padding)
     barGraph(context: context, array: convertedData,initialValue: padding, graphType: "Vertical", data: data, max: maxValue)
-    yAxisGridlines(context: context, padding: padding)
-    xAxisGridlines(context: context, arrayCount: arrayCount, initialValue: padding)
+    //yAxisGridlines(context: context, padding: padding)
+    barxAxisGridlines(context: context, arrayCount: arrayCount, initialValue: padding)
     
     if yAxisVisibility == true {
       axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10)

@@ -36,11 +36,15 @@ open class BarGraphCalculation {
     self.arrayCount = arrayCount
   }
   
+  
+  
+  // To make sure that the group data set is centered play around with the 10.0/10.0/15.0 parameters
+  
   func xVerticalValue(i: Int, dataSetCount: Double, count: Double) -> Double {
     let spaceLeft = frameWidth - (offSet * 2)
     let scale = spaceLeft / (arrayCount * count)
     let increment = (scale * count)
-    let start = offSet + (scale * dataSetCount)
+    let start = (offSet + 10.0) + (((scale) * dataSetCount) - 5.0) //Increase this to increase gap between data set
     let xValue = start + (increment * Double(i))
     
     
@@ -60,7 +64,7 @@ open class BarGraphCalculation {
   func verticalWidth(count: Double) -> Double {
     let spaceLeft = frameWidth - (offSet * 2)
     let scale = spaceLeft / (arrayCount * count)
-    let width = scale - 5.0
+    let width = scale - 10
     
     
     return width
@@ -91,33 +95,34 @@ open class BarGraphCalculation {
   }
   
   
-  ////This calculation works for the multiple data sets gridline - calculation vertical bar graph
+  //This calculation works for the multiple data sets gridline - calculation vertical bar graph
   
   
-//  func xGridlineStartCalculation(distanceIncrement: Int) -> CGPoint{
-//    let spaceLeft = frameWidth - (offSet * 2)
-//    let scale = spaceLeft / (arrayCount * 2)
-//    let increment = (scale * 2)
-//    let start = offSet + (increment * Double(distanceIncrement))
-//
-//    let xValue = CGPoint(x: start, y: 10)
-//
-//    return xValue
-//
-//  }
-//
-//  func xGridlineEndCalculation(distanceIncrement: Int) -> CGPoint{
-//    let yAxisPadding = frameHeight - currentFrame.distanceFromBottom
-//    let spaceLeft = frameWidth - (offSet * 2)
-//    let scale = spaceLeft / (arrayCount * 2)
-//    let increment = (scale * 2)
-//    let start = offSet + (increment * Double(distanceIncrement))
-//
-//    let xValue = CGPoint(x: start, y: yAxisPadding)
-//
-//    return xValue
-//  }
-//
+  func xGridlineStartCalculation(distanceIncrement: Int) -> CGPoint{
+    let spaceLeft = frameWidth - (offSet * 2)
+    let scale = spaceLeft / (arrayCount * 2)
+    let increment = (scale * 2)
+    let start = offSet + (increment * Double(distanceIncrement))
+    print(increment)
+    
+    let xValue = CGPoint(x: start, y: 10)
+
+    return xValue
+
+  }
+
+  func xGridlineEndCalculation(distanceIncrement: Int) -> CGPoint{
+    let yAxisPadding = frameHeight - currentFrame.distanceFromBottom
+    let spaceLeft = frameWidth - (offSet * 2)
+    let scale = spaceLeft / (arrayCount * 2)
+    let increment = (scale * 2)
+    let start = offSet + (increment * Double(distanceIncrement))
+
+    let xValue = CGPoint(x: start, y: yAxisPadding)
+
+    return xValue
+  }
+
   
   
   

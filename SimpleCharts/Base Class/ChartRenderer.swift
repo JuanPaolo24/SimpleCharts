@@ -288,6 +288,22 @@ open class ChartRenderer: UIView {
     }
   }
   
+  /// Renders a special X axis gridline for the bar chart
+  func barxAxisGridlines(context: CGContext, arrayCount: Int, initialValue: Double) {
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), offSet: initialValue, arrayCount: Double(arrayCount))
+    
+    for i in 0...arrayCount - 1 {
+      let startPoint = calc.xGridlineStartCalculation(distanceIncrement: i)
+      let endPoint = calc.xGridlineEndCalculation(distanceIncrement: i)
+      
+      if enableXGridline == true {
+        drawGridLines(context: context, start: startPoint, end: endPoint)
+      }
+      
+    }
+  
+  }
+  
   
   /// Renders a horizontal bar graph
   func drawHorizontalBarGraph(context: CGContext, array: [Double], maxValue: Double, data: BarChartData, initialValue: Double) {
