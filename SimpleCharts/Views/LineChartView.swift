@@ -86,7 +86,7 @@ open class LineChartView: ChartRenderer {
     
     xAxisBase(context: context, padding: padding)
     yAxisBase(context: context, padding: padding)
-    lineGraph(context: context, array: convertedData, initialValue: padding)
+    lineGraph(context: context, array: convertedData, initialValue: padding, max: maxValue, data: data, forCombined: false)
     yAxisGridlines(context: context, padding: padding)
     xAxisGridlines(context: context, arrayCount: arrayCount, initialValue: padding)
     
@@ -104,8 +104,7 @@ open class LineChartView: ChartRenderer {
     
   }
   
-  
-  
+
   func renderBezierGraph(context: CGContext, padding: Double) {
     let helper = HelperFunctions()
     let legend = LegendRenderer(frame: self.frame)
@@ -116,7 +115,7 @@ open class LineChartView: ChartRenderer {
    
     xAxisBase(context: context, padding: padding)
     yAxisBase(context: context, padding: padding)
-    lineBezierGraph(context: context, array: convertedData, initialValue: padding)
+    lineBezierGraph(context: context, array: convertedData, initialValue: padding, data: data)
     yAxisGridlines(context: context, padding: padding)
     xAxisGridlines(context: context, arrayCount: arrayCount, initialValue: padding)
     axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10)
@@ -125,29 +124,7 @@ open class LineChartView: ChartRenderer {
     
   }
   
-  
-  /// Renders a line graph
-  func lineGraph(context: CGContext, array: [[Double]], initialValue: Double) {
-    let helper = HelperFunctions()
-    let max = helper.processMultipleArrays(array: array)
-    
-    for (i, value) in array.enumerated() {
-      drawLineGraph(context: context, array: value, maxValue: max, source: data.array[i], initialValue: initialValue)
-    }
-  }
-  
-  
-  /// Renders a line graph
-  func lineBezierGraph(context: CGContext, array: [[Double]], initialValue: Double) {
-    let helper = HelperFunctions()
-    let max = helper.processMultipleArrays(array: array)
 
-    for (i, value) in array.enumerated() {
-      drawBezierCurve(context: context, array: value, maxValue: max, source: data.array[i] ,initialValue: initialValue)
-    }
-  }
-  
-  
 }
 
 

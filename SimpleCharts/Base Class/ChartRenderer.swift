@@ -158,20 +158,34 @@ open class ChartRenderer: UIView {
   }
   
   /// Base function for drawing single line graphs. Requires context, the array to be plotted and the max value of the whole data set
-  func drawLineGraph(context: CGContext, array: [Double], maxValue: Double, source: LineChartData, initialValue: Double) {
+  func drawLineGraph(context: CGContext, array: [Double], maxValue: Double, source: LineChartData, initialValue: Double, forCombined: Bool) {
     let calc = LineGraphCalculation(array: array, maxValue: maxValue, offSet: initialValue, frameWidth: frameWidth(), frameHeight: frameHeight())
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.alignment = .justified
     
     let textRenderer = TextRenderer(paragraphStyle: paragraphStyle, font: UIFont.systemFont(ofSize: source.setTextLabelFont), foreGroundColor: source.setTextLabelColour)
     
+    
     let startingYValue = calc.ylineGraphStartPoint()
-    let startingXValue = calc.xlineGraphStartPoint()
+    var startingXValue: Double = 0.0
+    
+    if forCombined == true {
+      startingXValue = calc.xlineCombineStartPoint()
+    } else {
+      startingXValue = calc.xlineGraphStartPoint()
+    }
     
     let path = pathStartPoint(startingXValue: startingXValue, startingYValue: startingYValue)
     
     for (i, value) in array.enumerated() {
-      let xValue = calc.xlineGraphPoint(i: i)
+      var xValue:Double = 0.0
+      
+      if forCombined == true {
+        xValue = calc.xlineCombinePoint(i: i)
+      } else {
+        xValue = calc.xlineGraphPoint(i: i)
+      }
+      
       let yValue = calc.ylineGraphPoint(value: value)
       
       
@@ -388,6 +402,26 @@ open class ChartRenderer: UIView {
       }
     }
   }
+  
+  /// Renders a line graph
+  func lineGraph(context: CGContext, array: [[Double]], initialValue: Double, max: Double, data: LineChartDataSet, forCombined: Bool) {
+    for (i, value) in array.enumerated() {
+      drawLineGraph(context: context, array: value, maxValue: max, source: data.array[i], initialValue: initialValue, forCombined: forCombined)
+    }
+  }
+  
+  
+  /// Renders a line graph
+  func lineBezierGraph(context: CGContext, array: [[Double]], initialValue: Double, data: LineChartDataSet) {
+    let helper = HelperFunctions()
+    let max = helper.processMultipleArrays(array: array)
+    
+    for (i, value) in array.enumerated() {
+      drawBezierCurve(context: context, array: value, maxValue: max, source: data.array[i] ,initialValue: initialValue)
+    }
+  }
+  
+  
   
   
 }

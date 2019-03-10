@@ -87,13 +87,28 @@ open class LegendRenderer: UIView {
     }
   }
   
-  func renderCombinedChartLegend(context: CGContext, arrays: [CombinedChartData]) {
-    var legendName:[String] = [arrays[0].barData.name, arrays[0].lineData.name]
-    var legendColour:[CGColor] = [arrays[0].barData.setBarGraphFillColour, arrays[0].lineData.setLineColour]
+  func renderCombinedChartLegend(context: CGContext, data: CombinedChartDataSet) {
+    let helper = HelperFunctions()
+    let lineChartDataSet = data.lineData
+    let barChartDataSet = data.barData
     
-    for i in 0...arrays.count {
+    let lineConvertedData = helper.convert(chartData: lineChartDataSet.array)
+    let barConvertedData = helper.convert(chartData: barChartDataSet.array)
+    let dataCount = (lineConvertedData.count + barConvertedData.count) - 1
+    var legendName: [String] = []
+    var legendColour: [CGColor] = []
+    
+    for i in 0...dataCount / 2 {
+      legendName.append(lineChartDataSet.array[i].name)
+      legendName.append(barChartDataSet.array[i].name)
+      legendColour.append(lineChartDataSet.array[i].setLineColour)
+      legendColour.append(barChartDataSet.array[i].setBarGraphFillColour)
+    }
+    
+    for i in 0...dataCount {
       drawLegend(context: context, x: Double(legendMaximumDistance), y: Double(frame.size.height) - 30, legendText: legendName[i], colour: legendColour[i])
     }
+    
   }
   
   

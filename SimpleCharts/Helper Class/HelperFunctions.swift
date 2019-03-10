@@ -34,7 +34,7 @@ class HelperFunctions {
   }
   
   /// Returns the max value from an array
-  open func returnMaxValueFrom(array: [Double]) -> Double {
+  open func returnPaddedMaxValueFrom(array: [Double]) -> Double {
     var max = 0.0
     if let maxValue = array.max() {
       max = maxValue
@@ -45,6 +45,16 @@ class HelperFunctions {
     
     return max + maxPadding
   }
+  
+  /// Returns the max value from an array
+  open func returnMaxValueFrom(array: [Double]) -> Double {
+    var max = 0.0
+    if let maxValue = array.max() {
+      max = maxValue
+    }
+    return max
+  }
+  
   
   
   /// Takes in multiple arrays and within those array determine the array with the highest count and returns that count

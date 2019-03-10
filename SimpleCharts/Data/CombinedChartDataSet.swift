@@ -11,12 +11,12 @@ import Foundation
 
 open class CombinedChartDataSet {
   
-  public let array: [CombinedChartData]
+  public let lineData: LineChartDataSet
+  public let barData: BarChartDataSet
   
-  required public init(dataset: [CombinedChartData]) {
-    self.array = dataset
+  required public init(lineData: LineChartDataSet, barData: BarChartDataSet) {
+    self.lineData = lineData
+    self.barData = barData
   }
-  
-  
   
 }

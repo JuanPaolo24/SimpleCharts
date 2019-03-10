@@ -27,8 +27,10 @@ open class CombinedChartView: ChartRenderer {
   /// Legend visibility (Default = True)
   open var legendVisibility = true
   
+
   /// Add the data source
-  public var data = CombinedChartDataSet(dataset: [CombinedChartData(lineData: LineChartData(dataset: [0], datasetName: "Test"), barData: BarChartData(dataset: [0], datasetName: "Test"))])
+  public var data = CombinedChartDataSet(lineData: LineChartDataSet(dataset: [LineChartData(dataset: [0], datasetName: "Test")]), barData: BarChartDataSet(dataset: [BarChartData(dataset: [0], datasetName: "Test2")]))
+  
   
   override public init(frame: CGRect) {
     super.init(frame: frame)
@@ -59,47 +61,42 @@ open class CombinedChartView: ChartRenderer {
   
   
   func renderCombinedChart(context: CGContext, padding: Double) {
+    let helper = HelperFunctions()
+    let axis = AxisRenderer(frame: self.frame)
+    let legend = LegendRenderer(frame: self.frame)
+  
+    let lineChartDataSet = data.lineData
+    let barChartDataSet = data.barData
     
-    for i in 0...data.array.count - 1 {
-      
-      let helper = HelperFunctions()
-      let legend = LegendRenderer(frame: self.frame)
-      let barConvertedData = helper.convert(chartData: data.array[i].barData)
-      let lineConvertedData = helper.convert(chartData: data.array[i].lineData)
-      
-      
-      let axis = AxisRenderer(frame: self.frame)
-      
-      let lineMax = helper.returnMaxValueFrom(array: lineConvertedData)
-      let barMax = helper.returnMaxValueFrom(array: barConvertedData)
-      
-      let maxValue = max(lineMax, barMax)
-      let barArrayCount = barConvertedData.count
-      let lineArrayCount = lineConvertedData.count
-      
-      let arrayCount = max(barArrayCount, lineArrayCount)
-      
-      
-      xAxisBase(context: context, padding: padding)
-      yAxisBase(context: context, padding: padding)
-      drawVerticalBarGraph(context: context, array: barConvertedData, maxValue: maxValue, data: data.array[i].barData, initialValue: padding, overallCount: Double(i), arrayCount: 1)
-      drawLineGraph(context: context, array: lineConvertedData, maxValue: maxValue, source: data.array[i].lineData, initialValue: padding)
-      yAxisGridlines(context: context, padding: padding)
-      
-      if yAxisVisibility == true {
-        axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10)
-      }
-      
-      if xAxisVisibility == true {
-        axis.barGraphxAxis(context: context, arrayCount: arrayCount, initialValue: padding)
-      }
-      
-      if legendVisibility == true {
-        legend.renderCombinedChartLegend(context: context, arrays: data.array)
-      }
-      
+    let lineConvertedData = helper.convert(chartData: lineChartDataSet.array)
+    let barConvertedData = helper.convert(chartData: barChartDataSet.array)
+    
+    let lineMaxValue = helper.processMultipleArrays(array: lineConvertedData)
+    let barMaxValue = helper.processMultipleArrays(array: barConvertedData)
+    let maxValue = max(lineMaxValue, barMaxValue)
+    
+    let lineArrayCount = helper.findArrayCountFrom(array: lineConvertedData)
+    let barArrayCount = helper.findArrayCountFrom(array: barConvertedData)
+    let arrayCount = max(lineArrayCount, barArrayCount)
+    
+    xAxisBase(context: context, padding: padding)
+    yAxisBase(context: context, padding: padding)
+    barGraph(context: context, array: barConvertedData, initialValue: padding, graphType: "Vertical", data: barChartDataSet, max: maxValue)
+    lineGraph(context: context, array: lineConvertedData, initialValue: padding, max: maxValue, data: lineChartDataSet, forCombined: true)
+    yAxisGridlines(context: context, padding: padding)
+    barxAxisGridlines(context: context, arrayCount: arrayCount, initialValue: padding)
+    
+    if yAxisVisibility == true {
+      axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10)
     }
     
+    if xAxisVisibility == true {
+      axis.barGraphxAxis(context: context, arrayCount: arrayCount, initialValue: padding)
+    }
+    
+    if legendVisibility == true {
+      legend.renderCombinedChartLegend(context: context, data: data)
+    }
     
   }
   

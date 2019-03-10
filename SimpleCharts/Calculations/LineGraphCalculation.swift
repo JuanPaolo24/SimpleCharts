@@ -77,6 +77,31 @@ open class LineGraphCalculation {
   }
   
   
+  // Calculation for the line point for combine charts
+  // This calculation makes sure that it is centered
+  func xlineCombineStartPoint() -> Double{
+    let arrayCount = Double(array.count)
+    let spaceLeft = frameWidth - (offSet * 2)
+    let increment = spaceLeft / (arrayCount)
+    let scale = spaceLeft / (arrayCount * 2)
+    
+    let xValue = offSet + scale + (increment * Double(0))
+    
+    return xValue
+  }
+  
+  func xlineCombinePoint(i: Int) -> Double {
+    let arrayCount = Double(array.count)
+    let spaceLeft = frameWidth - (offSet * 2)
+    let increment = spaceLeft / (arrayCount)
+    let scale = spaceLeft / (arrayCount * 2)
+    
+    let xValue = offSet + scale + (increment * Double(i))
+    
+    return xValue
+    
+  }
+  
   
   // Bezier Curve Graph
   
