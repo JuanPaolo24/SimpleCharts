@@ -101,10 +101,12 @@ open class ChartRenderer: UIView {
   
   /// Base function for drawing circle on the destination coordinates (CGPoint)
   private func drawCirclePoints(context: CGContext, destination: CGPoint, source: LineChartData) {
+    
     context.addArc(center: destination, radius: source.setCirclePointRadius, startAngle: CGFloat(0).degreesToRadians, endAngle: CGFloat(360).degreesToRadians, clockwise: true)
     context.setFillColor(source.setCirclePointColour)
     context.fillPath()
     
+
   }
   
   /// Base function for drawing lines from the a start point(Mutable Path) to a destination point (CGPoint)
@@ -142,20 +144,20 @@ open class ChartRenderer: UIView {
     return connection
   }
   
-  // Add fill to the current path - TODO: It is stil not behaving as intended
-  private func addFill(context: CGContext, path: CGPath) {
+
+  // Add fill to the current path
+  private func addFill(context: CGContext, path: CGMutablePath) {
     context.saveGState()
+    context.beginPath()
     context.addPath(path)
     
-    // filled is usually drawn with less alpha
+    context.setFillColor(UIColor.red.cgColor)
     context.setAlpha(0.33)
-    
-    context.setFillColor(UIColor.black.cgColor)
     context.fillPath()
-    
     context.restoreGState()
     
   }
+  
   
   /// Base function for drawing single line graphs. Requires context, the array to be plotted and the max value of the whole data set
   func drawLineGraph(context: CGContext, array: [Double], maxValue: Double, source: LineChartData, initialValue: Double, forCombined: Bool) {
@@ -177,8 +179,13 @@ open class ChartRenderer: UIView {
     
     let path = pathStartPoint(startingXValue: startingXValue, startingYValue: startingYValue)
     
+    let path2 = pathStartPoint(startingXValue: startingXValue, startingYValue: frameHeight() - 62)
+    
+    var xValue: Double = 0.0
+    var yValue: Double = 0.0
+    
     for (i, value) in array.enumerated() {
-      var xValue:Double = 0.0
+      
       
       if forCombined == true {
         xValue = calc.xlineCombinePoint(i: i)
@@ -186,7 +193,7 @@ open class ChartRenderer: UIView {
         xValue = calc.xlineGraphPoint(i: i)
       }
       
-      let yValue = calc.ylineGraphPoint(value: value)
+      yValue = calc.ylineGraphPoint(value: value)
       
       
       if source.enableCirclePointVisibility == true {
@@ -194,15 +201,22 @@ open class ChartRenderer: UIView {
       }
       if source.enableLineVisibility == true {
         drawLines(context: context, startingPoint: path, destinationPoint: CGPoint(x: xValue, y: yValue), source: source)
+        drawLines(context: context, startingPoint: path2, destinationPoint: CGPoint(x: xValue, y: yValue), source: source)
+        
       }
       if source.enableDataPointLabel == true {
         textRenderer.renderText(text: "\(value)", textFrame: CGRect(x: xValue, y: yValue - 15, width: 40, height: 20))
       }
     }
+    
+    if source.enableGraphFill == true {
+      drawLines(context: context, startingPoint: path2, destinationPoint: CGPoint(x: xValue, y: frameHeight() - 62), source: source)
+      addFill(context: context, path: path2)
+    }
+    
   }
   
-  
-  
+
   
   /// Base function for drawing line graphs with bezier curve. Requires context, the array to be plotted and the max value of the whole data set
   func drawBezierCurve(context: CGContext, array: [Double], maxValue: Double, source: LineChartData, initialValue: Double) {
@@ -217,16 +231,21 @@ open class ChartRenderer: UIView {
     let startingXValue = calc.xlineGraphStartPoint()
     
     let path = pathStartPoint(startingXValue: startingXValue, startingYValue: startingYValue)
+    let path2 = pathStartPoint(startingXValue: startingXValue, startingYValue: frameHeight() - 62)
+    
+    var destination = CGPoint()
+    
     let index = Array(array.dropFirst())
     
     for (i, value) in index.enumerated() {
       
-      let destination = calc.bezierGraphPoint(i: i, value: value)
+      destination = calc.bezierGraphPoint(i: i, value: value)
       let control1 = calc.bezierControlPoint1(i: i, value: value, intensity: source.setBezierCurveIntensity)
       let control2 = calc.bezierControlPoint2(i: i, value: value, intensity: source.setBezierCurveIntensity)
       
       if source.enableLineVisibility == true {
         addBezierCurve(context: context, startingPoint: path, point: destination, control1: control1, control2: control2, source: source)
+        addBezierCurve(context: context, startingPoint: path2, point: destination, control1: control1, control2: control2, source: source)
       }
       
       if source.enableCirclePointVisibility == true {
@@ -237,6 +256,11 @@ open class ChartRenderer: UIView {
         textRenderer.renderText(text: "\(value)", textFrame: CGRect(x: destination.x, y: destination.y - 15, width: 40, height: 20))
       }
     
+    }
+    
+    if source.enableGraphFill == true {
+      drawLines(context: context, startingPoint: path2, destinationPoint: CGPoint(x: Double(destination.x), y: frameHeight() - 62), source: source)
+      addFill(context: context, path: path2)
     }
   }
   

@@ -55,5 +55,10 @@ open class LineChartData: ChartData {
   /// Set the intensity of the bezier curve (Default 0.2)
   open var setBezierCurveIntensity = 0.2
   
+  /// Enable Graph Fill (Default = False)
+  open var enableGraphFill = false
+  
+  /// Returns true if graph fill is visible
+  open var isGraphFillEnabled: Bool {get {return enableGraphFill}}
   
 }
