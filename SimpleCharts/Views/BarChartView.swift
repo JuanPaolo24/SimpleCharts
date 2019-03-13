@@ -30,6 +30,13 @@ open class BarChartView: ChartRenderer {
   /// Returns true if legend is visible
   open var isLegendVisible: Bool { get {return legendVisibility} }
   
+  
+  /// Enables the axis label customisation (Default = false)
+  open var enableAxisCustomisation = false
+  
+  /// Set X Axis label (Pass in a string array with the same number of labels as the data set)
+  open var setXAxisLabel:[String] = []
+  
   public var data = BarChartDataSet(dataset: [BarChartData(dataset: [0], datasetName: "Test")])
   
   override public init(frame: CGRect) {
@@ -80,7 +87,7 @@ open class BarChartView: ChartRenderer {
     }
     
     if xAxisVisibility == true {
-      axis.barGraphxAxis(context: context, arrayCount: arrayCount, initialValue: padding)
+      axis.barGraphxAxis(context: context, arrayCount: arrayCount, initialValue: padding, label: setXAxisLabel)
     }
     
     if legendVisibility == true {

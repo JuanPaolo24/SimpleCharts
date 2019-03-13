@@ -235,12 +235,16 @@ open class BarGraphCalculation {
   
   //A special calculation for the vertical bar graph
   func xVerticalGraphxAxisLabel(i: Int) -> Double {
-    let scale = (frameWidth - (offSet * 2)) / arrayCount
+    let spaceLeft = frameWidth - (offSet * 2)
+    let scale = spaceLeft / (arrayCount * 2)
+    let increment = (scale * 2)
     let position = scale / 2
-    let startPoint = offSet + ((scale) * Double(i))
+    let start = offSet + (increment * Double(i))
+    
 
-    let xValue = startPoint + position
+    let xValue = start + position
    
+
     
     return xValue
     

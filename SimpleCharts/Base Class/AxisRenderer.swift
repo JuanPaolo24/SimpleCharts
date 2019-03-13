@@ -36,8 +36,8 @@ open class AxisRenderer: UIView {
   
   
   /// Base function for drawing Axis labels using the create label helper function
-  private func drawAxisLabels(x: Double, y: Double, text: String) {
-    let textFrame = CGRect(x: x, y: y, width: 20, height: 40)
+  private func drawAxisLabels(x: Double, y: Double, text: String, width: Double, height: Double) {
+    let textFrame = CGRect(x: x, y: y, width: width, height: height)
     
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.alignment = .justified
@@ -55,7 +55,7 @@ open class AxisRenderer: UIView {
       let xValue = calc.yAxisLabelxValue()
       let yValue = calc.yAxisLabelyValue(i: i)
       let label = calc.yAxisLabelText(i: i)
-      drawAxisLabels(x: xValue, y: yValue, text: label)
+      drawAxisLabels(x: xValue, y: yValue, text: label, width: 20, height: 40)
     }
   }
   
@@ -69,18 +69,18 @@ open class AxisRenderer: UIView {
       let yValue = calc.xAxisLabelyValue()
       let label = calc.xAxisLabelText(i: i)
       
-      drawAxisLabels(x: xValue, y: yValue, text: label)
+      drawAxisLabels(x: xValue, y: yValue, text: label, width: 20, height: 40)
     }
   }
   
   
   /// Renders the X axis label for the bar graph
-  func barGraphxAxis(context: CGContext, arrayCount: Int, initialValue: Double) {
+  func barGraphxAxis(context: CGContext, arrayCount: Int, initialValue: Double, label: [String]) {
     let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), offSet: initialValue, arrayCount: Double(arrayCount))
     for i in 0...arrayCount - 1 {
       let xValue = calc.xVerticalGraphxAxisLabel(i: i)
       let yValue = calc.xVerticalGraphyAxisLabel()
-      drawAxisLabels(x: xValue, y: yValue, text: String(i + 1))
+      drawAxisLabels(x: xValue, y: yValue, text: label[i], width: 40, height: 40)
     }
 
   }
@@ -95,7 +95,7 @@ open class AxisRenderer: UIView {
     for i in 0...arrayCount - 1 {
       let xValue = calc.horizontalYAxisLabelxPoint()
       let yValue = calc.horizontalYAxisLabelyPoint(i: i)
-      drawAxisLabels(x: xValue, y: yValue, text: String(i + 1))
+      drawAxisLabels(x: xValue, y: yValue, text: String(i + 1), width: 20, height: 40)
       
       
     }
@@ -111,7 +111,7 @@ open class AxisRenderer: UIView {
       let yValue = calc.horizontalXAxisLabelyPoint()
       let label = calc.horizontalXAxisText(i: i)
 
-      drawAxisLabels(x: xValue, y: yValue, text: label)
+      drawAxisLabels(x: xValue, y: yValue, text: label, width: 20, height: 40)
     }
     
   }

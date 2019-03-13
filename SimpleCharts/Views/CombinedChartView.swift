@@ -91,7 +91,7 @@ open class CombinedChartView: ChartRenderer {
     }
     
     if xAxisVisibility == true {
-      axis.barGraphxAxis(context: context, arrayCount: arrayCount, initialValue: padding)
+      axis.barGraphxAxis(context: context, arrayCount: arrayCount, initialValue: padding, label: [])
     }
     
     if legendVisibility == true {

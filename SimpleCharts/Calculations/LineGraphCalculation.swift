@@ -54,6 +54,7 @@ open class LineGraphCalculation {
   func ylineGraphPoint(value: Double) -> Double {
     let yAxisPadding = frameHeight - currentFrame.distanceFromBottom
     let yValue = yAxisPadding - ((yAxisPadding / maxValue) * value)
+    print(((yAxisPadding / maxValue) * value))
     return yValue
   }
   

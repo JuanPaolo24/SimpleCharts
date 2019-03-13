@@ -31,6 +31,12 @@ open class LineChartView: ChartRenderer {
   /// Returns true if legend is visible
   open var isLegendVisible: Bool { get {return legendVisibility} }
   
+  /// Enables the axis label customisation, if it is false then the max value of the data set will be taken and multiplied by 20% (Default = false)
+  open var enableAxisCustomisation = false
+  
+  /// The Y axis interval (Default = 25) (Minimum Value = Max value of the data set / 6) ie MaxValue = 150 then minimum value = 25
+  open var setYAxisInterval:Double = 25.0
+  
   
   /// Line type
   open var enableBezierCurve = true
@@ -80,7 +86,12 @@ open class LineChartView: ChartRenderer {
     let legend = LegendRenderer(frame: self.frame)
     let axis = AxisRenderer(frame: self.frame)
     let convertedData = helper.convert(chartData: data.array)
-    let maxValue = helper.processMultipleArrays(array: convertedData)
+    var maxValue = 0.0
+    if enableAxisCustomisation == true {
+      maxValue = setYAxisInterval * 6
+    } else {
+      maxValue = helper.processMultipleArrays(array: convertedData)
+    }
     let arrayCount = helper.findArrayCountFrom(array: convertedData)
     
     
