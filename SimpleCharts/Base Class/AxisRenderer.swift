@@ -48,13 +48,19 @@ open class AxisRenderer: UIView {
   
   
   /// Renders the Y axis labels
-  func yAxis(context: CGContext, maxValue: Double, padding: Double) {
+  func yAxis(context: CGContext, maxValue: Double, padding: Double, axisInverse: Bool) {
     let calc = LineGraphCalculation(arrayCount: 0, maxValue: maxValue, offSet: padding, frameWidth: frameWidth(), frameHeight: frameHeight())
     
     for i in 0...currentFrame.yAxisGridlinesCount {
       let xValue = calc.yAxisLabelxValue()
       let yValue = calc.yAxisLabelyValue(i: i)
-      let label = calc.yAxisLabelText(i: i)
+      var label = ""
+      if axisInverse == true {
+        label = calc.yAxisLabelText(i: currentFrame.yAxisGridlinesCount - i)
+      } else {
+        label = calc.yAxisLabelText(i: i)
+      }
+      
       drawAxisLabels(x: xValue, y: yValue, text: label, width: 20, height: 40)
     }
   }
@@ -75,14 +81,29 @@ open class AxisRenderer: UIView {
   
   
   /// Renders the X axis label for the bar graph
-  func barGraphxAxis(context: CGContext, arrayCount: Int, initialValue: Double, label: [String]) {
+  func barGraphxAxis(context: CGContext, arrayCount: Int, initialValue: Double) {
     let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), offSet: initialValue, arrayCount: Double(arrayCount))
     for i in 0...arrayCount - 1 {
       let xValue = calc.xVerticalGraphxAxisLabel(i: i)
       let yValue = calc.xVerticalGraphyAxisLabel()
-      drawAxisLabels(x: xValue, y: yValue, text: label[i], width: 40, height: 40)
+      drawAxisLabels(x: xValue, y: yValue, text: String(i + 1), width: 20, height: 40)
     }
-
+  }
+  
+  func customiseBarGraphxAxis(context: CGContext, arrayCount: Int, initialValue: Double, label: [String]) {
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), offSet: initialValue, arrayCount: Double(arrayCount))
+    for i in 0...arrayCount - 1 {
+      let xValue = calc.xVerticalGraphxAxisLabel(i: i)
+      let yValue = calc.xVerticalGraphyAxisLabel()
+      if label.count < arrayCount {
+        var placeholderArray = label
+        placeholderArray.append(contentsOf: Array(repeating: "Placeholder", count: arrayCount - label.count))
+        drawAxisLabels(x: xValue, y: yValue, text: placeholderArray[i], width: 60, height: 40)
+      } else {
+        drawAxisLabels(x: xValue, y: yValue, text: label[i], width: 40, height: 40)
+      }
+      
+    }
   }
   
 

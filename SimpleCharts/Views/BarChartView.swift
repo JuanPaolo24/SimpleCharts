@@ -37,6 +37,13 @@ open class BarChartView: ChartRenderer {
   /// Set X Axis label (Pass in a string array with the same number of labels as the data set)
   open var setXAxisLabel:[String] = []
   
+  /// Makes the Y axis inverse (Default = False)
+  open var enableYAxisInverse = false
+  
+  /// Returns true if Y Axis is inverse
+  open var isyAxisInverse: Bool { get {return enableYAxisInverse}}
+  
+  
   public var data = BarChartDataSet(dataset: [BarChartData(dataset: [0], datasetName: "Test")])
   
   override public init(frame: CGRect) {
@@ -79,15 +86,19 @@ open class BarChartView: ChartRenderer {
     xAxisBase(context: context, padding: padding)
     yAxisBase(context: context, padding: padding)
     barGraph(context: context, array: convertedData,initialValue: padding, graphType: "Vertical", data: data, max: maxValue)
-    //yAxisGridlines(context: context, padding: padding)
     barxAxisGridlines(context: context, arrayCount: arrayCount, initialValue: padding)
     
     if yAxisVisibility == true {
-      axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10)
+      axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10, axisInverse: enableYAxisInverse)
     }
     
     if xAxisVisibility == true {
-      axis.barGraphxAxis(context: context, arrayCount: arrayCount, initialValue: padding, label: setXAxisLabel)
+      if enableAxisCustomisation == true {
+        axis.customiseBarGraphxAxis(context: context, arrayCount: arrayCount, initialValue: padding, label: setXAxisLabel)
+      } else {
+        axis.barGraphxAxis(context: context, arrayCount: arrayCount, initialValue: padding)
+      }
+      
     }
     
     if legendVisibility == true {

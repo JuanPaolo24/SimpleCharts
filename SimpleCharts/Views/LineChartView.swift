@@ -37,6 +37,12 @@ open class LineChartView: ChartRenderer {
   /// The Y axis interval (Default = 25) (Minimum Value = Max value of the data set / 6) ie MaxValue = 150 then minimum value = 25
   open var setYAxisInterval:Double = 25.0
   
+  /// Makes the Y axis inverse (Default = False)
+  open var enableYAxisInverse = false
+  
+  /// Returns true if Y Axis is inverse
+  open var isyAxisInverse: Bool { get {return enableYAxisInverse}}
+  
   
   /// Line type
   open var enableBezierCurve = true
@@ -102,7 +108,7 @@ open class LineChartView: ChartRenderer {
     xAxisGridlines(context: context, arrayCount: arrayCount, initialValue: padding)
     
     if yAxisVisibility == true {
-      axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10)
+      axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10, axisInverse: enableYAxisInverse)
     }
   
     if xAxisVisibility == true {
@@ -129,7 +135,7 @@ open class LineChartView: ChartRenderer {
     lineBezierGraph(context: context, array: convertedData, initialValue: padding, data: data)
     yAxisGridlines(context: context, padding: padding)
     xAxisGridlines(context: context, arrayCount: arrayCount, initialValue: padding)
-    axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10)
+    axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10, axisInverse: enableYAxisInverse)
     axis.xAxis(context: context, arrayCount: arrayCount, initialValue: padding)
     legend.renderLineChartLegend(context: context, arrays: data.array)
     

@@ -24,6 +24,13 @@ open class CombinedChartView: ChartRenderer {
   /// Returns true if Y Axis label is visible
   open var isyAxisLabelVisible: Bool { get {return yAxisVisibility} }
   
+  /// Makes the Y axis inverse (Default = False)
+  open var enableYAxisInverse = false
+  
+  /// Returns true if Y Axis is inverse
+  open var isyAxisInverse: Bool { get {return enableYAxisInverse}}
+  
+  
   /// Legend visibility (Default = True)
   open var legendVisibility = true
   
@@ -87,11 +94,11 @@ open class CombinedChartView: ChartRenderer {
     barxAxisGridlines(context: context, arrayCount: arrayCount, initialValue: padding)
     
     if yAxisVisibility == true {
-      axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10)
+      axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10, axisInverse: enableYAxisInverse)
     }
     
     if xAxisVisibility == true {
-      axis.barGraphxAxis(context: context, arrayCount: arrayCount, initialValue: padding, label: [])
+      axis.barGraphxAxis(context: context, arrayCount: arrayCount, initialValue: padding)
     }
     
     if legendVisibility == true {
