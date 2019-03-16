@@ -13,6 +13,10 @@ enum legendPlacing {
   case left, right, bottom, top
 }
 
+enum orientation {
+  case landscape, portrait
+}
+
 
 open class LegendRenderer: UIView {
 
@@ -27,7 +31,18 @@ open class LegendRenderer: UIView {
   
     /// Variable used by the legend to determine the distance between each one to prevent the text overlapping
   private var legendMaximumDistance = CGFloat(45)
+  private var leftConfigxAxis = 10.0
+  private var rightConfigxAxis = 60.0
   
+  // Change the configuration of the legend based on the device orientation
+  func legendPadding(currentOrientation: orientation) {
+    if currentOrientation == .landscape {
+      legendMaximumDistance = CGFloat(70)
+      leftConfigxAxis = 70
+      rightConfigxAxis = 120
+    }
+    
+  }
   
   /// Base function for drawing legends
   func drawLegend(context: CGContext, x: Double, y: Double, legendText: String, colour: CGColor) {
@@ -71,9 +86,18 @@ open class LegendRenderer: UIView {
   }
   
   
-  func renderLineChartLegend(context: CGContext, arrays: [LineChartData]) {
+  func renderLineChartLegend(context: CGContext, arrays: [LineChartData], position: legendPlacing) {
     for i in 1...arrays.count {
-      drawLegend(context: context, x: Double(legendMaximumDistance), y: Double(frame.size.height) - 30, legendText: arrays[i - 1].name, colour: arrays[i - 1].setLineColour)
+      switch position {
+      case.bottom:
+        drawLegend(context: context, x: Double(legendMaximumDistance), y: Double(frame.size.height) - 30, legendText: arrays[i - 1].name, colour: arrays[i - 1].setLineColour)
+      case.top:
+        drawLegend(context: context, x: Double(legendMaximumDistance), y: 20, legendText: arrays[i - 1].name, colour: arrays[i - 1].setLineColour)
+      case.right:
+        drawLegend(context: context, x: Double(frame.size.width) - rightConfigxAxis, y: 20.0 * Double(i), legendText: arrays[i - 1].name, colour: arrays[i - 1].setLineColour)
+      case.left:
+        drawLegend(context: context, x: leftConfigxAxis, y: 20.0 * Double(i), legendText: arrays[i - 1].name, colour: arrays[i - 1].setLineColour)
+      }
     }
     
   }

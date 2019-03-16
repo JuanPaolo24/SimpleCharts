@@ -51,10 +51,12 @@ open class LineChartView: ChartRenderer {
   open var offSetRight:Double = 31.0
   
   /// Graph off set on the bottom (Default = 62)
-  open var offSetBottom:Double = 62.0
+  open var offSetBottom:Double = 31.0
   
   /// Graph off set on the top (Default = 10)
-  open var offSetTop:Double = 10.0
+  open var offSetTop:Double = 50.0
+  
+  
   
   /// Line type
   open var enableBezierCurve = true
@@ -90,15 +92,45 @@ open class LineChartView: ChartRenderer {
       }
     } else {
       if UIDevice.current.orientation.isLandscape {
-        renderLineGraph(context: context, landscapePadding: scale) //70
+        renderLineGraph(context: context, landscapePadding: scale, legendPosition: .bottom, currentOrientation: .landscape) //70
       } else {
-        renderLineGraph(context: context, landscapePadding: 1.0) //31
+        renderLineGraph(context: context, landscapePadding: 1.0, legendPosition: .bottom, currentOrientation: .portrait) //31
       }
       
     }
     
     
   }
+  
+  // Changes offset configuration based on the position of the legend
+  // This is for the default configuration
+  func changeOffset(position: legendPlacing) {
+    switch position {
+    case .bottom:
+      offSetLeft = 31.0
+      offSetRight = 31.0
+      offSetBottom = 62.0
+      offSetTop = 10.0
+    case .top:
+      offSetLeft = 31.0
+      offSetRight = 31.0
+      offSetBottom = 31.0
+      offSetTop = 50.0
+    case .right:
+      offSetLeft = 31.0
+      offSetRight = 70.0
+      offSetBottom = 31.0
+      offSetTop = 10.0
+    case .left:
+      offSetLeft = 70.0
+      offSetRight = 31.0
+      offSetBottom = 31.0
+      offSetTop = 10.0
+      
+    }
+    
+  }
+  
   
   /// Renders a line graph
   func lineGraph(context: CGContext, array: [[Double]], initialValue: Double, max: Double, data: LineChartDataSet, landscapePadding: Double) {
@@ -111,12 +143,15 @@ open class LineChartView: ChartRenderer {
   }
   
   
-  func renderLineGraph(context: CGContext, landscapePadding: Double) {
+  func renderLineGraph(context: CGContext, landscapePadding: Double, legendPosition: legendPlacing, currentOrientation: orientation) {
     let helper = HelperFunctions()
     let legend = LegendRenderer(frame: self.frame)
     let axis = AxisRenderer(frame: self.frame)
     let convertedData = helper.convert(chartData: data.array)
     var maxValue = 0.0
+    changeOffset(position: legendPosition)
+    legend.legendPadding(currentOrientation: currentOrientation)
+    
     if enableAxisCustomisation == true {
       maxValue = setYAxisInterval * 6
     } else {
@@ -142,7 +177,7 @@ open class LineChartView: ChartRenderer {
     }
     
     if legendVisibility == true {
-      legend.renderLineChartLegend(context: context, arrays: data.array)
+      legend.renderLineChartLegend(context: context, arrays: data.array, position: legendPosition)
     }
     
   }
@@ -179,7 +214,7 @@ open class LineChartView: ChartRenderer {
     xAxisGridlines(context: context, arrayCount: arrayCount, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
     axis.yAxis(context: context, maxValue: maxValue, axisInverse: enableYAxisInverse, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset - 10, offSetRight: paddedRightOffset)
     axis.xAxis(context: context, arrayCount: arrayCount, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
-    legend.renderLineChartLegend(context: context, arrays: data.array)
+    //legend.renderLineChartLegend(context: context, arrays: data.array)
     
   }
   
