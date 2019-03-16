@@ -118,6 +118,17 @@ open class ChartRenderer: UIView {
     context.setLineWidth(source.setLineWidth)
   }
   
+  
+  private func drawFillLine(context: CGContext, startingPoint: CGMutablePath, destinationPoint: CGPoint) {
+    startingPoint.addLine(to: destinationPoint)
+    context.addPath(startingPoint)
+    context.setStrokeColor(UIColor.clear.cgColor)
+    context.strokePath()
+    context.setLineWidth(3)
+    
+    
+  }
+  
   /// Base function for drawing rectangles
   private func drawRectangle(context: CGContext, x: Double, y: Double, width: Double, height: Double, source: BarChartData) {
     let rectangle = CGRect(x: x, y: y, width: width, height: height)
@@ -134,6 +145,13 @@ open class ChartRenderer: UIView {
     startingPoint.addCurve(to: point, control1: control1, control2: control2)
     context.addPath(startingPoint)
     context.setStrokeColor(source.setLineColour)
+    context.strokePath()
+  }
+  
+  private func drawBezierFill(context: CGContext, startingPoint: CGMutablePath, point: CGPoint, control1: CGPoint, control2: CGPoint) {
+    startingPoint.addCurve(to: point, control1: control1, control2: control2)
+    context.addPath(startingPoint)
+    context.setStrokeColor(UIColor.clear.cgColor)
     context.strokePath()
   }
   
@@ -160,8 +178,8 @@ open class ChartRenderer: UIView {
   
   
   /// Base function for drawing single line graphs. Requires context, the array to be plotted and the max value of the whole data set
-  func drawLineGraph(context: CGContext, array: [Double], maxValue: Double, source: LineChartData, initialValue: Double, forCombined: Bool) {
-    let calc = LineGraphCalculation(array: array, maxValue: maxValue, offSet: initialValue, frameWidth: frameWidth(), frameHeight: frameHeight())
+  func drawLineGraph(context: CGContext, array: [Double], maxValue: Double, source: LineChartData, forCombined: Bool, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
+    let calc = LineGraphCalculation(array: array, maxValue: maxValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.alignment = .justified
     
@@ -172,14 +190,14 @@ open class ChartRenderer: UIView {
     var startingXValue: Double = 0.0
     
     if forCombined == true {
-      startingXValue = calc.xlineCombineStartPoint()
+      startingXValue = calc.xlineCombinePoint(i: 0)
     } else {
-      startingXValue = calc.xlineGraphStartPoint()
+      startingXValue = calc.xlineGraphPoint(i: 0)
     }
     
     let path = pathStartPoint(startingXValue: startingXValue, startingYValue: startingYValue)
     
-    let path2 = pathStartPoint(startingXValue: startingXValue, startingYValue: frameHeight() - 62)
+    let path2 = pathStartPoint(startingXValue: startingXValue, startingYValue: frameHeight() - offSetBottom)
     
     var xValue: Double = 0.0
     var yValue: Double = 0.0
@@ -201,7 +219,7 @@ open class ChartRenderer: UIView {
       }
       if source.enableLineVisibility == true {
         drawLines(context: context, startingPoint: path, destinationPoint: CGPoint(x: xValue, y: yValue), source: source)
-        drawLines(context: context, startingPoint: path2, destinationPoint: CGPoint(x: xValue, y: yValue), source: source)
+        drawFillLine(context: context, startingPoint: path2, destinationPoint: CGPoint(x: xValue, y: yValue))
         
       }
       if source.enableDataPointLabel == true {
@@ -210,7 +228,8 @@ open class ChartRenderer: UIView {
     }
     
     if source.enableGraphFill == true {
-      drawLines(context: context, startingPoint: path2, destinationPoint: CGPoint(x: xValue, y: frameHeight() - 62), source: source)
+      drawFillLine(context: context, startingPoint: path2, destinationPoint: CGPoint(x: xValue, y: frameHeight() - offSetBottom))
+      
       addFill(context: context, path: path2)
     }
     
@@ -219,8 +238,8 @@ open class ChartRenderer: UIView {
 
   
   /// Base function for drawing line graphs with bezier curve. Requires context, the array to be plotted and the max value of the whole data set
-  func drawBezierCurve(context: CGContext, array: [Double], maxValue: Double, source: LineChartData, initialValue: Double) {
-    let calc = LineGraphCalculation(array: array, maxValue: maxValue, offSet: initialValue, frameWidth: frameWidth(), frameHeight: frameHeight())
+  func drawBezierCurve(context: CGContext, array: [Double], maxValue: Double, source: LineChartData, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
+    let calc = LineGraphCalculation(array: array, maxValue: maxValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
     
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.alignment = .justified
@@ -228,10 +247,10 @@ open class ChartRenderer: UIView {
     let textRenderer = TextRenderer(paragraphStyle: paragraphStyle, font: UIFont.systemFont(ofSize: source.setTextLabelFont), foreGroundColor: source.setTextLabelColour)
     
     let startingYValue = calc.ylineGraphStartPoint()
-    let startingXValue = calc.xlineGraphStartPoint()
+    let startingXValue = calc.xlineGraphPoint(i: 0)
     
     let path = pathStartPoint(startingXValue: startingXValue, startingYValue: startingYValue)
-    let path2 = pathStartPoint(startingXValue: startingXValue, startingYValue: frameHeight() - 62)
+    let path2 = pathStartPoint(startingXValue: startingXValue, startingYValue: frameHeight() - offSetBottom)
     
     var destination = CGPoint()
     
@@ -245,7 +264,7 @@ open class ChartRenderer: UIView {
       
       if source.enableLineVisibility == true {
         addBezierCurve(context: context, startingPoint: path, point: destination, control1: control1, control2: control2, source: source)
-        addBezierCurve(context: context, startingPoint: path2, point: destination, control1: control1, control2: control2, source: source)
+        drawBezierFill(context: context, startingPoint: path2, point: destination, control1: control1, control2: control2)
       }
       
       if source.enableCirclePointVisibility == true {
@@ -259,20 +278,22 @@ open class ChartRenderer: UIView {
     }
     
     if source.enableGraphFill == true {
-      drawLines(context: context, startingPoint: path2, destinationPoint: CGPoint(x: Double(destination.x), y: frameHeight() - 62), source: source)
+      drawFillLine(context: context, startingPoint: path2, destinationPoint: CGPoint(x: Double(destination.x), y: frameHeight() - offSetBottom))
       addFill(context: context, path: path2)
     }
   }
   
   
   /// A function that draws the Y axis line used by Line and Bar Graph
-  func yAxisBase(context: CGContext, padding: Double) {
-    let yAxisPadding = frameHeight() - currentFrame.distanceFromBottom
-    let leftBaseStartPoint = CGPoint(x: padding, y: 10)
-    let leftBaseEndPoint = CGPoint(x: padding, y: yAxisPadding)
+  func yAxisBase(context: CGContext, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
+    let yAxisPadding = frameHeight() - offSetBottom
+    let xAxisPadding = frameWidth() - offSetRight
     
-    let rightBaseStartPoint = CGPoint(x: frameWidth() - padding, y: 10)
-    let rightBaseEndPoint = CGPoint(x: frameWidth() - padding, y: yAxisPadding)
+    let leftBaseStartPoint = CGPoint(x: offSetLeft, y: offSetTop)
+    let leftBaseEndPoint = CGPoint(x: offSetLeft, y: yAxisPadding)
+    
+    let rightBaseStartPoint = CGPoint(x: xAxisPadding, y: offSetTop)
+    let rightBaseEndPoint = CGPoint(x: xAxisPadding, y: yAxisPadding)
     
     drawAxisBase(context: context, start: leftBaseStartPoint, end: leftBaseEndPoint, strokeColour: setYAxisBaseColour, width: 3.0)
     drawAxisBase(context: context, start: rightBaseStartPoint, end: rightBaseEndPoint, strokeColour: setYAxisBaseColour, width: 3.0)
@@ -280,16 +301,16 @@ open class ChartRenderer: UIView {
   
   /// A function that draw the X axis line used by Line and Bar Graph
   
-  func xAxisBase(context: CGContext, padding: Double) {
+  func xAxisBase(context: CGContext, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
     
-    let yAxisPadding = frameHeight() - currentFrame.distanceFromBottom
-    let xAxisPadding = frameWidth() - padding
+    let yAxisPadding = frameHeight() - offSetBottom
+    let xAxisPadding = frameWidth() - offSetRight
     
-    let bottomBaseStartPoint = CGPoint(x: padding, y: yAxisPadding)
+    let bottomBaseStartPoint = CGPoint(x: offSetLeft, y: yAxisPadding)
     let bottomBaseEndPoint = CGPoint(x: xAxisPadding, y: yAxisPadding)
     
-    let upperBaseStartPoint = CGPoint(x: padding, y: 10)
-    let upperBaseEndPoint = CGPoint(x: xAxisPadding, y: 10)
+    let upperBaseStartPoint = CGPoint(x: offSetLeft, y: offSetTop)
+    let upperBaseEndPoint = CGPoint(x: xAxisPadding, y: offSetTop)
     
     drawAxisBase(context: context, start: bottomBaseStartPoint, end: bottomBaseEndPoint, strokeColour: setXAxisBaseColour, width: 2.0)
     drawAxisBase(context: context, start: upperBaseStartPoint, end: upperBaseEndPoint, strokeColour: setXAxisBaseColour, width: 2.0)
@@ -298,8 +319,8 @@ open class ChartRenderer: UIView {
   
   
   /// Renders the Y axis Gridlines
-  func yAxisGridlines(context: CGContext, padding: Double) {
-    let calc = GeneralGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), offSet: padding)
+  func yAxisGridlines(context: CGContext, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
+    let calc = GeneralGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), arrayCount: 0, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
     for i in 0...currentFrame.yAxisGridlinesCount {
       let yStartPoint = calc.yGridlineStartPoint(i: i)
       let yEndPoint = calc.yGridlineEndPoint(i: i)
@@ -312,13 +333,12 @@ open class ChartRenderer: UIView {
   
   
   /// Renders the X axis Gridlines
-  func xAxisGridlines(context: CGContext, arrayCount: Int, initialValue: Double) {
-    let calc = GeneralGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), offSet: initialValue, arrayCount: Double(arrayCount))
+  func xAxisGridlines(context: CGContext, arrayCount: Int, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
+    let calc = GeneralGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), arrayCount: Double(arrayCount), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
     
-    for i in 0...arrayCount - 1 {
+    for i in 0...currentFrame.yAxisGridlinesCount {
       let startPoint = calc.xGridlineStartPoint(distanceIncrement: i)
       let endPoint = calc.xGridlineEndPoint(distanceIncrement: i)
-      
       if enableXGridline == true {
         drawGridLines(context: context, start: startPoint, end: endPoint)
       }
@@ -430,7 +450,7 @@ open class ChartRenderer: UIView {
   /// Renders a line graph
   func lineGraph(context: CGContext, array: [[Double]], initialValue: Double, max: Double, data: LineChartDataSet, forCombined: Bool) {
     for (i, value) in array.enumerated() {
-      drawLineGraph(context: context, array: value, maxValue: max, source: data.array[i], initialValue: initialValue, forCombined: forCombined)
+      drawLineGraph(context: context, array: value, maxValue: max, source: data.array[i], forCombined: forCombined, offSetTop: 10, offSetBottom: 62, offSetLeft: 31, offSetRight: 31)
     }
   }
   
@@ -441,7 +461,7 @@ open class ChartRenderer: UIView {
     let max = helper.processMultipleArrays(array: array)
     
     for (i, value) in array.enumerated() {
-      drawBezierCurve(context: context, array: value, maxValue: max, source: data.array[i] ,initialValue: initialValue)
+      drawBezierCurve(context: context, array: value, maxValue: max, source: data.array[i], offSetTop: 10, offSetBottom: 62, offSetLeft: 31, offSetRight: 31)
     }
   }
   

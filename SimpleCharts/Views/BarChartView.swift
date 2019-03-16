@@ -83,13 +83,13 @@ open class BarChartView: ChartRenderer {
     let maxValue = helper.processMultipleArrays(array: convertedData)
     let arrayCount = helper.findArrayCountFrom(array: convertedData)
     
-    xAxisBase(context: context, padding: padding)
-    yAxisBase(context: context, padding: padding)
+    xAxisBase(context: context, offSetTop: 10, offSetBottom: 62, offSetLeft: 31, offSetRight: 31)
+    yAxisBase(context: context, offSetTop: 10, offSetBottom: 62, offSetLeft: 31, offSetRight: 31)
     barGraph(context: context, array: convertedData,initialValue: padding, graphType: "Vertical", data: data, max: maxValue)
     barxAxisGridlines(context: context, arrayCount: arrayCount, initialValue: padding)
     
     if yAxisVisibility == true {
-      axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10, axisInverse: enableYAxisInverse)
+      axis.yAxis(context: context, maxValue: maxValue, axisInverse: enableYAxisInverse, offSetTop: 10, offSetBottom: 62, offSetLeft: 31 - 10, offSetRight: 31)
     }
     
     if xAxisVisibility == true {

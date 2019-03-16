@@ -14,35 +14,50 @@ open class LineGraphCalculation {
   private var array: [Double]
   private var arrayCount: Int
   private var maxValue: Double
-  private var offSet: Double
   private var frameWidth: Double
   private var frameHeight: Double
   
+  private var offSetTop: Double
+  private var offSetBottom: Double
+  private var offSetLeft: Double
+  private var offSetRight: Double
   
-  /// Initialize this when using the line graph point calculation
-  required public init(array: [Double], maxValue: Double, offSet: Double, frameWidth: Double, frameHeight: Double) {
+  
+
+  /// This initializer includes all the offset for the left, right, bottom and top in order for the user to completely customisate the graph
+  required public init(array: [Double], maxValue: Double, frameWidth: Double, frameHeight: Double, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
     self.array = array
     self.arrayCount = 0
     self.maxValue = maxValue
-    self.offSet = offSet
     self.frameWidth = frameWidth
     self.frameHeight = frameHeight
+    
+    self.offSetTop = offSetTop
+    self.offSetBottom = offSetBottom
+    self.offSetRight = offSetRight
+    self.offSetLeft = offSetLeft
   }
   
-  required public init(arrayCount: Int, maxValue: Double, offSet: Double, frameWidth: Double, frameHeight: Double) {
+  // Make array count clear of its responsibility
+  /// This initializer includes all the offset for the left, right, bottom and top in order for the user to completely customisate the graph
+  required public init(arrayCount: Int, maxValue: Double, frameWidth: Double, frameHeight: Double, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
     self.array = []
     self.arrayCount = arrayCount
     self.maxValue = maxValue
-    self.offSet = offSet
     self.frameWidth = frameWidth
     self.frameHeight = frameHeight
+    
+    self.offSetTop = offSetTop
+    self.offSetBottom = offSetBottom
+    self.offSetRight = offSetRight
+    self.offSetLeft = offSetLeft
   }
   
   
   // Normal Line Graph
   
   func ylineGraphStartPoint() -> Double {
-    let yAxisPadding = frameHeight - currentFrame.distanceFromBottom
+    let yAxisPadding = frameHeight - offSetBottom
     var yValue = 0.0
     if let firstValue = array.first {
       yValue = yAxisPadding - ((yAxisPadding / maxValue) * firstValue)
@@ -52,52 +67,31 @@ open class LineGraphCalculation {
   
   
   func ylineGraphPoint(value: Double) -> Double {
-    let yAxisPadding = frameHeight - currentFrame.distanceFromBottom
+    let yAxisPadding = frameHeight - offSetBottom
     let yValue = yAxisPadding - ((yAxisPadding / maxValue) * value)
-    print(((yAxisPadding / maxValue) * value))
     return yValue
   }
   
-  func xlineGraphStartPoint() -> Double {
-    let arrayCount = Double(array.count)
-    let spaceLeft = frameWidth - (offSet * 2)
-    let increment = spaceLeft / (arrayCount - 1)
-    
-    let xValue = offSet + (increment * Double(0))
-    
-    return xValue
-  }
-  
+
   func xlineGraphPoint(i: Int) -> Double {
     let arrayCount = Double(array.count)
-    let spaceLeft = frameWidth - (offSet * 2)
+    let spaceLeft = frameWidth - (offSetLeft + offSetRight)
     let increment = spaceLeft / (arrayCount - 1)
-    let xValue = offSet + (increment * Double(i))
+    let xValue = offSetLeft + (increment * Double(i))
     
     return xValue
   }
   
   
   // Calculation for the line point for combine charts
-  // This calculation makes sure that it is centered
-  func xlineCombineStartPoint() -> Double{
-    let arrayCount = Double(array.count)
-    let spaceLeft = frameWidth - (offSet * 2)
-    let increment = spaceLeft / (arrayCount)
-    let scale = spaceLeft / (arrayCount * 2)
-    
-    let xValue = offSet + scale + (increment * Double(0))
-    
-    return xValue
-  }
   
   func xlineCombinePoint(i: Int) -> Double {
     let arrayCount = Double(array.count)
-    let spaceLeft = frameWidth - (offSet * 2)
+    let spaceLeft = frameWidth - (offSetLeft + offSetRight)
     let increment = spaceLeft / (arrayCount)
     let scale = spaceLeft / (arrayCount * 2)
     
-    let xValue = offSet + scale + (increment * Double(i))
+    let xValue = offSetLeft + scale + (increment * Double(i))
     
     return xValue
     
@@ -110,10 +104,10 @@ open class LineGraphCalculation {
   func bezierGraphPoint(i: Int, value: Double) -> CGPoint {
     
     let arrayCount = Double(array.count)
-    let spaceLeft = frameWidth - (offSet * 2)
-    let yOffSet = frameHeight - 62
+    let spaceLeft = frameWidth - (offSetLeft + offSetRight)
+    let yOffSet = frameHeight - offSetBottom
     let increment = spaceLeft / (arrayCount - 1)
-    let xPoint = offSet + (increment * Double(i + 1))
+    let xPoint = offSetLeft + (increment * Double(i + 1))
     let yPoint = yOffSet - ((yOffSet / maxValue) * value)
     
     let point = CGPoint(x: xPoint, y: yPoint)
@@ -125,10 +119,10 @@ open class LineGraphCalculation {
     let arrayCount = Double(array.count)
     let start = Array(array.dropLast())
     
-    let spaceLeft = frameWidth - (offSet * 2)
+    let spaceLeft = frameWidth - (offSetLeft + offSetRight)
     let increment = spaceLeft / (arrayCount - 1)
-    let yOffSet = frameHeight - 62
-    let xPoint = offSet + (increment * Double(i + 1))
+    let yOffSet = frameHeight - offSetBottom
+    let xPoint = offSetLeft + (increment * Double(i + 1))
     let prevPoint = xPoint - increment
     let yPoint = yOffSet - ((yOffSet / maxValue) * start[i])
     let nextValue = yOffSet - ((yOffSet / maxValue) * value)
@@ -147,10 +141,10 @@ open class LineGraphCalculation {
     let arrayCount = Double(array.count)
     let start = Array(array.dropLast())
     
-    let spaceLeft = frameWidth - (offSet * 2)
+    let spaceLeft = frameWidth - (offSetLeft + offSetRight)
     let increment = spaceLeft / (arrayCount - 1)
-    let yOffSet = frameHeight - 62
-    let xPoint = offSet + (increment * Double(i + 1))
+    let yOffSet = frameHeight - offSetBottom
+    let xPoint = offSetLeft + (increment * Double(i + 1))
     let prevPoint = xPoint - increment
     let yPoint = yOffSet - ((yOffSet / maxValue) * start[i])
     let nextValue = yOffSet - ((yOffSet / maxValue) * value)
@@ -170,7 +164,7 @@ open class LineGraphCalculation {
   
 // Axis Label
   func xAxisLabelxValue(i: Int) -> Double {
-    let spaceLeft = (frameWidth - 8) - (offSet * 2)
+    let spaceLeft = (frameWidth - 8) - (offSetLeft + offSetRight)
     var increment = 0.0
     let count = Double(arrayCount)
     
@@ -180,14 +174,14 @@ open class LineGraphCalculation {
       increment = spaceLeft / 6
     }
     
-    let xValue = offSet + (increment * Double(i))
+    let xValue = offSetLeft + (increment * Double(i))
     
     return xValue
     
   }
   
   func xAxisLabelyValue() -> Double {
-    let yValue = (frameHeight - 62) + 10
+    let yValue = (frameHeight - offSetBottom) + 10
     
     return yValue
   }
@@ -209,17 +203,17 @@ open class LineGraphCalculation {
   
   
   func yAxisLabelxValue() -> Double {
-    let xValue = offSet - 10
+    let xValue = offSetLeft - 10
     
     return xValue
   }
   
   
   func yAxisLabelyValue(i: Int) -> Double {
-    let frameScale = (frameHeight - currentFrame.distanceFromBottom - 10) / Double(currentFrame.yAxisGridlinesCount)
+    let frameScale = (frameHeight - offSetBottom - offSetTop) / Double(currentFrame.yAxisGridlinesCount)
     let actualValue = frameScale * Double(i)
 
-    let yValue = (frameHeight - 67) - actualValue
+    let yValue = (frameHeight - offSetBottom - 2) - actualValue
     
     return yValue
     

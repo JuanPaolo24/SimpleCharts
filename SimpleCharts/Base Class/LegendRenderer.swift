@@ -9,6 +9,11 @@
 import Foundation
 
 
+enum legendPlacing {
+  case left, right, bottom, top
+}
+
+
 open class LegendRenderer: UIView {
 
   public override init(frame: CGRect) {

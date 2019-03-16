@@ -68,8 +68,8 @@ open class HorizontalBarChartView: ChartRenderer {
     let maxValue = helper.processMultipleArrays(array: convertedData)
     let arrayCount = helper.findArrayCountFrom(array: convertedData)
     
-    xAxisBase(context: context, padding: padding)
-    yAxisBase(context: context, padding: padding)
+    xAxisBase(context: context, offSetTop: 10, offSetBottom: 62, offSetLeft: 31, offSetRight: 31)
+    yAxisBase(context: context, offSetTop: 10, offSetBottom: 62, offSetLeft: 31, offSetRight: 31)
     barGraph(context: context, array: convertedData, initialValue: padding, graphType: "Horizontal", data: data, max: maxValue)
     horizontalBarGraphXGridlines(context: context, initialValue: padding)
     horizontalBarGraphYGridlines(context: context, arrayCount: arrayCount, padding: padding)

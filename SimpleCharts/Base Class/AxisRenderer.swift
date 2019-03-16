@@ -48,8 +48,8 @@ open class AxisRenderer: UIView {
   
   
   /// Renders the Y axis labels
-  func yAxis(context: CGContext, maxValue: Double, padding: Double, axisInverse: Bool) {
-    let calc = LineGraphCalculation(arrayCount: 0, maxValue: maxValue, offSet: padding, frameWidth: frameWidth(), frameHeight: frameHeight())
+  func yAxis(context: CGContext, maxValue: Double, axisInverse: Bool, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
+    let calc = LineGraphCalculation(arrayCount: 0, maxValue: maxValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
     
     for i in 0...currentFrame.yAxisGridlinesCount {
       let xValue = calc.yAxisLabelxValue()
@@ -67,10 +67,10 @@ open class AxisRenderer: UIView {
   
   
   /// Renders the X axis labels
-  func xAxis(context: CGContext, arrayCount: Int, initialValue: Double) {
-    let calc = LineGraphCalculation(arrayCount: arrayCount, maxValue: 0, offSet: initialValue, frameWidth: frameWidth(), frameHeight: frameHeight())
+  func xAxis(context: CGContext, arrayCount: Int, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
+    let calc = LineGraphCalculation(arrayCount: arrayCount, maxValue: 0, frameWidth: frameWidth(), frameHeight: frameHeight(), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
     
-    for i in 0...arrayCount {
+    for i in 0...currentFrame.yAxisGridlinesCount {
       let xValue = calc.xAxisLabelxValue(i: i)
       let yValue = calc.xAxisLabelyValue()
       let label = calc.xAxisLabelText(i: i)

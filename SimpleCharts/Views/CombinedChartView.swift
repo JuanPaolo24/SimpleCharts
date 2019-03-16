@@ -86,15 +86,15 @@ open class CombinedChartView: ChartRenderer {
     let barArrayCount = helper.findArrayCountFrom(array: barConvertedData)
     let arrayCount = max(lineArrayCount, barArrayCount)
     
-    xAxisBase(context: context, padding: padding)
-    yAxisBase(context: context, padding: padding)
+    xAxisBase(context: context, offSetTop: 10, offSetBottom: 62, offSetLeft: 31, offSetRight: 31)
+    yAxisBase(context: context, offSetTop: 10, offSetBottom: 62, offSetLeft: 31, offSetRight: 31)
     barGraph(context: context, array: barConvertedData, initialValue: padding, graphType: "Vertical", data: barChartDataSet, max: maxValue)
     lineGraph(context: context, array: lineConvertedData, initialValue: padding, max: maxValue, data: lineChartDataSet, forCombined: true)
-    yAxisGridlines(context: context, padding: padding)
+    yAxisGridlines(context: context, offSetTop: 10, offSetBottom: 62, offSetLeft: 31, offSetRight: 31)
     barxAxisGridlines(context: context, arrayCount: arrayCount, initialValue: padding)
     
     if yAxisVisibility == true {
-      axis.yAxis(context: context, maxValue: maxValue, padding: padding - 10, axisInverse: enableYAxisInverse)
+      axis.yAxis(context: context, maxValue: maxValue, axisInverse: enableYAxisInverse, offSetTop: 10, offSetBottom: 62, offSetLeft: 31, offSetRight: 31)
     }
     
     if xAxisVisibility == true {
