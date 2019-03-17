@@ -11,30 +11,39 @@ import Foundation
 
 open class CombinedChartView: ChartRenderer {
   
-  //Axis
-  /// X axis labels visibility (Default = True)
-  open var xAxisVisibility = true
+
+  /// Legend Position (Default = bottom)
+  open var legendPosition: legendPlacing = .bottom
   
-  /// Returns true if X Axis label is visible
-  open var isxAxisLabelVisible: Bool { get {return xAxisVisibility} }
+  /// Custom legend x (When you select .custom on legend position then you can use this to set your own x values)
+  open var customXlegend: Double = 0.0
   
-  /// Y axis labels visibility (Default = True)
-  open var yAxisVisibility = true
-  
-  /// Returns true if Y Axis label is visible
-  open var isyAxisLabelVisible: Bool { get {return yAxisVisibility} }
-  
-  /// Makes the Y axis inverse (Default = False)
-  open var enableYAxisInverse = false
-  
-  /// Returns true if Y Axis is inverse
-  open var isyAxisInverse: Bool { get {return enableYAxisInverse}}
+  /// Custom legend y (When you select .custom on legend position then you can use this to set your own y values)
+  open var customYlegend: Double = 0.0
   
   
   /// Legend visibility (Default = True)
   open var legendVisibility = true
   
-
+  /// Graph off set on the left (Default = 31)
+  open var offSetLeft:Double = 31.0
+  
+  /// Graph off set on the right (Default = 31)
+  open var offSetRight:Double = 31.0
+  
+  /// Graph off set on the bottom (Default = 62)
+  open var offSetBottom:Double = 62.0
+  
+  /// Graph off set on the top (Default = 20)
+  open var offSetTop:Double = 20.0
+  
+  /// An instance of the xAxis to provide customisation through this
+  open var xAxis:xAxisConfiguration = xAxisConfiguration()
+  
+  /// An instance of the yAxis to provide customisation through this
+  open var yAxis:yAxisConfiguration = yAxisConfiguration()
+  
+  
   /// Add the data source
   public var data = CombinedChartDataSet(lineData: LineChartDataSet(dataset: [LineChartData(dataset: [0], datasetName: "Test")]), barData: BarChartDataSet(dataset: [BarChartData(dataset: [0], datasetName: "Test2")]))
   
@@ -57,21 +66,94 @@ open class CombinedChartView: ChartRenderer {
       return
     }
     
+    changeOffset(position: legendPosition)
+    
+    let scale = 70.0/31.0
+    
     if UIDevice.current.orientation.isLandscape {
-      renderCombinedChart(context: context, padding: 70)
+      renderCombinedChart(context: context, landscapePadding: scale, currentOrientation: .landscape)
     } else {
-      renderCombinedChart(context: context, padding: 30)
+      renderCombinedChart(context: context, landscapePadding: 1.0, currentOrientation: .portrait)
     }
     
     
   }
   
+  // Changes offset configuration based on the position of the legend
+  // This is for the default configuration
+  func changeOffset(position: legendPlacing) {
+    switch position {
+    case .bottom:
+      offSetLeft = 31.0
+      offSetRight = 31.0
+      offSetBottom = 62.0
+      offSetTop = 20.0
+    case .top:
+      offSetLeft = 31.0
+      offSetRight = 31.0
+      offSetBottom = 31.0
+      offSetTop = 50.0
+    case .right:
+      offSetLeft = 31.0
+      offSetRight = 70.0
+      offSetBottom = 31.0
+      offSetTop = 20.0
+    case .left:
+      offSetLeft = 70.0
+      offSetRight = 31.0
+      offSetBottom = 31.0
+      offSetTop = 20.0
+    case .custom:
+      offSetLeft = 31.0
+      offSetRight = 31.0
+      offSetBottom = 62.0
+      offSetTop = 20.0
+    }
+    
+  }
   
-  func renderCombinedChart(context: CGContext, padding: Double) {
+  
+  /// Renders a line graph
+  func lineGraph(context: CGContext, array: [[Double]], max: Double, data: LineChartDataSet, forCombined: Bool, landscapePadding: Double) {
+    let paddedLeftOffset = offSetLeft * landscapePadding
+    let paddedRightOffset = offSetRight * landscapePadding
+    
+    for (i, value) in array.enumerated() {
+      drawLineGraph(context: context, array: value, maxValue: max, source: data.array[i], forCombined: forCombined, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
+    }
+  }
+  
+  
+  /// Renders a line graph
+  func lineBezierGraph(context: CGContext, array: [[Double]], data: LineChartDataSet) {
+    let helper = HelperFunctions()
+    let max = helper.processMultipleArrays(array: array)
+    
+    
+    for (i, value) in array.enumerated() {
+      drawBezierCurve(context: context, array: value, maxValue: max, source: data.array[i], offSetTop: 10, offSetBottom: 62, offSetLeft: 31, offSetRight: 31)
+    }
+  }
+  
+  func barGraph(context: CGContext, array: [[Double]], data: BarChartDataSet, max: Double, landscapePadding: Double) {
+    let paddedLeftOffset = offSetLeft * landscapePadding
+    let paddedRightOffset = offSetRight * landscapePadding
+    
+    for (i, value) in array.enumerated() {
+      drawVerticalBarGraph(context: context, array: value, maxValue: max, data: data.array[i], overallCount: Double(i), arrayCount: Double(array.count), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
+    }
+  }
+  
+  
+  
+  func renderCombinedChart(context: CGContext, landscapePadding: Double, currentOrientation: orientation) {
     let helper = HelperFunctions()
     let axis = AxisRenderer(frame: self.frame)
     let legend = LegendRenderer(frame: self.frame)
-  
+    
+    let paddedLeftOffset = offSetLeft * landscapePadding
+    let paddedRightOffset = offSetRight * landscapePadding
+    
     let lineChartDataSet = data.lineData
     let barChartDataSet = data.barData
     
@@ -86,23 +168,26 @@ open class CombinedChartView: ChartRenderer {
     let barArrayCount = helper.findArrayCountFrom(array: barConvertedData)
     let arrayCount = max(lineArrayCount, barArrayCount)
     
-    xAxisBase(context: context, offSetTop: 10, offSetBottom: 62, offSetLeft: 31, offSetRight: 31)
-    yAxisBase(context: context, offSetTop: 10, offSetBottom: 62, offSetLeft: 31, offSetRight: 31)
-    barGraph(context: context, array: barConvertedData, initialValue: padding, graphType: "Vertical", data: barChartDataSet, max: maxValue)
-    lineGraph(context: context, array: lineConvertedData, initialValue: padding, max: maxValue, data: lineChartDataSet, forCombined: true)
-    yAxisGridlines(context: context, offSetTop: 10, offSetBottom: 62, offSetLeft: 31, offSetRight: 31)
-    barxAxisGridlines(context: context, arrayCount: arrayCount, initialValue: padding)
     
-    if yAxisVisibility == true {
-      axis.yAxis(context: context, maxValue: maxValue, axisInverse: enableYAxisInverse, offSetTop: 10, offSetBottom: 62, offSetLeft: 31, offSetRight: 31)
+    legend.legendPadding(currentOrientation: currentOrientation)
+    
+    xAxisBase(context: context, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
+    yAxisBase(context: context, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
+    barGraph(context: context, array: barConvertedData, data: barChartDataSet, max: maxValue, landscapePadding: landscapePadding)
+    lineGraph(context: context, array: lineConvertedData, max: maxValue, data: lineChartDataSet, forCombined: true, landscapePadding: landscapePadding)
+    yAxisGridlines(context: context, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
+    barxAxisGridlines(context: context, arrayCount: arrayCount, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
+    
+    if yAxis.yAxisVisibility == true {
+      axis.yAxis(context: context, maxValue: maxValue, axisInverse: yAxis.enableYAxisInverse, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset - 10, offSetRight: paddedRightOffset)
     }
     
-    if xAxisVisibility == true {
-      axis.barGraphxAxis(context: context, arrayCount: arrayCount, initialValue: padding)
+    if xAxis.xAxisVisibility == true {
+      axis.barGraphxAxis(context: context, arrayCount: arrayCount, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
     }
     
     if legendVisibility == true {
-      legend.renderCombinedChartLegend(context: context, data: data)
+      legend.renderCombinedChartLegend(context: context, data: data, position: legendPosition, customX: customXlegend, customY: customYlegend)
     }
     
   }

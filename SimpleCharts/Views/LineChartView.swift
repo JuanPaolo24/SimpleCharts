@@ -76,13 +76,15 @@ open class LineChartView: ChartRenderer {
       return
     }
     
+    changeOffset(position: legendPosition)
+    
     let scale = 70.0/31.0
     
     if enableBezierCurve {
       if UIDevice.current.orientation.isLandscape {
-        renderBezierGraph(context: context, landscapePadding: scale)
+        renderBezierGraph(context: context, landscapePadding: scale, currentOrientation: .landscape)
       } else {
-        renderBezierGraph(context: context, landscapePadding: 1.0)
+        renderBezierGraph(context: context, landscapePadding: 1.0, currentOrientation: .portrait)
       }
     } else {
       if UIDevice.current.orientation.isLandscape {
@@ -114,12 +116,12 @@ open class LineChartView: ChartRenderer {
       offSetLeft = 31.0
       offSetRight = 70.0
       offSetBottom = 31.0
-      offSetTop = 10.0
+      offSetTop = 20.0
     case .left:
       offSetLeft = 70.0
       offSetRight = 31.0
       offSetBottom = 31.0
-      offSetTop = 10.0
+      offSetTop = 20.0
     case .custom:
       offSetLeft = 31.0
       offSetRight = 31.0
@@ -151,7 +153,6 @@ open class LineChartView: ChartRenderer {
     let paddedLeftOffset = offSetLeft * landscapePadding
     let paddedRightOffset = offSetRight * landscapePadding
     
-    changeOffset(position: legendPosition)
     legend.legendPadding(currentOrientation: currentOrientation)
     
     if enableAxisCustomisation == true {
@@ -181,9 +182,7 @@ open class LineChartView: ChartRenderer {
   }
   
   /// Renders a line graph
-  func lineBezierGraph(context: CGContext, array: [[Double]], data: LineChartDataSet, landscapePadding: Double) {
-    let helper = HelperFunctions()
-    let max = helper.processMultipleArrays(array: array)
+  func lineBezierGraph(context: CGContext, array: [[Double]], data: LineChartDataSet, max: Double, landscapePadding: Double) {
     let paddedLeftOffset = offSetLeft * landscapePadding
     let paddedRightOffset = offSetRight * landscapePadding
     
@@ -193,26 +192,46 @@ open class LineChartView: ChartRenderer {
   }
   
 
-  func renderBezierGraph(context: CGContext, landscapePadding: Double) {
+  func renderBezierGraph(context: CGContext, landscapePadding: Double, currentOrientation: orientation) {
     let helper = HelperFunctions()
     let legend = LegendRenderer(frame: self.frame)
     let axis = AxisRenderer(frame: self.frame)
     let convertedData = helper.convert(chartData: data.array)
-    let maxValue = helper.processMultipleArrays(array: convertedData)
     let arrayCount = helper.findArrayCountFrom(array: convertedData)
+    
+    
+    legend.legendPadding(currentOrientation: currentOrientation)
     
     let paddedLeftOffset = offSetLeft * landscapePadding
     let paddedRightOffset = offSetRight * landscapePadding
     
-   
+    var maxValue = 0.0
+    
+    if enableAxisCustomisation == true {
+      maxValue = yAxis.setYAxisInterval * 6
+    } else {
+      maxValue = helper.processMultipleArrays(array: convertedData)
+    }
+    
     xAxisBase(context: context, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
     yAxisBase(context: context, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
-    lineBezierGraph(context: context, array: convertedData, data: data, landscapePadding: landscapePadding)
+    lineBezierGraph(context: context, array: convertedData, data: data, max: maxValue, landscapePadding: landscapePadding)
     yAxisGridlines(context: context, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
     xAxisGridlines(context: context, arrayCount: arrayCount, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
-    axis.yAxis(context: context, maxValue: maxValue, axisInverse: yAxis.enableYAxisInverse, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset - 10, offSetRight: paddedRightOffset)
-    axis.xAxis(context: context, arrayCount: arrayCount, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
-    //legend.renderLineChartLegend(context: context, arrays: data.array)
+    
+    if yAxis.yAxisVisibility == true {
+      axis.yAxis(context: context, maxValue: maxValue, axisInverse: yAxis.enableYAxisInverse, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset - 10, offSetRight: paddedRightOffset)
+    }
+    
+    if xAxis.xAxisVisibility == true {
+      axis.xAxis(context: context, arrayCount: arrayCount, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
+    }
+    
+    if legendVisibility == true {
+      legend.renderLineChartLegend(context: context, arrays: data.array, position: legendPosition, customX: customXlegend, customY: customYlegend)
+    }
+    
+    
     
   }
   

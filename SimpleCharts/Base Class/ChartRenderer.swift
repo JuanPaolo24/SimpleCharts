@@ -347,8 +347,8 @@ open class ChartRenderer: UIView {
   }
   
   /// Renders a special X axis gridline for the bar chart
-  func barxAxisGridlines(context: CGContext, arrayCount: Int, initialValue: Double) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), offSet: initialValue, arrayCount: Double(arrayCount))
+  func barxAxisGridlines(context: CGContext, arrayCount: Int, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, arrayCount: Double(arrayCount), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
     
     for i in 0...arrayCount - 1 {
       let startPoint = calc.xGridlineStartCalculation(distanceIncrement: i)
@@ -364,8 +364,10 @@ open class ChartRenderer: UIView {
   
   
   /// Renders a horizontal bar graph
-  func drawHorizontalBarGraph(context: CGContext, array: [Double], maxValue: Double, data: BarChartData, initialValue: Double) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, offSet: initialValue, arrayCount: Double(array.count))
+  func drawHorizontalBarGraph(context: CGContext, array: [Double], maxValue: Double, data: BarChartData, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
+
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, arrayCount: Double(array.count), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
+    
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.alignment = .justified
     let textRenderer = TextRenderer(paragraphStyle: paragraphStyle, font: UIFont.systemFont(ofSize: data.setTextLabelFont), foreGroundColor: data.setTextLabelColour)
@@ -386,8 +388,10 @@ open class ChartRenderer: UIView {
   
   
   // Renders a vertical bar graph with support for multiple data sets
-  func drawVerticalBarGraph(context: CGContext, array: [Double], maxValue: Double, data: BarChartData, initialValue: Double, overallCount: Double, arrayCount: Double) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, offSet: initialValue, arrayCount: Double(array.count))
+  func drawVerticalBarGraph(context: CGContext, array: [Double], maxValue: Double, data: BarChartData, overallCount: Double, arrayCount: Double, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
+    
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, arrayCount: Double(array.count), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
+    
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.alignment = .justified
     let textRenderer = TextRenderer(paragraphStyle: paragraphStyle, font: UIFont.systemFont(ofSize: data.setTextLabelFont), foreGroundColor: data.setTextLabelColour)
@@ -415,8 +419,8 @@ open class ChartRenderer: UIView {
   
   
   /// Y Gridlines used by the horizontal bar graph
-  func horizontalBarGraphYGridlines(context: CGContext, arrayCount: Int, padding: Double) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), offSet: padding, arrayCount: Double(arrayCount))
+  func horizontalBarGraphYGridlines(context: CGContext, arrayCount: Int, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, arrayCount: Double(arrayCount), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
     for i in 0...arrayCount {
       let yStartPoint = calc.yHorizontalStartGridlines(i: i)
       let yEndPoint = calc.yHorizontalEndGridlines(i: i)
@@ -425,8 +429,8 @@ open class ChartRenderer: UIView {
   }
   
   /// X Gridlines used by the horizontal bar graph
-  func horizontalBarGraphXGridlines(context: CGContext, initialValue: Double) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), offSet: initialValue, arrayCount: Double(currentFrame.yAxisGridlinesCount))
+  func horizontalBarGraphXGridlines(context: CGContext, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, arrayCount: Double(currentFrame.yAxisGridlinesCount), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
     
     for i in 0...currentFrame.yAxisGridlinesCount {
       let startPoint = calc.xHorizontalStartGridlines(i: i)
@@ -437,36 +441,7 @@ open class ChartRenderer: UIView {
   }
   
   
-  func barGraph(context: CGContext, array: [[Double]], initialValue: Double, graphType: String, data: BarChartDataSet, max: Double) {
-    for (i, value) in array.enumerated() {
-      if graphType == "Vertical" {
-        drawVerticalBarGraph(context: context, array: value, maxValue: max, data: data.array[i], initialValue: initialValue, overallCount: Double(i), arrayCount: Double(array.count))
-      } else {
-        drawHorizontalBarGraph(context: context, array: value, maxValue: max, data: data.array[i], initialValue: initialValue)
-      }
-    }
-  }
-  
-  /// Renders a line graph
-  func lineGraph(context: CGContext, array: [[Double]], initialValue: Double, max: Double, data: LineChartDataSet, forCombined: Bool) {
-    for (i, value) in array.enumerated() {
-      drawLineGraph(context: context, array: value, maxValue: max, source: data.array[i], forCombined: forCombined, offSetTop: 10, offSetBottom: 62, offSetLeft: 31, offSetRight: 31)
-    }
-  }
-  
-  
-  /// Renders a line graph
-  func lineBezierGraph(context: CGContext, array: [[Double]], initialValue: Double, data: LineChartDataSet) {
-    let helper = HelperFunctions()
-    let max = helper.processMultipleArrays(array: array)
-    
-    for (i, value) in array.enumerated() {
-      drawBezierCurve(context: context, array: value, maxValue: max, source: data.array[i], offSetTop: 10, offSetBottom: 62, offSetLeft: 31, offSetRight: 31)
-    }
-  }
-  
-  
-  
+ 
   
 }
 

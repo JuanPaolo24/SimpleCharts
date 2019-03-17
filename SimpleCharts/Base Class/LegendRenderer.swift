@@ -109,9 +109,20 @@ open class LegendRenderer: UIView {
     
   }
   
-  func renderBarChartLegend(context: CGContext, arrays: [BarChartData]) {
+  func renderBarChartLegend(context: CGContext, arrays: [BarChartData], position: legendPlacing, customX: Double, customY: Double) {
     for i in 1...arrays.count {
-      drawLegend(context: context, x: Double(legendMaximumDistance), y: Double(frame.size.height) - 30, legendText: arrays[i - 1].name, colour: arrays[i - 1].setBarGraphFillColour)
+      switch position {
+      case.bottom:
+        drawLegend(context: context, x: Double(legendMaximumDistance), y: Double(frame.size.height) - 30, legendText: arrays[i - 1].name, colour: arrays[i - 1].setBarGraphFillColour)
+      case.top:
+        drawLegend(context: context, x: Double(legendMaximumDistance), y: 20, legendText: arrays[i - 1].name, colour: arrays[i - 1].setBarGraphFillColour)
+      case.right:
+        drawLegend(context: context, x: Double(frame.size.width) - rightConfigxAxis, y: 20.0 * Double(i), legendText: arrays[i - 1].name, colour: arrays[i - 1].setBarGraphFillColour)
+      case.left:
+        drawLegend(context: context, x: leftConfigxAxis, y: 20.0 * Double(i), legendText: arrays[i - 1].name, colour: arrays[i - 1].setBarGraphFillColour)
+      case.custom:
+        drawLegend(context: context, x: customX, y: customY, legendText: arrays[i - 1].name, colour: arrays[i - 1].setBarGraphFillColour)
+      }
     }
   }
   
@@ -123,7 +134,7 @@ open class LegendRenderer: UIView {
     }
   }
   
-  func renderCombinedChartLegend(context: CGContext, data: CombinedChartDataSet) {
+  func renderCombinedChartLegend(context: CGContext, data: CombinedChartDataSet, position: legendPlacing, customX: Double, customY: Double) {
     let helper = HelperFunctions()
     let lineChartDataSet = data.lineData
     let barChartDataSet = data.barData
@@ -142,7 +153,18 @@ open class LegendRenderer: UIView {
     }
     
     for i in 0...dataCount {
-      drawLegend(context: context, x: Double(legendMaximumDistance), y: Double(frame.size.height) - 30, legendText: legendName[i], colour: legendColour[i])
+      switch position {
+      case.bottom:
+        drawLegend(context: context, x: Double(legendMaximumDistance), y: Double(frame.size.height) - 30, legendText: legendName[i], colour: legendColour[i])
+      case.top:
+        drawLegend(context: context, x: Double(legendMaximumDistance), y: 20, legendText: legendName[i], colour: legendColour[i])
+      case.right:
+        drawLegend(context: context, x: Double(frame.size.width) - rightConfigxAxis, y: 20.0 * Double(i + 1), legendText: legendName[i], colour: legendColour[i])
+      case.left:
+        drawLegend(context: context, x: leftConfigxAxis, y: 20.0 * Double(i + 1), legendText: legendName[i], colour: legendColour[i])
+      case.custom:
+        drawLegend(context: context, x: customX, y: customY, legendText: legendName[i], colour: legendColour[i])
+      }
     }
     
   }

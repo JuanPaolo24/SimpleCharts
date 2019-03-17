@@ -30,6 +30,18 @@ open class HorizontalBarChartView: ChartRenderer {
   /// Returns true if legend is visible
   open var isLegendVisible: Bool { get {return legendVisibility} }
   
+  /// Graph off set on the left (Default = 31)
+  open var offSetLeft:Double = 31.0
+  
+  /// Graph off set on the right (Default = 31)
+  open var offSetRight:Double = 31.0
+  
+  /// Graph off set on the bottom (Default = 62)
+  open var offSetBottom:Double = 62.0
+  
+  /// Graph off set on the top (Default = 20)
+  open var offSetTop:Double = 10.0
+  
   public var data = BarChartDataSet(dataset: [BarChartData(dataset: [0], datasetName: "Test")])
   
   override public init(frame: CGRect) {
@@ -51,15 +63,26 @@ open class HorizontalBarChartView: ChartRenderer {
       return
     }
     
+    let scale = 70.0/31.0
+    
     if UIDevice.current.orientation.isLandscape {
-      renderHorizontalBarGraph(context: context, padding: 70)
+      renderHorizontalBarGraph(context: context, landscapePadding: scale)
     } else {
-      renderHorizontalBarGraph(context: context, padding: 31)
+      renderHorizontalBarGraph(context: context, landscapePadding: 1.0)
     }
     
   }
   
-  func renderHorizontalBarGraph(context: CGContext, padding: Double) {
+  func barGraph(context: CGContext, array: [[Double]], data: BarChartDataSet, max: Double, landscapePadding: Double) {
+    let paddedLeftOffset = offSetLeft * landscapePadding
+    let paddedRightOffset = offSetRight * landscapePadding
+    
+    for (i, value) in array.enumerated() {
+      drawHorizontalBarGraph(context: context, array: value, maxValue: max, data: data.array[i], offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
+    }
+  }
+ 
+  func renderHorizontalBarGraph(context: CGContext, landscapePadding: Double) {
     let helper = HelperFunctions()
     let legend = LegendRenderer(frame: self.frame)
     let convertedData = helper.convert(chartData: data.array)
@@ -68,23 +91,23 @@ open class HorizontalBarChartView: ChartRenderer {
     let maxValue = helper.processMultipleArrays(array: convertedData)
     let arrayCount = helper.findArrayCountFrom(array: convertedData)
     
-    xAxisBase(context: context, offSetTop: 10, offSetBottom: 62, offSetLeft: 31, offSetRight: 31)
-    yAxisBase(context: context, offSetTop: 10, offSetBottom: 62, offSetLeft: 31, offSetRight: 31)
-    barGraph(context: context, array: convertedData, initialValue: padding, graphType: "Horizontal", data: data, max: maxValue)
-    horizontalBarGraphXGridlines(context: context, initialValue: padding)
-    horizontalBarGraphYGridlines(context: context, arrayCount: arrayCount, padding: padding)
+    xAxisBase(context: context, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
+    yAxisBase(context: context, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
+    barGraph(context: context, array: convertedData, data: data, max: maxValue, landscapePadding: landscapePadding)
+    horizontalBarGraphXGridlines(context: context, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
+    horizontalBarGraphYGridlines(context: context, arrayCount: arrayCount, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
     
     if yAxisVisibility == true {
-      axis.horizontalBarGraphYAxis(context: context, arrayCount: arrayCount, padding: padding)
+      axis.horizontalBarGraphYAxis(context: context, arrayCount: arrayCount, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
     }
     
     if xAxisVisibility == true {
-      axis.horizontalBarGraphXAxis(context: context, maxValue: maxValue, initialValue: padding)
+      axis.horizontalBarGraphXAxis(context: context, maxValue: maxValue, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
     }
     
-    if legendVisibility == true {
-      legend.renderBarChartLegend(context: context, arrays: data.array)
-    }
+//    if legendVisibility == true {
+//      legend.renderBarChartLegend(context: context, arrays: data.array)
+//    }
     
   }
   
