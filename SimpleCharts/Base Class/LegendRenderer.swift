@@ -9,8 +9,8 @@
 import Foundation
 
 
-enum legendPlacing {
-  case left, right, bottom, top
+public enum legendPlacing {
+  case left, right, bottom, top, custom
 }
 
 enum orientation {
@@ -19,6 +19,7 @@ enum orientation {
 
 
 open class LegendRenderer: UIView {
+
 
   public override init(frame: CGRect) {
     super.init(frame: frame)
@@ -34,6 +35,7 @@ open class LegendRenderer: UIView {
   private var leftConfigxAxis = 10.0
   private var rightConfigxAxis = 60.0
   
+  
   // Change the configuration of the legend based on the device orientation
   func legendPadding(currentOrientation: orientation) {
     if currentOrientation == .landscape {
@@ -43,6 +45,9 @@ open class LegendRenderer: UIView {
     }
     
   }
+  
+
+  
   
   /// Base function for drawing legends
   func drawLegend(context: CGContext, x: Double, y: Double, legendText: String, colour: CGColor) {
@@ -86,7 +91,7 @@ open class LegendRenderer: UIView {
   }
   
   
-  func renderLineChartLegend(context: CGContext, arrays: [LineChartData], position: legendPlacing) {
+  func renderLineChartLegend(context: CGContext, arrays: [LineChartData], position: legendPlacing, customX: Double, customY: Double) {
     for i in 1...arrays.count {
       switch position {
       case.bottom:
@@ -97,6 +102,8 @@ open class LegendRenderer: UIView {
         drawLegend(context: context, x: Double(frame.size.width) - rightConfigxAxis, y: 20.0 * Double(i), legendText: arrays[i - 1].name, colour: arrays[i - 1].setLineColour)
       case.left:
         drawLegend(context: context, x: leftConfigxAxis, y: 20.0 * Double(i), legendText: arrays[i - 1].name, colour: arrays[i - 1].setLineColour)
+      case.custom:
+        drawLegend(context: context, x: customX, y: customY, legendText: arrays[i - 1].name, colour: arrays[i - 1].setLineColour)
       }
     }
     

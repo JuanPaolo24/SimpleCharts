@@ -36,7 +36,7 @@ open class AxisRenderer: UIView {
   
   
   /// Base function for drawing Axis labels using the create label helper function
-  private func drawAxisLabels(x: Double, y: Double, text: String, width: Double, height: Double) {
+  func drawAxisLabels(x: Double, y: Double, text: String, width: Double, height: Double) {
     let textFrame = CGRect(x: x, y: y, width: width, height: height)
     
     let paragraphStyle = NSMutableParagraphStyle()
@@ -52,9 +52,10 @@ open class AxisRenderer: UIView {
     let calc = LineGraphCalculation(arrayCount: 0, maxValue: maxValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
     
     for i in 0...currentFrame.yAxisGridlinesCount {
-      let xValue = calc.yAxisLabelxValue()
+      let xValue = calc.yAxisLabelxValue(isLeft: true)
       let yValue = calc.yAxisLabelyValue(i: i)
       var label = ""
+      let xValue2 = calc.yAxisLabelxValue(isLeft: false)
       if axisInverse == true {
         label = calc.yAxisLabelText(i: currentFrame.yAxisGridlinesCount - i)
       } else {
@@ -62,6 +63,7 @@ open class AxisRenderer: UIView {
       }
       
       drawAxisLabels(x: xValue, y: yValue, text: label, width: 20, height: 40)
+      drawAxisLabels(x: xValue2, y: yValue, text: label, width: 20, height: 40)
     }
   }
   
@@ -72,10 +74,12 @@ open class AxisRenderer: UIView {
     
     for i in 0...currentFrame.yAxisGridlinesCount {
       let xValue = calc.xAxisLabelxValue(i: i)
-      let yValue = calc.xAxisLabelyValue()
+      let yValue = calc.xAxisLabelyValue(isBottom: true)
       let label = calc.xAxisLabelText(i: i)
+      let yValue2 = calc.xAxisLabelyValue(isBottom: false)
       
       drawAxisLabels(x: xValue, y: yValue, text: label, width: 20, height: 40)
+      drawAxisLabels(x: xValue, y: yValue2, text: label, width: 20, height: 40)
     }
   }
   

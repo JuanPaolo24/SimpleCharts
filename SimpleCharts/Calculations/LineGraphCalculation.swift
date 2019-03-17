@@ -180,8 +180,14 @@ open class LineGraphCalculation {
     
   }
   
-  func xAxisLabelyValue() -> Double {
-    let yValue = (frameHeight - offSetBottom) + 10
+  func xAxisLabelyValue(isBottom: Bool) -> Double {
+    var yValue = 0.0
+    
+    if isBottom == true {
+      yValue = (frameHeight - offSetBottom) + 10
+    } else {
+      yValue = offSetTop - 15
+    }
     
     return yValue
   }
@@ -202,8 +208,15 @@ open class LineGraphCalculation {
   }
   
   
-  func yAxisLabelxValue() -> Double {
-    let xValue = offSetLeft - 10
+  func yAxisLabelxValue(isLeft: Bool) -> Double {
+    var xValue = 0.0
+    
+    if isLeft == true {
+      xValue = offSetLeft - 10
+    } else {
+      xValue = frameWidth - (offSetRight - 5)
+    }
+    
     
     return xValue
   }
