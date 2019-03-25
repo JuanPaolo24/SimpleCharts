@@ -48,16 +48,16 @@ open class AxisRenderer: UIView {
   
   
   /// Renders the Y axis labels
-  func yAxis(context: CGContext, maxValue: Double, axisInverse: Bool, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
-    let calc = LineGraphCalculation(arrayCount: 0, maxValue: maxValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
+  func yAxis(context: CGContext, maxValue: Double, axisInverse: Bool, offSet: offset, gridlineCount: Double) {
+    let calc = LineGraphCalculation(array: [], arrayCount: 0, maxValue: maxValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: gridlineCount, xAxisGridlineCount: 0)
     
-    for i in 0...currentFrame.yAxisGridlinesCount {
+    for i in 0...Int(gridlineCount) {
       let xValue = calc.yAxisLabelxValue(isLeft: true)
       let yValue = calc.yAxisLabelyValue(i: i)
       var label = ""
       let xValue2 = calc.yAxisLabelxValue(isLeft: false)
       if axisInverse == true {
-        label = calc.yAxisLabelText(i: currentFrame.yAxisGridlinesCount - i)
+        label = calc.yAxisLabelText(i: Int(gridlineCount) - i)
       } else {
         label = calc.yAxisLabelText(i: i)
       }
@@ -69,10 +69,9 @@ open class AxisRenderer: UIView {
   
   
   /// Renders the X axis labels
-  func xAxis(context: CGContext, arrayCount: Int, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
-    let calc = LineGraphCalculation(arrayCount: arrayCount, maxValue: 0, frameWidth: frameWidth(), frameHeight: frameHeight(), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
-    
-    for i in 0...currentFrame.yAxisGridlinesCount {
+  func xAxis(context: CGContext, arrayCount: Int, offSet: offset, gridlineCount: Double) {
+    let calc = LineGraphCalculation(array: [], arrayCount: arrayCount, maxValue: 0, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: 0, xAxisGridlineCount: gridlineCount)
+    for i in 0...Int(gridlineCount) {
       let xValue = calc.xAxisLabelxValue(i: i)
       let yValue = calc.xAxisLabelyValue(isBottom: true)
       let label = calc.xAxisLabelText(i: i)
@@ -85,8 +84,8 @@ open class AxisRenderer: UIView {
   
   
   /// Renders the X axis label for the bar graph
-  func barGraphxAxis(context: CGContext, arrayCount: Int, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, arrayCount: Double(arrayCount), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
+  func barGraphxAxis(context: CGContext, arrayCount: Int, offSet: offset) {
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, arrayCount: Double(arrayCount), offSet: offSet)
     for i in 0...arrayCount - 1 {
       let xValue = calc.xVerticalGraphxAxisLabel(i: i)
       let yValue = calc.xVerticalGraphyAxisLabel()
@@ -94,8 +93,8 @@ open class AxisRenderer: UIView {
     }
   }
   
-  func customiseBarGraphxAxis(context: CGContext, arrayCount: Int, label: [String], offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, arrayCount: Double(arrayCount), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
+  func customiseBarGraphxAxis(context: CGContext, arrayCount: Int, label: [String], offSet: offset) {
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, arrayCount: Double(arrayCount), offSet: offSet)
     for i in 0...arrayCount - 1 {
       let xValue = calc.xVerticalGraphxAxisLabel(i: i)
       let yValue = calc.xVerticalGraphyAxisLabel()
@@ -113,9 +112,9 @@ open class AxisRenderer: UIView {
 
   
   /// Renders the horizontal bar graphs Y axis labels
-  func horizontalBarGraphYAxis(context: CGContext, arrayCount: Int, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
+  func horizontalBarGraphYAxis(context: CGContext, arrayCount: Int, offSet: offset) {
 
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, arrayCount: Double(arrayCount), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, arrayCount: Double(arrayCount), offSet: offSet)
 
     for i in 0...arrayCount - 1 {
       let xValue = calc.horizontalYAxisLabelxPoint()
@@ -128,8 +127,8 @@ open class AxisRenderer: UIView {
   
   
   /// Renders the horizontal bar graphs X axis labels
-  func horizontalBarGraphXAxis(context: CGContext, maxValue: Double, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, arrayCount: Double(currentFrame.yAxisGridlinesCount + 1), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
+  func horizontalBarGraphXAxis(context: CGContext, maxValue: Double, offSet: offset) {
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, arrayCount: Double(currentFrame.yAxisGridlinesCount + 1), offSet: offSet)
     
     for i in 0...currentFrame.yAxisGridlinesCount {
       let xValue = calc.horizontalXAxisLabelxPoint(i: i)

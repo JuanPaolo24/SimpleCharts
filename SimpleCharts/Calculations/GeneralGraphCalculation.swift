@@ -14,78 +14,58 @@ open class GeneralGraphCalculation {
   private var frameWidth: Double
   private var frameHeight: Double
   private var arrayCount: Double
-  
-  
-  private var offSetTop: Double
-  private var offSetBottom: Double
-  private var offSetLeft: Double
-  private var offSetRight: Double
+  private var offSet:offset
+  private var yAxisGridlineCount: Double
+  private var xAxisGridlineCount: Double
   
 
-  public required init(frameHeight: Double, frameWidth: Double, arrayCount: Double, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double){
+  public required init(frameHeight: Double, frameWidth: Double, arrayCount: Double, offSet: offset, yAxisGridlineCount: Double, xAxisGridlineCount: Double){
     self.frameWidth = frameWidth
     self.frameHeight = frameHeight
     self.arrayCount = arrayCount
-
-    self.offSetTop = offSetTop
-    self.offSetBottom = offSetBottom
-    self.offSetRight = offSetRight
-    self.offSetLeft = offSetLeft
+    self.offSet = offSet
+    self.yAxisGridlineCount = yAxisGridlineCount
+    self.xAxisGridlineCount = xAxisGridlineCount
   }
 
   
-  
-  
-  func yGridlineStartPoint(i: Int) -> CGPoint {
-    let frameScale = (frameHeight - offSetBottom - offSetTop) / Double(currentFrame.yAxisGridlinesCount)
-    let yAxisPadding = frameHeight - offSetBottom
+  func yGridlinePoint(i: Int, destination: position) -> CGPoint {
+    let frameScale = (frameHeight - offSet.bottom - offSet.top) / yAxisGridlineCount
+    let yAxisPadding = frameHeight - offSet.bottom
+    let xAxisPadding = frameWidth - offSet.right
     let actualValue = frameScale * Double(i)
-    let yStartPoint = CGPoint(x: offSetLeft, y: yAxisPadding - actualValue)
+    var point = CGPoint()
     
-    return yStartPoint
+    if destination == position.start {
+      point = CGPoint(x: offSet.left, y: yAxisPadding - actualValue)
+    } else {
+      point = CGPoint(x: xAxisPadding, y: yAxisPadding - actualValue)
+    }
+    
+    
+    return point
   }
   
-  func yGridlineEndPoint(i: Int) -> CGPoint {
-    let frameScale = (frameHeight - offSetBottom - offSetTop) / Double(currentFrame.yAxisGridlinesCount)
-    let yAxisPadding = frameHeight - offSetBottom
-    let xAxisPadding = frameWidth - offSetRight
-    let actualValue = frameScale * Double(i)
-    
-    let yEndPoint = CGPoint(x: xAxisPadding, y: yAxisPadding - actualValue)
-    
-    return yEndPoint
-  }
-  
-  func xGridlineStartPoint(distanceIncrement: Int) -> CGPoint {
-    let spaceLeft = frameWidth - (offSetLeft + offSetRight)
+  func xGridlinePoint(distanceIncrement: Int, destination: position) -> CGPoint {
+    let yAxisPadding = frameHeight - offSet.bottom
+    let spaceLeft = frameWidth - (offSet.left + offSet.right)
     var increment = 0.0
-    if arrayCount < 6 {
+    if arrayCount < xAxisGridlineCount {
       increment = spaceLeft / (arrayCount - 1)
     } else {
-      increment = spaceLeft / 6
+      increment = spaceLeft / xAxisGridlineCount
     }
-    let xValue = offSetLeft + (increment * Double(distanceIncrement))
-    let xStartPoint = CGPoint(x: xValue, y: offSetTop)
-    return xStartPoint
-  }
-  
-  
-  func xGridlineEndPoint(distanceIncrement: Int) -> CGPoint {
-    let yAxisPadding = frameHeight - offSetBottom
-    let spaceLeft = frameWidth - (offSetLeft + offSetRight)
-    var increment = 0.0
-    if arrayCount < 6 {
-      increment = spaceLeft / (arrayCount - 1)
-    } else {
-      increment = spaceLeft / 6
-    }
-    let xValue = offSetLeft + (increment * Double(distanceIncrement))
-    let yEndPoint = CGPoint(x: xValue, y: yAxisPadding)
-    return yEndPoint
     
+    let xValue = offSet.left + (increment * Double(distanceIncrement))
+    var point = CGPoint()
+    
+    if destination == position.start {
+      point = CGPoint(x: xValue, y: offSet.top)
+    } else {
+      point = CGPoint(x: xValue, y: yAxisPadding)
+    }
+    
+    return point
   }
-  
-  
-  
   
 }

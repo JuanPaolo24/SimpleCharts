@@ -16,23 +16,17 @@ open class BarGraphCalculation {
   private var maxValue: Double
   private var arrayCount: Double
   
-  private var offSetTop: Double
-  private var offSetBottom: Double
-  private var offSetLeft: Double
-  private var offSetRight: Double
+  private var offSet: offset
 
   
   /// Call this initializer unless you are using the horizontal gridline calculation
-  public required init(frameHeight: Double, frameWidth: Double, maxValue: Double, arrayCount: Double, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
+  public required init(frameHeight: Double, frameWidth: Double, maxValue: Double, arrayCount: Double, offSet: offset) {
     self.frameWidth = frameWidth
     self.frameHeight = frameHeight
     self.maxValue = maxValue
     self.arrayCount = arrayCount
     
-    self.offSetTop = offSetTop
-    self.offSetBottom = offSetBottom
-    self.offSetRight = offSetRight
-    self.offSetLeft = offSetLeft
+    self.offSet = offSet
   }
   
   
@@ -40,10 +34,10 @@ open class BarGraphCalculation {
   // To make sure that the group data set is centered play around with the 10.0/10.0/15.0 parameters
   
   func xVerticalValue(i: Int, dataSetCount: Double, count: Double) -> Double {
-    let spaceLeft = frameWidth - (offSetLeft + offSetRight)
+    let spaceLeft = frameWidth - (offSet.left + offSet.right)
     let scale = spaceLeft / (arrayCount * count)
     let increment = (scale * count)
-    let start = (offSetLeft + 10.0) + (((scale) * dataSetCount) - 5.0) //Increase this to increase gap between data set
+    let start = (offSet.left + 10.0) + (((scale) * dataSetCount) - 5.0) //Increase this to increase gap between data set
     let xValue = start + (increment * Double(i))
     
     
@@ -52,7 +46,7 @@ open class BarGraphCalculation {
   
   
   func yVerticalValue(value: Double) -> Double {
-    let yAxisPadding = frameHeight - offSetBottom
+    let yAxisPadding = frameHeight - offSet.bottom
     let yValuePosition = (yAxisPadding / maxValue) * value
     let yValue = yAxisPadding - yValuePosition
     
@@ -61,7 +55,7 @@ open class BarGraphCalculation {
   
   
   func verticalWidth(count: Double) -> Double {
-    let spaceLeft = frameWidth - (offSetLeft + offSetRight)
+    let spaceLeft = frameWidth - (offSet.left + offSet.right)
     let scale = spaceLeft / (arrayCount * count)
     let width = scale - 10
     
@@ -71,7 +65,7 @@ open class BarGraphCalculation {
   
   
   func verticalHeight(value: Double) -> Double {
-    let yAxisPadding = frameHeight - offSetBottom
+    let yAxisPadding = frameHeight - offSet.bottom
     let yValuePosition = (yAxisPadding / maxValue) * value
     let yValue = yAxisPadding - yValuePosition
     let height = yAxisPadding - yValue
@@ -80,13 +74,13 @@ open class BarGraphCalculation {
   }
   
   func xVerticalTextFrame(i: Int) -> Double {
-    let scale = (frameWidth - (offSetLeft + offSetRight)) / arrayCount
-    let xValue = (offSetLeft + 5) + (scale * Double(i))
+    let scale = (frameWidth - (offSet.left + offSet.right)) / arrayCount
+    let xValue = (offSet.left + 5) + (scale * Double(i))
     return xValue
   }
   
   func yVerticalTextFrame(value: Double) -> Double {
-    let yAxisPadding = frameHeight - offSetBottom
+    let yAxisPadding = frameHeight - offSet.bottom
     let yValuePosition = (yAxisPadding / maxValue) * value
     let yValue = (yAxisPadding - yValuePosition) - 15
     
@@ -98,23 +92,23 @@ open class BarGraphCalculation {
   
   
   func xGridlineStartCalculation(distanceIncrement: Int) -> CGPoint{
-    let spaceLeft = frameWidth - (offSetLeft + offSetRight)
+    let spaceLeft = frameWidth - (offSet.left + offSet.right)
     let scale = spaceLeft / (arrayCount * 2)
     let increment = (scale * 2)
-    let start = offSetLeft + (increment * Double(distanceIncrement))
+    let start = offSet.left + (increment * Double(distanceIncrement))
     
-    let xValue = CGPoint(x: start, y: offSetTop)
+    let xValue = CGPoint(x: start, y: offSet.top)
 
     return xValue
 
   }
 
   func xGridlineEndCalculation(distanceIncrement: Int) -> CGPoint{
-    let yAxisPadding = frameHeight - offSetBottom
-    let spaceLeft = frameWidth - (offSetLeft + offSetRight)
+    let yAxisPadding = frameHeight - offSet.bottom
+    let spaceLeft = frameWidth - (offSet.left + offSet.right)
     let scale = spaceLeft / (arrayCount * 2)
     let increment = (scale * 2)
-    let start = offSetLeft + (increment * Double(distanceIncrement))
+    let start = offSet.left + (increment * Double(distanceIncrement))
 
     let xValue = CGPoint(x: start, y: yAxisPadding)
 
@@ -128,19 +122,19 @@ open class BarGraphCalculation {
   // Horizontal graph calculations
   
   func xHorizontalValue() -> Double{
-    return offSetLeft
+    return offSet.left
   }
   
   func yHorizontalValue(i: Int) -> Double {
-    let scale = (frameHeight - offSetBottom) / arrayCount
+    let scale = (frameHeight - offSet.bottom) / arrayCount
     let yValue = 20 + (scale * Double(i))
     
     return yValue
   }
   
   func horizontalWidth(value: Double) -> Double {
-    let xAxisPadding = frameWidth - offSetBottom
-    let extraPadding = offSetLeft - 30
+    let xAxisPadding = frameWidth - offSet.bottom
+    let extraPadding = offSet.left - 30
     
     let width = ((xAxisPadding / maxValue) * value) - extraPadding
     
@@ -148,28 +142,28 @@ open class BarGraphCalculation {
   }
   
   func horizontalHeight() -> Double {
-    let scale = (frameHeight - offSetBottom - offSetTop) / arrayCount
+    let scale = (frameHeight - offSet.bottom - offSet.top) / arrayCount
     let height = scale - 30
     
     return height
   }
   
   func xHorizontalTextFrame(value: Double) -> Double {
-    let xAxisPadding = frameWidth - offSetBottom
-    let extraPadding = offSetLeft - 30
+    let xAxisPadding = frameWidth - offSet.bottom
+    let extraPadding = offSet.left - 30
     
     let xValue = ((xAxisPadding / maxValue) * value) - extraPadding
     
-    let xFrame = (offSetLeft + xValue) + 5
+    let xFrame = (offSet.left + xValue) + 5
     
     return xFrame
   }
   
   func yHorizontalTextFrame(i: Int) -> Double {
     var labelPadding = 25.0
-    let scale = (frameHeight - offSetBottom) / arrayCount
+    let scale = (frameHeight - offSet.bottom) / arrayCount
     
-    if offSetLeft == 70 {
+    if offSet.left == 70 {
       labelPadding = 10.0
     }
     
@@ -182,11 +176,11 @@ open class BarGraphCalculation {
   // Special gridline calculation for the Horizontal bar graph - Vertical bar graph can rely on the general graph calculation
   
   func xHorizontalStartGridlines(i: Int) -> CGPoint {
-    let spaceLeft = frameWidth - (offSetLeft + offSetRight)
+    let spaceLeft = frameWidth - (offSet.left + offSet.right)
     let increment = spaceLeft / arrayCount
-    let xValue = offSetLeft + (increment * Double(i))
+    let xValue = offSet.left + (increment * Double(i))
     
-    let xStartPoint = CGPoint(x: xValue, y: offSetTop)
+    let xStartPoint = CGPoint(x: xValue, y: offSet.top)
     
     return xStartPoint
     
@@ -194,10 +188,10 @@ open class BarGraphCalculation {
   }
   
   func xHorizontalEndGridlines(i: Int) -> CGPoint {
-    let spaceLeft = frameWidth - (offSetLeft + offSetRight)
+    let spaceLeft = frameWidth - (offSet.left + offSet.right)
     let increment = spaceLeft / arrayCount
-    let xValue = offSetLeft + (increment * Double(i))
-    let yAxisPadding = frameHeight - offSetBottom
+    let xValue = offSet.left + (increment * Double(i))
+    let yAxisPadding = frameHeight - offSet.bottom
     
     let xEndPoint = CGPoint(x: xValue, y: yAxisPadding)
     
@@ -206,21 +200,21 @@ open class BarGraphCalculation {
   
   
   func yHorizontalStartGridlines(i: Int) -> CGPoint {
-    let yAxisPadding = frameHeight - offSetBottom
-    let frameScale = (frameHeight - offSetBottom - offSetTop) / Double(arrayCount)
+    let yAxisPadding = frameHeight - offSet.bottom
+    let frameScale = (frameHeight - offSet.bottom - offSet.top) / Double(arrayCount)
     let actualValue = frameScale * Double(i)
     let yPoint = yAxisPadding - actualValue
     
-    let yStartPoint = CGPoint(x: offSetLeft, y: yPoint)
+    let yStartPoint = CGPoint(x: offSet.left, y: yPoint)
     
     
     return yStartPoint
   }
   
   func yHorizontalEndGridlines(i: Int) -> CGPoint {
-    let xAxisPadding = frameWidth - offSetLeft
-    let yAxisPadding = frameHeight - offSetBottom
-    let frameScale = (frameHeight - offSetBottom - offSetTop) / Double(arrayCount)
+    let xAxisPadding = frameWidth - offSet.left
+    let yAxisPadding = frameHeight - offSet.bottom
+    let frameScale = (frameHeight - offSet.bottom - offSet.top) / Double(arrayCount)
     let actualValue = frameScale * Double(i)
     let yPoint = yAxisPadding - actualValue
     
@@ -233,11 +227,11 @@ open class BarGraphCalculation {
   
   //A special calculation for the vertical bar graph
   func xVerticalGraphxAxisLabel(i: Int) -> Double {
-    let spaceLeft = frameWidth - (offSetLeft + offSetRight)
+    let spaceLeft = frameWidth - (offSet.left + offSet.right)
     let scale = spaceLeft / (arrayCount * 2)
     let increment = (scale * 2)
     let position = scale / 2
-    let start = offSetLeft + (increment * Double(i))
+    let start = offSet.left + (increment * Double(i))
     
 
     let xValue = start + position
@@ -249,7 +243,7 @@ open class BarGraphCalculation {
   }
   
   func xVerticalGraphyAxisLabel() -> Double {
-    let yValue = frameHeight - (offSetBottom - 7)
+    let yValue = frameHeight - (offSet.bottom - 7)
     
     return yValue
   }
@@ -259,7 +253,7 @@ open class BarGraphCalculation {
   // Horizontal Bar Graph Label Calculation
   
   func horizontalXAxisLabelxPoint(i: Int) -> Double {
-    let spaceLeft = (frameWidth - 8) - (offSetLeft + offSetRight)
+    let spaceLeft = (frameWidth - 8) - (offSet.left + offSet.right)
     var increment = 0.0
     let count = Double(arrayCount)
     
@@ -269,7 +263,7 @@ open class BarGraphCalculation {
       increment = spaceLeft / 6
     }
     
-    let xValue = offSetLeft + (increment * Double(i))
+    let xValue = offSet.left + (increment * Double(i))
     
     return xValue
   }
@@ -291,23 +285,23 @@ open class BarGraphCalculation {
   
   
   func horizontalYAxisLabelxPoint() -> Double {
-    let xValue = offSetLeft - 20
+    let xValue = offSet.left - 20
     
     return xValue
   }
   
   
   func horizontalYAxisLabelyPoint(i: Int) -> Double {
-    let spaceLeft = (frameHeight - offSetBottom - offSetTop) / arrayCount
+    let spaceLeft = (frameHeight - offSet.bottom - offSet.top) / arrayCount
     var startingPadding = 0.0
     var pad = 0.0
     
     //Landscape requires a different calculation
-    if offSetLeft == 70 {
+    if offSet.left == 70 {
       pad = 60
-      startingPadding = offSetLeft + 10
+      startingPadding = offSet.left + 10
     } else {
-      startingPadding = offSetLeft + 30
+      startingPadding = offSet.left + 30
     }
 
     let yValue = (startingPadding - pad) + (spaceLeft * Double(i))

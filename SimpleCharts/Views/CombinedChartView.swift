@@ -44,6 +44,9 @@ open class CombinedChartView: ChartRenderer {
   open var yAxis:yAxisConfiguration = yAxisConfiguration()
   
   
+  /// Line type
+  open var enableLineBezier = true
+  
   /// Add the data source
   public var data = CombinedChartDataSet(lineData: LineChartDataSet(dataset: [LineChartData(dataset: [0], datasetName: "Test")]), barData: BarChartDataSet(dataset: [BarChartData(dataset: [0], datasetName: "Test2")]))
   
@@ -117,30 +120,25 @@ open class CombinedChartView: ChartRenderer {
   func lineGraph(context: CGContext, array: [[Double]], max: Double, data: LineChartDataSet, forCombined: Bool, landscapePadding: Double) {
     let paddedLeftOffset = offSetLeft * landscapePadding
     let paddedRightOffset = offSetRight * landscapePadding
+    let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
     
     for (i, value) in array.enumerated() {
-      drawLineGraph(context: context, array: value, maxValue: max, source: data.array[i], forCombined: forCombined, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
-    }
-  }
-  
-  
-  /// Renders a line graph
-  func lineBezierGraph(context: CGContext, array: [[Double]], data: LineChartDataSet) {
-    let helper = HelperFunctions()
-    let max = helper.processMultipleArrays(array: array)
-    
-    
-    for (i, value) in array.enumerated() {
-      drawBezierCurve(context: context, array: value, maxValue: max, source: data.array[i], offSetTop: 10, offSetBottom: 62, offSetLeft: 31, offSetRight: 31)
+      
+      if enableLineBezier == true {
+        drawBezierCurve(context: context, array: value, maxValue: max, source: data.array[i], offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
+      } else {
+        drawLineGraph(context: context, array: value, maxValue: max, source: data.array[i], forCombined: forCombined, offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
+      }
     }
   }
   
   func barGraph(context: CGContext, array: [[Double]], data: BarChartDataSet, max: Double, landscapePadding: Double) {
     let paddedLeftOffset = offSetLeft * landscapePadding
     let paddedRightOffset = offSetRight * landscapePadding
+    let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
     
     for (i, value) in array.enumerated() {
-      drawVerticalBarGraph(context: context, array: value, maxValue: max, data: data.array[i], overallCount: Double(i), arrayCount: Double(array.count), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
+      drawVerticalBarGraph(context: context, array: value, maxValue: max, data: data.array[i], overallCount: Double(i), arrayCount: Double(array.count), offSet: offSet)
     }
   }
   
@@ -153,6 +151,7 @@ open class CombinedChartView: ChartRenderer {
     
     let paddedLeftOffset = offSetLeft * landscapePadding
     let paddedRightOffset = offSetRight * landscapePadding
+    let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
     
     let lineChartDataSet = data.lineData
     let barChartDataSet = data.barData
@@ -171,19 +170,19 @@ open class CombinedChartView: ChartRenderer {
     
     legend.legendPadding(currentOrientation: currentOrientation)
     
-    xAxisBase(context: context, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
-    yAxisBase(context: context, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
+    xAxisBase(context: context, offSet: offSet)
+    yAxisBase(context: context, offSet: offSet)
     barGraph(context: context, array: barConvertedData, data: barChartDataSet, max: maxValue, landscapePadding: landscapePadding)
     lineGraph(context: context, array: lineConvertedData, max: maxValue, data: lineChartDataSet, forCombined: true, landscapePadding: landscapePadding)
-    yAxisGridlines(context: context, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
-    barxAxisGridlines(context: context, arrayCount: arrayCount, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
+    yAxisGridlines(context: context, offSet: offSet, gridlineCount: yAxis.setGridlineCount)
+    barxAxisGridlines(context: context, arrayCount: arrayCount, offSet: offSet)
     
     if yAxis.yAxisVisibility == true {
-      axis.yAxis(context: context, maxValue: maxValue, axisInverse: yAxis.enableYAxisInverse, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset - 10, offSetRight: paddedRightOffset)
+      axis.yAxis(context: context, maxValue: maxValue, axisInverse: yAxis.enableYAxisInverse, offSet: offSet, gridlineCount: yAxis.setGridlineCount)
     }
     
     if xAxis.xAxisVisibility == true {
-      axis.barGraphxAxis(context: context, arrayCount: arrayCount, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
+      axis.barGraphxAxis(context: context, arrayCount: arrayCount, offSet: offSet)
     }
     
     if legendVisibility == true {

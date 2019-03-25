@@ -9,13 +9,6 @@
 import Foundation
 
 
-public enum legendPlacing {
-  case left, right, bottom, top, custom
-}
-
-enum orientation {
-  case landscape, portrait
-}
 
 
 open class LegendRenderer: UIView {

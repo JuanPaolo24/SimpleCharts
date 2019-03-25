@@ -9,6 +9,7 @@
 import Foundation
 import CoreGraphics
 
+
 extension FloatingPoint {
   var degreesToRadians: Self {return self * .pi / 180}
 }
@@ -23,6 +24,8 @@ open class ChartRenderer: UIView {
   public required init?(coder aDecoder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
+  
+
   
   
   //General
@@ -178,8 +181,8 @@ open class ChartRenderer: UIView {
   
   
   /// Base function for drawing single line graphs. Requires context, the array to be plotted and the max value of the whole data set
-  func drawLineGraph(context: CGContext, array: [Double], maxValue: Double, source: LineChartData, forCombined: Bool, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
-    let calc = LineGraphCalculation(array: array, maxValue: maxValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
+  func drawLineGraph(context: CGContext, array: [Double], maxValue: Double, source: LineChartData, forCombined: Bool, offSet: offset, xGridlineCount: Double, yGridlineCount: Double) {
+    let calc = LineGraphCalculation(array: array, arrayCount: 0, maxValue: maxValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yGridlineCount, xAxisGridlineCount: xGridlineCount)
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.alignment = .justified
     
@@ -197,7 +200,7 @@ open class ChartRenderer: UIView {
     
     let path = pathStartPoint(startingXValue: startingXValue, startingYValue: startingYValue)
     
-    let path2 = pathStartPoint(startingXValue: startingXValue, startingYValue: frameHeight() - offSetBottom)
+    let path2 = pathStartPoint(startingXValue: startingXValue, startingYValue: frameHeight() - offSet.bottom)
     
     var xValue: Double = 0.0
     var yValue: Double = 0.0
@@ -228,7 +231,7 @@ open class ChartRenderer: UIView {
     }
     
     if source.enableGraphFill == true {
-      drawFillLine(context: context, startingPoint: path2, destinationPoint: CGPoint(x: xValue, y: frameHeight() - offSetBottom))
+      drawFillLine(context: context, startingPoint: path2, destinationPoint: CGPoint(x: xValue, y: frameHeight() - offSet.bottom))
       
       addFill(context: context, path: path2)
     }
@@ -238,8 +241,8 @@ open class ChartRenderer: UIView {
 
   
   /// Base function for drawing line graphs with bezier curve. Requires context, the array to be plotted and the max value of the whole data set
-  func drawBezierCurve(context: CGContext, array: [Double], maxValue: Double, source: LineChartData, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
-    let calc = LineGraphCalculation(array: array, maxValue: maxValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
+  func drawBezierCurve(context: CGContext, array: [Double], maxValue: Double, source: LineChartData, offSet: offset, xGridlineCount: Double, yGridlineCount: Double) {
+    let calc = LineGraphCalculation(array: array, arrayCount: 0, maxValue: maxValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yGridlineCount, xAxisGridlineCount: xGridlineCount)
     
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.alignment = .justified
@@ -250,7 +253,7 @@ open class ChartRenderer: UIView {
     let startingXValue = calc.xlineGraphPoint(i: 0)
     
     let path = pathStartPoint(startingXValue: startingXValue, startingYValue: startingYValue)
-    let path2 = pathStartPoint(startingXValue: startingXValue, startingYValue: frameHeight() - offSetBottom)
+    let path2 = pathStartPoint(startingXValue: startingXValue, startingYValue: frameHeight() - offSet.bottom)
     
     var destination = CGPoint()
     
@@ -278,21 +281,21 @@ open class ChartRenderer: UIView {
     }
     
     if source.enableGraphFill == true {
-      drawFillLine(context: context, startingPoint: path2, destinationPoint: CGPoint(x: Double(destination.x), y: frameHeight() - offSetBottom))
+      drawFillLine(context: context, startingPoint: path2, destinationPoint: CGPoint(x: Double(destination.x), y: frameHeight() - offSet.bottom))
       addFill(context: context, path: path2)
     }
   }
   
   
   /// A function that draws the Y axis line used by Line and Bar Graph
-  func yAxisBase(context: CGContext, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
-    let yAxisPadding = frameHeight() - offSetBottom
-    let xAxisPadding = frameWidth() - offSetRight
+  func yAxisBase(context: CGContext, offSet: offset) {
+    let yAxisPadding = frameHeight() - offSet.bottom
+    let xAxisPadding = frameWidth() - offSet.right
     
-    let leftBaseStartPoint = CGPoint(x: offSetLeft, y: offSetTop)
-    let leftBaseEndPoint = CGPoint(x: offSetLeft, y: yAxisPadding)
+    let leftBaseStartPoint = CGPoint(x: offSet.left, y: offSet.top)
+    let leftBaseEndPoint = CGPoint(x: offSet.left, y: yAxisPadding)
     
-    let rightBaseStartPoint = CGPoint(x: xAxisPadding, y: offSetTop)
+    let rightBaseStartPoint = CGPoint(x: xAxisPadding, y: offSet.top)
     let rightBaseEndPoint = CGPoint(x: xAxisPadding, y: yAxisPadding)
     
     drawAxisBase(context: context, start: leftBaseStartPoint, end: leftBaseEndPoint, strokeColour: setYAxisBaseColour, width: 3.0)
@@ -301,16 +304,16 @@ open class ChartRenderer: UIView {
   
   /// A function that draw the X axis line used by Line and Bar Graph
   
-  func xAxisBase(context: CGContext, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
+  func xAxisBase(context: CGContext, offSet: offset) {
     
-    let yAxisPadding = frameHeight() - offSetBottom
-    let xAxisPadding = frameWidth() - offSetRight
+    let yAxisPadding = frameHeight() - offSet.bottom
+    let xAxisPadding = frameWidth() - offSet.right
     
-    let bottomBaseStartPoint = CGPoint(x: offSetLeft, y: yAxisPadding)
+    let bottomBaseStartPoint = CGPoint(x: offSet.left, y: yAxisPadding)
     let bottomBaseEndPoint = CGPoint(x: xAxisPadding, y: yAxisPadding)
     
-    let upperBaseStartPoint = CGPoint(x: offSetLeft, y: offSetTop)
-    let upperBaseEndPoint = CGPoint(x: xAxisPadding, y: offSetTop)
+    let upperBaseStartPoint = CGPoint(x: offSet.left, y: offSet.top)
+    let upperBaseEndPoint = CGPoint(x: xAxisPadding, y: offSet.top)
     
     drawAxisBase(context: context, start: bottomBaseStartPoint, end: bottomBaseEndPoint, strokeColour: setXAxisBaseColour, width: 2.0)
     drawAxisBase(context: context, start: upperBaseStartPoint, end: upperBaseEndPoint, strokeColour: setXAxisBaseColour, width: 2.0)
@@ -319,11 +322,12 @@ open class ChartRenderer: UIView {
   
   
   /// Renders the Y axis Gridlines
-  func yAxisGridlines(context: CGContext, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
-    let calc = GeneralGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), arrayCount: 0, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
-    for i in 0...currentFrame.yAxisGridlinesCount {
-      let yStartPoint = calc.yGridlineStartPoint(i: i)
-      let yEndPoint = calc.yGridlineEndPoint(i: i)
+  func yAxisGridlines(context: CGContext, offSet: offset, gridlineCount: Double) {
+    let calc = GeneralGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), arrayCount: 0, offSet: offSet, yAxisGridlineCount: gridlineCount, xAxisGridlineCount: 0)
+    
+    for i in 0...Int(gridlineCount) {
+      let yStartPoint = calc.yGridlinePoint(i: i, destination: position.start)
+      let yEndPoint = calc.yGridlinePoint(i: i, destination: position.end)
       
       if enableYGridline == true {
         drawGridLines(context: context, start: yStartPoint, end: yEndPoint)
@@ -333,12 +337,13 @@ open class ChartRenderer: UIView {
   
   
   /// Renders the X axis Gridlines
-  func xAxisGridlines(context: CGContext, arrayCount: Int, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
-    let calc = GeneralGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), arrayCount: Double(arrayCount), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
+  func xAxisGridlines(context: CGContext, arrayCount: Int, offSet: offset, gridlineCount: Double) {
+    let calc = GeneralGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), arrayCount: Double(arrayCount), offSet: offSet, yAxisGridlineCount: 0, xAxisGridlineCount: gridlineCount)
     
-    for i in 0...currentFrame.yAxisGridlinesCount {
-      let startPoint = calc.xGridlineStartPoint(distanceIncrement: i)
-      let endPoint = calc.xGridlineEndPoint(distanceIncrement: i)
+    
+    for i in 0...Int(gridlineCount) {
+      let startPoint = calc.xGridlinePoint(distanceIncrement: i, destination: position.start)
+      let endPoint = calc.xGridlinePoint(distanceIncrement: i, destination: position.end)
       if enableXGridline == true {
         drawGridLines(context: context, start: startPoint, end: endPoint)
       }
@@ -347,8 +352,8 @@ open class ChartRenderer: UIView {
   }
   
   /// Renders a special X axis gridline for the bar chart
-  func barxAxisGridlines(context: CGContext, arrayCount: Int, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, arrayCount: Double(arrayCount), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
+  func barxAxisGridlines(context: CGContext, arrayCount: Int, offSet: offset) {
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, arrayCount: Double(arrayCount), offSet: offSet)
     
     for i in 0...arrayCount - 1 {
       let startPoint = calc.xGridlineStartCalculation(distanceIncrement: i)
@@ -364,9 +369,9 @@ open class ChartRenderer: UIView {
   
   
   /// Renders a horizontal bar graph
-  func drawHorizontalBarGraph(context: CGContext, array: [Double], maxValue: Double, data: BarChartData, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
+  func drawHorizontalBarGraph(context: CGContext, array: [Double], maxValue: Double, data: BarChartData, offSet: offset) {
 
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, arrayCount: Double(array.count), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, arrayCount: Double(array.count), offSet: offSet)
     
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.alignment = .justified
@@ -388,9 +393,9 @@ open class ChartRenderer: UIView {
   
   
   // Renders a vertical bar graph with support for multiple data sets
-  func drawVerticalBarGraph(context: CGContext, array: [Double], maxValue: Double, data: BarChartData, overallCount: Double, arrayCount: Double, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
+  func drawVerticalBarGraph(context: CGContext, array: [Double], maxValue: Double, data: BarChartData, overallCount: Double, arrayCount: Double, offSet: offset) {
     
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, arrayCount: Double(array.count), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, arrayCount: Double(array.count), offSet: offSet)
     
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.alignment = .justified
@@ -419,8 +424,8 @@ open class ChartRenderer: UIView {
   
   
   /// Y Gridlines used by the horizontal bar graph
-  func horizontalBarGraphYGridlines(context: CGContext, arrayCount: Int, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, arrayCount: Double(arrayCount), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
+  func horizontalBarGraphYGridlines(context: CGContext, arrayCount: Int, offSet: offset) {
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, arrayCount: Double(arrayCount), offSet: offSet)
     for i in 0...arrayCount {
       let yStartPoint = calc.yHorizontalStartGridlines(i: i)
       let yEndPoint = calc.yHorizontalEndGridlines(i: i)
@@ -429,8 +434,8 @@ open class ChartRenderer: UIView {
   }
   
   /// X Gridlines used by the horizontal bar graph
-  func horizontalBarGraphXGridlines(context: CGContext, offSetTop: Double, offSetBottom: Double, offSetLeft: Double, offSetRight: Double) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, arrayCount: Double(currentFrame.yAxisGridlinesCount), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
+  func horizontalBarGraphXGridlines(context: CGContext, offSet: offset) {
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, arrayCount: Double(currentFrame.yAxisGridlinesCount), offSet: offSet)
     
     for i in 0...currentFrame.yAxisGridlinesCount {
       let startPoint = calc.xHorizontalStartGridlines(i: i)

@@ -129,9 +129,10 @@ open class BarChartView: ChartRenderer {
   func barGraph(context: CGContext, array: [[Double]], data: BarChartDataSet, max: Double, landscapePadding: Double) {
     let paddedLeftOffset = offSetLeft * landscapePadding
     let paddedRightOffset = offSetRight * landscapePadding
+    let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
     
     for (i, value) in array.enumerated() {
-      drawVerticalBarGraph(context: context, array: value, maxValue: max, data: data.array[i], overallCount: Double(i), arrayCount: Double(array.count), offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
+      drawVerticalBarGraph(context: context, array: value, maxValue: max, data: data.array[i], overallCount: Double(i), arrayCount: Double(array.count), offSet: offSet)
     }
   }
 
@@ -154,24 +155,24 @@ open class BarChartView: ChartRenderer {
     
     let paddedLeftOffset = offSetLeft * landscapePadding
     let paddedRightOffset = offSetRight * landscapePadding
-    
+    let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
     
     legend.legendPadding(currentOrientation: currentOrientation)
     
-    xAxisBase(context: context, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
-    yAxisBase(context: context, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
+    xAxisBase(context: context, offSet: offSet)
+    yAxisBase(context: context, offSet: offSet)
     barGraph(context: context, array: convertedData, data: data, max: maxValue, landscapePadding: landscapePadding)
-    barxAxisGridlines(context: context, arrayCount: arrayCount, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
+    barxAxisGridlines(context: context, arrayCount: arrayCount, offSet: offSet)
     
     if yAxis.yAxisVisibility == true {
-      axis.yAxis(context: context, maxValue: maxValue, axisInverse: enableYAxisInverse, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset - 10, offSetRight: paddedRightOffset)
+      axis.yAxis(context: context, maxValue: maxValue, axisInverse: enableYAxisInverse, offSet: offSet, gridlineCount: yAxis.setGridlineCount)
     }
     
     if xAxis.xAxisVisibility == true {
       if enableAxisCustomisation == true {
-        axis.customiseBarGraphxAxis(context: context, arrayCount: arrayCount, label: setXAxisLabel, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
+        axis.customiseBarGraphxAxis(context: context, arrayCount: arrayCount, label: setXAxisLabel, offSet: offSet)
       } else {
-        axis.barGraphxAxis(context: context, arrayCount: arrayCount, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
+        axis.barGraphxAxis(context: context, arrayCount: arrayCount, offSet: offSet)
       }
       
     }

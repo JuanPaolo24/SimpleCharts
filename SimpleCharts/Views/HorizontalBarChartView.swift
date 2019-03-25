@@ -76,9 +76,10 @@ open class HorizontalBarChartView: ChartRenderer {
   func barGraph(context: CGContext, array: [[Double]], data: BarChartDataSet, max: Double, landscapePadding: Double) {
     let paddedLeftOffset = offSetLeft * landscapePadding
     let paddedRightOffset = offSetRight * landscapePadding
+    let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
     
     for (i, value) in array.enumerated() {
-      drawHorizontalBarGraph(context: context, array: value, maxValue: max, data: data.array[i], offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: paddedLeftOffset, offSetRight: paddedRightOffset)
+      drawHorizontalBarGraph(context: context, array: value, maxValue: max, data: data.array[i], offSet: offSet)
     }
   }
  
@@ -90,19 +91,22 @@ open class HorizontalBarChartView: ChartRenderer {
     
     let maxValue = helper.processMultipleArrays(array: convertedData)
     let arrayCount = helper.findArrayCountFrom(array: convertedData)
+    let paddedLeftOffset = offSetLeft * landscapePadding
+    let paddedRightOffset = offSetRight * landscapePadding
+    let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
     
-    xAxisBase(context: context, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
-    yAxisBase(context: context, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
+    xAxisBase(context: context, offSet: offSet)
+    yAxisBase(context: context, offSet: offSet)
     barGraph(context: context, array: convertedData, data: data, max: maxValue, landscapePadding: landscapePadding)
-    horizontalBarGraphXGridlines(context: context, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
-    horizontalBarGraphYGridlines(context: context, arrayCount: arrayCount, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
+    horizontalBarGraphXGridlines(context: context, offSet: offSet)
+    horizontalBarGraphYGridlines(context: context, arrayCount: arrayCount, offSet: offSet)
     
     if yAxisVisibility == true {
-      axis.horizontalBarGraphYAxis(context: context, arrayCount: arrayCount, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
+      axis.horizontalBarGraphYAxis(context: context, arrayCount: arrayCount, offSet: offSet)
     }
     
     if xAxisVisibility == true {
-      axis.horizontalBarGraphXAxis(context: context, maxValue: maxValue, offSetTop: offSetTop, offSetBottom: offSetBottom, offSetLeft: offSetLeft, offSetRight: offSetRight)
+      axis.horizontalBarGraphXAxis(context: context, maxValue: maxValue, offSet: offSet)
     }
     
 //    if legendVisibility == true {

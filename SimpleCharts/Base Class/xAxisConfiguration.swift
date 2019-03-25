@@ -18,6 +18,7 @@ open class xAxisConfiguration {
   /// Returns true if X Axis label is visible
   open var isxAxisLabelVisible: Bool { get {return xAxisVisibility} }
   
-
+  /// Number of gridlines (Default = 6)
+  open var setGridlineCount:Double = 6
   
 }

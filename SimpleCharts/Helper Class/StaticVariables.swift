@@ -11,11 +11,8 @@ import Foundation
 
 struct currentFrame {
   
-  ///Current Value = 31
-  static let leftAndRightSidePadding = 31.0
   ///Current Value = 6
   static let yAxisGridlinesCount = 6 //might introduce this as a customisation
-  ///Current Value = 62
-  static let distanceFromBottom = 62.0
+
   
 }

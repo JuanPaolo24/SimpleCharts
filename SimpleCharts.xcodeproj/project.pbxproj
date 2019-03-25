@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		281901872247EB1D00E352F8 /* CustomTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 281901862247EB1D00E352F8 /* CustomTypes.swift */; };
 		282ABB0D22240EB200785C78 /* HorizontalBarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282ABB0C22240EB200785C78 /* HorizontalBarChartView.swift */; };
 		282ABB1B22255C7800785C78 /* ArcRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282ABB1A22255C7800785C78 /* ArcRenderer.swift */; };
 		282ABB1D22255C9E00785C78 /* PieChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282ABB1C22255C9E00785C78 /* PieChartView.swift */; };
@@ -48,6 +49,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		281901862247EB1D00E352F8 /* CustomTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTypes.swift; sourceTree = "<group>"; };
 		282ABB0C22240EB200785C78 /* HorizontalBarChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalBarChartView.swift; sourceTree = "<group>"; };
 		282ABB1A22255C7800785C78 /* ArcRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArcRenderer.swift; sourceTree = "<group>"; };
 		282ABB1C22255C9E00785C78 /* PieChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieChartView.swift; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 			children = (
 				287F1DF9221AA66200A61908 /* HelperFunctions.swift */,
 				287F1DFE221B1ABE00A61908 /* StaticVariables.swift */,
+				281901862247EB1D00E352F8 /* CustomTypes.swift */,
 			);
 			path = "Helper Class";
 			sourceTree = "<group>";
@@ -328,6 +331,7 @@
 				287F1E16221EB17C00A61908 /* AxisRenderer.swift in Sources */,
 				28DA74C0223E6F6E005C13D5 /* yAxisConfiguration.swift in Sources */,
 				282ABB1B22255C7800785C78 /* ArcRenderer.swift in Sources */,
+				281901872247EB1D00E352F8 /* CustomTypes.swift in Sources */,
 				287F1E0A221D91EA00A61908 /* LegendRenderer.swift in Sources */,
 				282ABB1D22255C9E00785C78 /* PieChartView.swift in Sources */,
 				2866D569220C72060009005A /* LineChartView.swift in Sources */,
