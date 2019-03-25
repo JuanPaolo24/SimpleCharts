@@ -106,8 +106,10 @@ open class ChartRenderer: UIView {
   private func drawCirclePoints(context: CGContext, destination: CGPoint, source: LineChartData) {
     
     context.addArc(center: destination, radius: source.setCirclePointRadius, startAngle: CGFloat(0).degreesToRadians, endAngle: CGFloat(360).degreesToRadians, clockwise: true)
-    context.setFillColor(source.setCirclePointColour)
+    
+    context.setFillColor(source.setLineGraphColour)
     context.fillPath()
+    
     
 
   }
@@ -116,9 +118,10 @@ open class ChartRenderer: UIView {
   private func drawLines(context: CGContext, startingPoint: CGMutablePath, destinationPoint: CGPoint, source: LineChartData) {
     startingPoint.addLine(to: destinationPoint)
     context.addPath(startingPoint)
-    context.setStrokeColor(source.setLineColour)
+    context.setStrokeColor(source.setLineGraphColour)
     context.strokePath()
     context.setLineWidth(source.setLineWidth)
+    
   }
   
   
@@ -147,7 +150,7 @@ open class ChartRenderer: UIView {
   private func addBezierCurve(context: CGContext, startingPoint: CGMutablePath, point: CGPoint, control1: CGPoint, control2: CGPoint, source: LineChartData) {
     startingPoint.addCurve(to: point, control1: control1, control2: control2)
     context.addPath(startingPoint)
-    context.setStrokeColor(source.setLineColour)
+    context.setStrokeColor(source.setLineGraphColour)
     context.strokePath()
   }
   
@@ -216,9 +219,9 @@ open class ChartRenderer: UIView {
       
       yValue = calc.ylineGraphPoint(value: value)
       
-      
       if source.enableCirclePointVisibility == true {
         drawCirclePoints(context: context, destination: CGPoint(x: xValue, y: yValue), source: source)
+
       }
       if source.enableLineVisibility == true {
         drawLines(context: context, startingPoint: path, destinationPoint: CGPoint(x: xValue, y: yValue), source: source)
@@ -427,19 +430,19 @@ open class ChartRenderer: UIView {
   func horizontalBarGraphYGridlines(context: CGContext, arrayCount: Int, offSet: offset) {
     let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, arrayCount: Double(arrayCount), offSet: offSet)
     for i in 0...arrayCount {
-      let yStartPoint = calc.yHorizontalStartGridlines(i: i)
-      let yEndPoint = calc.yHorizontalEndGridlines(i: i)
+      let yStartPoint = calc.yHorizontalGridline(i: i, destination: position.start)
+      let yEndPoint = calc.yHorizontalGridline(i: i, destination: position.end)
       drawGridLines(context: context, start: yStartPoint, end: yEndPoint)
     }
   }
   
   /// X Gridlines used by the horizontal bar graph
-  func horizontalBarGraphXGridlines(context: CGContext, offSet: offset) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, arrayCount: Double(currentFrame.yAxisGridlinesCount), offSet: offSet)
+  func horizontalBarGraphXGridlines(context: CGContext, offSet: offset, gridline: Double) {
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, arrayCount: gridline, offSet: offSet)
     
-    for i in 0...currentFrame.yAxisGridlinesCount {
-      let startPoint = calc.xHorizontalStartGridlines(i: i)
-      let endPoint = calc.xHorizontalEndGridlines(i: i)
+    for i in 0...Int(gridline) {
+      let startPoint = calc.xHorizontalGridline(i: i, destination: position.start)
+      let endPoint = calc.xHorizontalGridline(i: i, destination: position.end)
       
       drawGridLines(context: context, start: startPoint, end: endPoint)
     }

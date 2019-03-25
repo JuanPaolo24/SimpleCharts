@@ -145,11 +145,18 @@ open class BarChartView: ChartRenderer {
     
     var maxValue = 0.0
     
+    let actualMax = helper.processMultipleArrays(array: convertedData)
+    
     if enableAxisCustomisation == true {
-      maxValue = yAxis.setYAxisInterval * 6
+      if yAxis.enableMaximumValueCalculation == true {
+        maxValue = yAxis.setYAxisMaximumValue
+      } else {
+        maxValue = yAxis.setYAxisInterval * yAxis.setGridlineCount
+      }
     } else {
-      maxValue = helper.processMultipleArrays(array: convertedData)
+      maxValue = actualMax
     }
+    
     
     let arrayCount = helper.findArrayCountFrom(array: convertedData)
     

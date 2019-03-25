@@ -88,15 +88,15 @@ open class LegendRenderer: UIView {
     for i in 1...arrays.count {
       switch position {
       case.bottom:
-        drawLegend(context: context, x: Double(legendMaximumDistance), y: Double(frame.size.height) - 30, legendText: arrays[i - 1].name, colour: arrays[i - 1].setLineColour)
+        drawLegend(context: context, x: Double(legendMaximumDistance), y: Double(frame.size.height) - 30, legendText: arrays[i - 1].name, colour: arrays[i - 1].setLineGraphColour)
       case.top:
-        drawLegend(context: context, x: Double(legendMaximumDistance), y: 20, legendText: arrays[i - 1].name, colour: arrays[i - 1].setLineColour)
+        drawLegend(context: context, x: Double(legendMaximumDistance), y: 20, legendText: arrays[i - 1].name, colour: arrays[i - 1].setLineGraphColour)
       case.right:
-        drawLegend(context: context, x: Double(frame.size.width) - rightConfigxAxis, y: 20.0 * Double(i), legendText: arrays[i - 1].name, colour: arrays[i - 1].setLineColour)
+        drawLegend(context: context, x: Double(frame.size.width) - rightConfigxAxis, y: 20.0 * Double(i), legendText: arrays[i - 1].name, colour: arrays[i - 1].setLineGraphColour)
       case.left:
-        drawLegend(context: context, x: leftConfigxAxis, y: 20.0 * Double(i), legendText: arrays[i - 1].name, colour: arrays[i - 1].setLineColour)
+        drawLegend(context: context, x: leftConfigxAxis, y: 20.0 * Double(i), legendText: arrays[i - 1].name, colour: arrays[i - 1].setLineGraphColour)
       case.custom:
-        drawLegend(context: context, x: customX, y: customY, legendText: arrays[i - 1].name, colour: arrays[i - 1].setLineColour)
+        drawLegend(context: context, x: customX, y: customY, legendText: arrays[i - 1].name, colour: arrays[i - 1].setLineGraphColour)
       }
     }
     
@@ -141,7 +141,7 @@ open class LegendRenderer: UIView {
     for i in 0...dataCount / 2 {
       legendName.append(lineChartDataSet.array[i].name)
       legendName.append(barChartDataSet.array[i].name)
-      legendColour.append(lineChartDataSet.array[i].setLineColour)
+      legendColour.append(lineChartDataSet.array[i].setLineGraphColour)
       legendColour.append(barChartDataSet.array[i].setBarGraphFillColour)
     }
     

@@ -28,11 +28,8 @@ open class LineChartData: ChartData {
   /// Returns true if line is visible
   open var isLineVisible: Bool { get {return enableLineVisibility} }
   
-  /// Set Circle Point (Line Graph) colour
-  open var setCirclePointColour = UIColor.black.cgColor
-  
-  /// Set Line (Line Graph) colour
-  open var setLineColour = UIColor.black.cgColor
+  /// Set the graph colour both the circle point and the line
+  open var setLineGraphColour = UIColor.black.cgColor
   
   /// Set Circle Point Radius (Default = 3)
   open var setCirclePointRadius: CGFloat = 3.0

@@ -175,53 +175,41 @@ open class BarGraphCalculation {
   
   // Special gridline calculation for the Horizontal bar graph - Vertical bar graph can rely on the general graph calculation
   
-  func xHorizontalStartGridlines(i: Int) -> CGPoint {
-    let spaceLeft = frameWidth - (offSet.left + offSet.right)
-    let increment = spaceLeft / arrayCount
-    let xValue = offSet.left + (increment * Double(i))
-    
-    let xStartPoint = CGPoint(x: xValue, y: offSet.top)
-    
-    return xStartPoint
-    
-    
-  }
-  
-  func xHorizontalEndGridlines(i: Int) -> CGPoint {
+  func xHorizontalGridline(i: Int, destination: position) -> CGPoint {
     let spaceLeft = frameWidth - (offSet.left + offSet.right)
     let increment = spaceLeft / arrayCount
     let xValue = offSet.left + (increment * Double(i))
     let yAxisPadding = frameHeight - offSet.bottom
     
-    let xEndPoint = CGPoint(x: xValue, y: yAxisPadding)
+    var point = CGPoint()
     
-    return xEndPoint
+    if destination == position.start {
+      point = CGPoint(x: xValue, y: offSet.top)
+    } else {
+      point = CGPoint(x: xValue, y: yAxisPadding)
+    }
+    
+    return point
+    
+    
   }
-  
-  
-  func yHorizontalStartGridlines(i: Int) -> CGPoint {
+
+  func yHorizontalGridline(i: Int, destination: position) -> CGPoint {
+    let xAxisPadding = frameWidth - offSet.right
     let yAxisPadding = frameHeight - offSet.bottom
     let frameScale = (frameHeight - offSet.bottom - offSet.top) / Double(arrayCount)
     let actualValue = frameScale * Double(i)
     let yPoint = yAxisPadding - actualValue
     
-    let yStartPoint = CGPoint(x: offSet.left, y: yPoint)
+    var point = CGPoint()
     
+    if destination == position.start {
+      point = CGPoint(x: offSet.left, y: yPoint)
+    } else {
+      point = CGPoint(x: xAxisPadding, y: yPoint)
+    }
     
-    return yStartPoint
-  }
-  
-  func yHorizontalEndGridlines(i: Int) -> CGPoint {
-    let xAxisPadding = frameWidth - offSet.left
-    let yAxisPadding = frameHeight - offSet.bottom
-    let frameScale = (frameHeight - offSet.bottom - offSet.top) / Double(arrayCount)
-    let actualValue = frameScale * Double(i)
-    let yPoint = yAxisPadding - actualValue
-    
-    let yEndPoint = CGPoint(x: xAxisPadding, y: yPoint)
-    
-    return yEndPoint
-    
+    return point
   }
   
   
@@ -270,17 +258,10 @@ open class BarGraphCalculation {
   
   
   func horizontalXAxisLabelyPoint() -> Double {
-    let yValue = frameHeight - 55
+    let yValue = frameHeight - 30
     return yValue
   }
   
-  
-  func horizontalXAxisText(i: Int) -> String {
-    let actualDataScale = Int(maxValue / 6)
-    let label = String(i * actualDataScale)
-    
-    return label
-  }
   
   
   

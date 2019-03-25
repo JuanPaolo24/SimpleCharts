@@ -23,7 +23,6 @@
 		2866D577220DB73D0009005A /* BarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2866D576220DB73D0009005A /* BarChartView.swift */; };
 		2866D57E2211E7530009005A /* BarChartData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2866D57D2211E7530009005A /* BarChartData.swift */; };
 		287F1DFA221AA66200A61908 /* HelperFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 287F1DF9221AA66200A61908 /* HelperFunctions.swift */; };
-		287F1DFF221B1ABE00A61908 /* StaticVariables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 287F1DFE221B1ABE00A61908 /* StaticVariables.swift */; };
 		287F1E04221C640F00A61908 /* ChartData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 287F1E03221C640F00A61908 /* ChartData.swift */; };
 		287F1E0A221D91EA00A61908 /* LegendRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 287F1E09221D91EA00A61908 /* LegendRenderer.swift */; };
 		287F1E10221DA22E00A61908 /* LineChartDataSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 287F1E0F221DA22E00A61908 /* LineChartDataSet.swift */; };
@@ -66,7 +65,6 @@
 		2866D576220DB73D0009005A /* BarChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarChartView.swift; sourceTree = "<group>"; };
 		2866D57D2211E7530009005A /* BarChartData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarChartData.swift; sourceTree = "<group>"; };
 		287F1DF9221AA66200A61908 /* HelperFunctions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelperFunctions.swift; sourceTree = "<group>"; };
-		287F1DFE221B1ABE00A61908 /* StaticVariables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticVariables.swift; sourceTree = "<group>"; };
 		287F1E03221C640F00A61908 /* ChartData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartData.swift; sourceTree = "<group>"; };
 		287F1E09221D91EA00A61908 /* LegendRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegendRenderer.swift; sourceTree = "<group>"; };
 		287F1E0F221DA22E00A61908 /* LineChartDataSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineChartDataSet.swift; sourceTree = "<group>"; };
@@ -156,7 +154,6 @@
 			isa = PBXGroup;
 			children = (
 				287F1DF9221AA66200A61908 /* HelperFunctions.swift */,
-				287F1DFE221B1ABE00A61908 /* StaticVariables.swift */,
 				281901862247EB1D00E352F8 /* CustomTypes.swift */,
 			);
 			path = "Helper Class";
@@ -322,7 +319,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				283C05E42226612000A984AB /* CombinedChartDataSet.swift in Sources */,
-				287F1DFF221B1ABE00A61908 /* StaticVariables.swift in Sources */,
 				28827C4822294DED00124E55 /* LineGraphCalculation.swift in Sources */,
 				282ABB232225690100785C78 /* PieChartDataSet.swift in Sources */,
 				2866D572220CB3110009005A /* LineChartData.swift in Sources */,

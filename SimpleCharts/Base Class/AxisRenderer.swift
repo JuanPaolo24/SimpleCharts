@@ -127,13 +127,14 @@ open class AxisRenderer: UIView {
   
   
   /// Renders the horizontal bar graphs X axis labels
-  func horizontalBarGraphXAxis(context: CGContext, maxValue: Double, offSet: offset) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, arrayCount: Double(currentFrame.yAxisGridlinesCount + 1), offSet: offSet)
+  func horizontalBarGraphXAxis(context: CGContext, maxValue: Double, offSet: offset, gridline: Double) {
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, arrayCount: gridline + 1, offSet: offSet)
+    let actualDataScale = Int(maxValue / gridline)
     
-    for i in 0...currentFrame.yAxisGridlinesCount {
+    for i in 0...Int(gridline) {
       let xValue = calc.horizontalXAxisLabelxPoint(i: i)
       let yValue = calc.horizontalXAxisLabelyPoint()
-      let label = calc.horizontalXAxisText(i: i)
+      let label = String(i * actualDataScale)
 
       drawAxisLabels(x: xValue, y: yValue, text: label, width: 20, height: 40)
     }
