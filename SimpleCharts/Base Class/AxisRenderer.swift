@@ -128,12 +128,14 @@ open class AxisRenderer: UIView {
   
   /// Renders the horizontal bar graphs X axis labels
   func horizontalBarGraphXAxis(context: CGContext, maxValue: Double, offSet: offset, gridline: Double) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, arrayCount: gridline + 1, offSet: offSet)
+    
+    let calc = LineGraphCalculation(array: [], arrayCount: Int(gridline + 1), maxValue: maxValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: 0, xAxisGridlineCount: gridline)
+    
     let actualDataScale = Int(maxValue / gridline)
     
     for i in 0...Int(gridline) {
-      let xValue = calc.horizontalXAxisLabelxPoint(i: i)
-      let yValue = calc.horizontalXAxisLabelyPoint()
+      let xValue = calc.xAxisLabelxValue(i: i)
+      let yValue = calc.xAxisLabelyValue(isBottom: true)
       let label = String(i * actualDataScale)
 
       drawAxisLabels(x: xValue, y: yValue, text: label, width: 20, height: 40)

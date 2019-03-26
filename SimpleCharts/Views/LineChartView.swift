@@ -130,7 +130,7 @@ open class LineChartView: ChartRenderer {
     
     for (i, value) in array.enumerated() {
       if enableBezierCurve == true {
-        drawBezierCurve(context: context, array: value, maxValue: max, source: data.array[i], offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
+        drawBezierCurve(context: context, array: value, maxValue: max, source: data.array[i], forCombined: false, offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
       } else {
         drawLineGraph(context: context, array: value, maxValue: max, source: data.array[i], forCombined: false, offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
       }

@@ -129,7 +129,7 @@ open class HorizontalBarChartView: ChartRenderer {
     let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
     
     for (i, value) in array.enumerated() {
-      drawHorizontalBarGraph(context: context, array: value, maxValue: max, data: data.array[i], offSet: offSet)
+      drawHorizontalBarGraph(context: context, array: value, maxValue: max, data: data.array[i], overallCount: Double(i), arrayCount: Double(array.count), offSet: offSet)
     }
   }
  

@@ -97,29 +97,23 @@ open class LineGraphCalculation {
     return point
   }
   
-  func bezierControlPoint1(i: Int, value: Double, intensity: Double) -> CGPoint {
+   // Calculation for the bezier point for combine charts
+  func bezierCombinePoint(i: Int, value: Double) -> CGPoint {
+    
     let arrayCount = Double(array.count)
-    let start = Array(array.dropLast())
-    
     let spaceLeft = frameWidth - (offSet.left + offSet.right)
-    let increment = spaceLeft / (arrayCount - 1)
     let yOffSet = frameHeight - offSet.bottom
-    let xPoint = offSet.left + (increment * Double(i + 1))
-    let prevPoint = xPoint - increment
-    let yPoint = yOffSet - ((yOffSet / maxValue) * start[i])
-    let nextValue = yOffSet - ((yOffSet / maxValue) * value)
+    let increment = spaceLeft / (arrayCount)
+    let scale = spaceLeft / (arrayCount * 2)
+    let xPoint = offSet.left + scale + (increment * Double(i + 1))
+    let yPoint = yOffSet - ((yOffSet / maxValue) * value)
     
+    let point = CGPoint(x: xPoint, y: yPoint)
     
-    let xIntensity = (xPoint - prevPoint) * intensity
-    let yIntensity = (yPoint - nextValue) * intensity
-    
-    let control1 = CGPoint(x: prevPoint + xIntensity, y: yPoint + yIntensity)
-    
-    return control1
-    
+    return point
   }
   
-  func bezierControlPoint2(i: Int, value: Double, intensity: Double) -> CGPoint {
+  func bezierControlPoint(i: Int, value: Double, intensity: Double, isControl1: Bool) -> CGPoint {
     let arrayCount = Double(array.count)
     let start = Array(array.dropLast())
     
@@ -135,10 +129,46 @@ open class LineGraphCalculation {
     let xIntensity = (xPoint - prevPoint) * intensity
     let yIntensity = (yPoint - nextValue) * intensity
     
-    let control2 = CGPoint(x: xPoint - xIntensity, y: nextValue - yIntensity)
     
-    return control2
+    var control = CGPoint()
     
+    if isControl1 == true {
+      control = CGPoint(x: prevPoint + xIntensity, y: yPoint + yIntensity)
+    } else {
+      control = CGPoint(x: xPoint - xIntensity, y: nextValue - yIntensity)
+    }
+    
+    return control
+    
+  }
+   // Calculation for the bezier points  for combine charts
+  
+  func bezierControlCombinedPoint(i: Int, value: Double, intensity: Double, isControl1: Bool) -> CGPoint {
+    let arrayCount = Double(array.count)
+    let start = Array(array.dropLast())
+
+    let spaceLeft = frameWidth - (offSet.left + offSet.right)
+    let increment = spaceLeft / (arrayCount)
+    let yOffSet = frameHeight - offSet.bottom
+    let scale = spaceLeft / (arrayCount * 2)
+    let xPoint = offSet.left + scale + (increment * Double(i + 1))
+    let prevPoint = xPoint - increment
+    let yPoint = yOffSet - ((yOffSet / maxValue) * start[i])
+    let nextValue = yOffSet - ((yOffSet / maxValue) * value)
+
+    let xIntensity = (xPoint - prevPoint) * intensity
+    let yIntensity = (yPoint - nextValue) * intensity
+
+    var control = CGPoint()
+    
+    if isControl1 == true {
+      control = CGPoint(x: prevPoint + xIntensity, y: yPoint + yIntensity)
+    } else {
+      control = CGPoint(x: xPoint - xIntensity, y: nextValue - yIntensity)
+    }
+    
+    return control
+
   }
   
   

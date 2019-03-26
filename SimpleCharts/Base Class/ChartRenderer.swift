@@ -244,7 +244,7 @@ open class ChartRenderer: UIView {
 
   
   /// Base function for drawing line graphs with bezier curve. Requires context, the array to be plotted and the max value of the whole data set
-  func drawBezierCurve(context: CGContext, array: [Double], maxValue: Double, source: LineChartData, offSet: offset, xGridlineCount: Double, yGridlineCount: Double) {
+  func drawBezierCurve(context: CGContext, array: [Double], maxValue: Double, source: LineChartData, forCombined:Bool, offSet: offset, xGridlineCount: Double, yGridlineCount: Double) {
     let calc = LineGraphCalculation(array: array, arrayCount: 0, maxValue: maxValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yGridlineCount, xAxisGridlineCount: xGridlineCount)
     
     let paragraphStyle = NSMutableParagraphStyle()
@@ -253,20 +253,36 @@ open class ChartRenderer: UIView {
     let textRenderer = TextRenderer(paragraphStyle: paragraphStyle, font: UIFont.systemFont(ofSize: source.setTextLabelFont), foreGroundColor: source.setTextLabelColour)
     
     let startingYValue = calc.ylineGraphStartPoint()
-    let startingXValue = calc.xlineGraphPoint(i: 0)
+    var startingXValue = 0.0
+    
+    if forCombined == true {
+      startingXValue = calc.xlineCombinePoint(i: 0)
+    } else {
+      startingXValue = calc.xlineGraphPoint(i: 0)
+    }
     
     let path = pathStartPoint(startingXValue: startingXValue, startingYValue: startingYValue)
+    drawCirclePoints(context: context, destination: CGPoint(x: startingXValue, y: startingYValue), source: source)
     let path2 = pathStartPoint(startingXValue: startingXValue, startingYValue: frameHeight() - offSet.bottom)
     
     var destination = CGPoint()
+    var control1 = CGPoint()
+    var control2 = CGPoint()
     
     let index = Array(array.dropFirst())
     
     for (i, value) in index.enumerated() {
       
-      destination = calc.bezierGraphPoint(i: i, value: value)
-      let control1 = calc.bezierControlPoint1(i: i, value: value, intensity: source.setBezierCurveIntensity)
-      let control2 = calc.bezierControlPoint2(i: i, value: value, intensity: source.setBezierCurveIntensity)
+      if forCombined == true {
+        destination = calc.bezierCombinePoint(i: i, value: value)
+        control1 = calc.bezierControlCombinedPoint(i: i, value: value, intensity: source.setBezierCurveIntensity, isControl1: true)
+        control2 = calc.bezierControlCombinedPoint(i: i, value: value, intensity: source.setBezierCurveIntensity, isControl1: false)
+      } else {
+        destination = calc.bezierGraphPoint(i: i, value: value)
+        control1 = calc.bezierControlPoint(i: i, value: value, intensity: source.setBezierCurveIntensity, isControl1: true)
+        control2 = calc.bezierControlPoint(i: i, value: value, intensity: source.setBezierCurveIntensity, isControl1: false)
+      }
+      
       
       if source.enableLineVisibility == true {
         addBezierCurve(context: context, startingPoint: path, point: destination, control1: control1, control2: control2, source: source)
@@ -372,7 +388,7 @@ open class ChartRenderer: UIView {
   
   
   /// Renders a horizontal bar graph
-  func drawHorizontalBarGraph(context: CGContext, array: [Double], maxValue: Double, data: BarChartData, offSet: offset) {
+  func drawHorizontalBarGraph(context: CGContext, array: [Double], maxValue: Double, data: BarChartData, overallCount: Double, arrayCount: Double, offSet: offset) {
 
     let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, arrayCount: Double(array.count), offSet: offSet)
     
@@ -381,12 +397,12 @@ open class ChartRenderer: UIView {
     let textRenderer = TextRenderer(paragraphStyle: paragraphStyle, font: UIFont.systemFont(ofSize: data.setTextLabelFont), foreGroundColor: data.setTextLabelColour)
     
     for (i, value) in array.enumerated() {
-      let yValue = calc.yHorizontalValue(i: i)
+      let yValue = calc.yHorizontalValue(i: i, dataSetCount: overallCount, count: arrayCount)
       let xValue = calc.xHorizontalValue()
       let width = calc.horizontalWidth(value: value)
-      let height = calc.horizontalHeight()
+      let height = calc.horizontalHeight(count: arrayCount)
       let xFrame = calc.xHorizontalTextFrame(value: value)
-      let yFrame = calc.yHorizontalTextFrame(i: i)
+      let yFrame = calc.yHorizontalTextFrame(i: i, dataSetCount: overallCount, count: arrayCount)
       
       drawRectangle(context: context, x: xValue, y: yValue, width: width, height: height, source: data)
       textRenderer.renderText(text: "\(value)", textFrame: CGRect(x: xFrame, y: yFrame, width: 40, height: 20))
@@ -411,7 +427,7 @@ open class ChartRenderer: UIView {
       let yValue = calc.yVerticalValue(value: value)
       
       let height = calc.verticalHeight(value: value)
-      let xFrame = calc.xVerticalTextFrame(i: i)
+      let xFrame = calc.xVerticalTextFrame(i: i, dataSetCount: overallCount, count: arrayCount)
       let yFrame = calc.yVerticalTextFrame(value: value)
       
       drawRectangle(context: context, x: xValue, y: yValue, width: width, height: height, source: data)

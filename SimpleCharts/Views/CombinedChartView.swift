@@ -125,7 +125,7 @@ open class CombinedChartView: ChartRenderer {
     for (i, value) in array.enumerated() {
       
       if enableLineBezier == true {
-        drawBezierCurve(context: context, array: value, maxValue: max, source: data.array[i], offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
+        drawBezierCurve(context: context, array: value, maxValue: max, source: data.array[i], forCombined: true, offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
       } else {
         drawLineGraph(context: context, array: value, maxValue: max, source: data.array[i], forCombined: forCombined, offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
       }

@@ -73,9 +73,14 @@ open class BarGraphCalculation {
     return height
   }
   
-  func xVerticalTextFrame(i: Int) -> Double {
-    let scale = (frameWidth - (offSet.left + offSet.right)) / arrayCount
-    let xValue = (offSet.left + 5) + (scale * Double(i))
+  func xVerticalTextFrame(i: Int, dataSetCount: Double, count: Double) -> Double {
+    let spaceLeft = frameWidth - (offSet.left + offSet.right)
+    let scale = spaceLeft / (arrayCount * count)
+    let increment = (scale * count)
+    let start = (offSet.left + 10.0) + (((scale) * dataSetCount) - 5.0)
+    let xValue = (start) + (increment * Double(i))
+    
+    
     return xValue
   }
   
@@ -125,49 +130,48 @@ open class BarGraphCalculation {
     return offSet.left
   }
   
-  func yHorizontalValue(i: Int) -> Double {
-    let scale = (frameHeight - offSet.bottom) / arrayCount
-    let yValue = 20 + (scale * Double(i))
+  func yHorizontalValue(i: Int, dataSetCount: Double, count: Double) -> Double {
+    let spaceLeft = frameHeight - (offSet.bottom + offSet.top)
+    let scale = spaceLeft / (arrayCount * count)
+    let increment = (scale * count)
+    let start = (offSet.top + 10.0) + (((scale) * dataSetCount) - 5.0)
+    let yValue = start + (increment * Double(i))
     
     return yValue
   }
   
   func horizontalWidth(value: Double) -> Double {
-    let xAxisPadding = frameWidth - offSet.bottom
-    let extraPadding = offSet.left - 30
+    let xAxisPadding = frameWidth - (offSet.left + offSet.right)
     
-    let width = ((xAxisPadding / maxValue) * value) - extraPadding
+    
+    let width = ((xAxisPadding / maxValue) * value)
     
     return width
   }
   
-  func horizontalHeight() -> Double {
-    let scale = (frameHeight - offSet.bottom - offSet.top) / arrayCount
-    let height = scale - 30
+  func horizontalHeight(count: Double) -> Double {
+    let spaceLeft = frameHeight - (offSet.bottom + offSet.top)
+    let scale = spaceLeft / (arrayCount * count)
+    let height = scale - 10
     
     return height
   }
   
   func xHorizontalTextFrame(value: Double) -> Double {
-    let xAxisPadding = frameWidth - offSet.bottom
-    let extraPadding = offSet.left - 30
     
-    let xValue = ((xAxisPadding / maxValue) * value) - extraPadding
+    let xAxisPadding = frameWidth - (offSet.left + offSet.right)
+    let xValuePosition = (xAxisPadding / maxValue) * value
+    let xValue = (offSet.left + xValuePosition) + 5
     
-    let xFrame = (offSet.left + xValue) + 5
-    
-    return xFrame
+    return xValue
   }
   
-  func yHorizontalTextFrame(i: Int) -> Double {
-    var labelPadding = 25.0
-    let scale = (frameHeight - offSet.bottom) / arrayCount
-    
-    if offSet.left == 70 {
-      labelPadding = 10.0
-    }
-    
-    let yFrame = labelPadding + (scale * Double(i))
+  func yHorizontalTextFrame(i: Int, dataSetCount: Double, count: Double) -> Double {
+    let spaceLeft = frameHeight - (offSet.bottom + offSet.top)
+    let scale = spaceLeft / (arrayCount * count)
+    let increment = (scale * count)
+    let start = (offSet.top + 10.0) + (((scale) * dataSetCount) - 5.0)
+    let yFrame = start + (increment * Double(i))
     
     return yFrame
   }
@@ -236,35 +240,6 @@ open class BarGraphCalculation {
     return yValue
   }
   
-  
-  
-  // Horizontal Bar Graph Label Calculation
-  
-  func horizontalXAxisLabelxPoint(i: Int) -> Double {
-    let spaceLeft = (frameWidth - 8) - (offSet.left + offSet.right)
-    var increment = 0.0
-    let count = Double(arrayCount)
-    
-    if count < 6 {
-      increment = spaceLeft / (count - 1)
-    } else {
-      increment = spaceLeft / 6
-    }
-    
-    let xValue = offSet.left + (increment * Double(i))
-    
-    return xValue
-  }
-  
-  
-  func horizontalXAxisLabelyPoint() -> Double {
-    let yValue = frameHeight - 30
-    return yValue
-  }
-  
-  
-  
-  
   func horizontalYAxisLabelxPoint() -> Double {
     let xValue = offSet.left - 20
     
@@ -273,21 +248,14 @@ open class BarGraphCalculation {
   
   
   func horizontalYAxisLabelyPoint(i: Int) -> Double {
-    let spaceLeft = (frameHeight - offSet.bottom - offSet.top) / arrayCount
-    var startingPadding = 0.0
-    var pad = 0.0
+    let spaceLeft = frameHeight - (offSet.bottom + offSet.top)
+    let scale = spaceLeft / (arrayCount * 2)
+    let increment = (scale * 2)
+    let position = scale / 2
+    let start = offSet.top + (increment * Double(i))
+    let xValue = start + position
     
-    //Landscape requires a different calculation
-    if offSet.left == 70 {
-      pad = 60
-      startingPadding = offSet.left + 10
-    } else {
-      startingPadding = offSet.left + 30
-    }
-
-    let yValue = (startingPadding - pad) + (spaceLeft * Double(i))
-    
-    return yValue
+    return xValue
     
   }
   

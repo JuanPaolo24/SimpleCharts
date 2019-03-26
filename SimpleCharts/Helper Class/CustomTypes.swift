@@ -25,6 +25,10 @@ public enum legendPlacing {
   case left, right, bottom, top, custom
 }
 
+public enum pielegendPlacing {
+  case left, right, bottom, top, topleft, topright, bottomleft, bottomright, custom
+}
+
 public enum orientation {
   case landscape, portrait
 }

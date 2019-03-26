@@ -28,6 +28,11 @@ open class LegendRenderer: UIView {
   private var leftConfigxAxis = 10.0
   private var rightConfigxAxis = 60.0
   
+  private var pieLegendMaximumDistance = CGFloat(100)
+  private var bottomConfigyAxis = 80.0
+  private var topConfigyAxis = 80.0
+  
+  private var pieLegendPadding = 0.0
   
   // Change the configuration of the legend based on the device orientation
   func legendPadding(currentOrientation: orientation) {
@@ -35,6 +40,11 @@ open class LegendRenderer: UIView {
       legendMaximumDistance = CGFloat(70)
       leftConfigxAxis = 70
       rightConfigxAxis = 120
+      
+      pieLegendMaximumDistance = CGFloat(350)
+      bottomConfigyAxis = 20.0
+      topConfigyAxis = 10.0
+      pieLegendPadding = 50.0
     }
     
   }
@@ -60,29 +70,31 @@ open class LegendRenderer: UIView {
     textRenderer.renderText(text: legendText, textFrame: textFrame)
     legendMaximumDistance = textFrame.maxX + 5
     
+    
   }
   
-  
-  func drawPieLegend(context: CGContext, y: Double, legendText: String, colour: CGColor, offset: Double) {
-    let x = Double(frame.size.width) - offset
-    
-    let rectangleLegend = CGRect(x: x, y: y, width: 10, height: 10)
+  /// Base function for drawing legends
+  func drawPieLegend(context: CGContext, x: Double, y: Double, legendText: String, colour: CGColor) {
+    let rectangleLegend = CGRect(x: x , y: y, width: 10, height: 10)
     context.setFillColor(colour)
     context.setLineWidth(1.0)
     context.addRect(rectangleLegend)
     context.drawPath(using: .fill)
     
     let textCount = Double(6 * legendText.count)
-    let textFrame = CGRect(x: Double(rectangleLegend.maxX) + 5, y: y, width: textCount, height: 10)
+    let textFrame = CGRect(x: Double(rectangleLegend.maxX) + 5 , y: y, width: textCount, height: 10)
     
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.alignment = .justified
     let textRenderer = TextRenderer(paragraphStyle: paragraphStyle, font: UIFont.systemFont(ofSize: 8.0), foreGroundColor: UIColor.black)
     
     textRenderer.renderText(text: legendText, textFrame: textFrame)
+    pieLegendMaximumDistance = textFrame.maxX
+    
     
   }
   
+
   
   func renderLineChartLegend(context: CGContext, arrays: [LineChartData], position: legendPlacing, customX: Double, customY: Double) {
     for i in 1...arrays.count {
@@ -120,9 +132,30 @@ open class LegendRenderer: UIView {
   }
   
   
-  func renderPieChartLegend(context: CGContext, arrays: [PieChartData], padding: Double) {
+  func renderPieChartLegend(context: CGContext, arrays: [PieChartData], position: pielegendPlacing, customX: Double, customY: Double) {
     for i in 1...arrays.count {
-      drawPieLegend(context: context, y: 30 + (Double(i) * 15), legendText: arrays[i - 1].name, colour: arrays[i - 1].color.cgColor, offset: padding)
+      switch position {
+      case.bottom:
+        drawPieLegend(context: context, x: Double(pieLegendMaximumDistance), y: Double(frame.size.height) - bottomConfigyAxis, legendText: arrays[i - 1].name, colour: arrays[i - 1].color.cgColor)
+      case.bottomleft:
+        drawLegend(context: context, x: leftConfigxAxis + 35, y: Double(frame.size.height) - (50 + (Double(arrays.count - i) * 15)), legendText: arrays[i - 1].name, colour: arrays[i - 1].color.cgColor)
+      case.bottomright:
+        drawLegend(context: context, x: Double(frame.size.width) - rightConfigxAxis, y: Double(frame.size.height) - (50 + (Double(arrays.count - i) * 15)), legendText: arrays[i - 1].name, colour: arrays[i - 1].color.cgColor)
+      case.top:
+        drawPieLegend(context: context, x: Double(pieLegendMaximumDistance), y: topConfigyAxis, legendText: arrays[i - 1].name, colour: arrays[i - 1].color.cgColor)
+      case.topleft:
+        drawLegend(context: context, x: leftConfigxAxis + 35, y: (30 + (Double(i) * 15)), legendText: arrays[i - 1].name, colour: arrays[i - 1].color.cgColor)
+      case.topright:
+        drawLegend(context: context, x: Double(frame.size.width) - rightConfigxAxis, y: (30 + (Double(i) * 15)), legendText: arrays[i - 1].name, colour: arrays[i - 1].color.cgColor)
+      case.right:
+        drawLegend(context: context, x: Double(frame.size.width) - (50 + pieLegendPadding), y: Double((frame.size.height/2) - 50) + (Double(i) * 15), legendText: arrays[i - 1].name, colour: arrays[i - 1].color.cgColor)
+      case.left:
+        drawLegend(context: context, x: 30 + pieLegendPadding, y: Double((frame.size.height/2) - 50) + (Double(i) * 15), legendText: arrays[i - 1].name, colour: arrays[i - 1].color.cgColor)
+      case.custom:
+        drawLegend(context: context, x: customX, y: customY, legendText: arrays[i - 1].name, colour: arrays[i - 1].color.cgColor)
+      }
+      
+      
       
     }
   }

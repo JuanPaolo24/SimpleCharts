@@ -10,6 +10,22 @@ import Foundation
 
 open class PieChartView: ArcRenderer {
   
+  /// Legend visibility (Default = True)
+  open var legendVisibility = true
+  
+  /// Returns true if legend is visible
+  open var isLegendVisible: Bool { get {return legendVisibility} }
+  
+  /// Legend Position (Default = Top right)
+  open var legendPosition: pielegendPlacing = .topright
+  
+  /// Custom legend x (When you select .custom on legend position then you can use this to set your own x values)
+  open var customXlegend: Double = 0.0
+  
+  /// Custom legend y (When you select .custom on legend position then you can use this to set your own y values)
+  open var customYlegend: Double = 0.0
+  
+  
   public var data = PieChartDataSet(dataset: [PieChartData(color: UIColor.white, value: 0, name: "")])
   
   override public init(frame: CGRect) {
@@ -29,20 +45,42 @@ open class PieChartView: ArcRenderer {
       return
     }
     
-    let legend = LegendRenderer(frame: self.frame)
+    
+    
     
     
     
     if UIDevice.current.orientation.isLandscape {
-      drawPieArc(context: context, radiusPercentage: 0.4, segments: data)
-      legend.renderPieChartLegend(context: context, arrays: data.array, padding: 220)
+      renderPieChart(context: context, currentOrientation: orientation.landscape)
     } else {
-      drawPieArc(context: context, radiusPercentage: 0.4, segments: data)
-      legend.renderPieChartLegend(context: context, arrays: data.array, padding: 100)
+      renderPieChart(context: context, currentOrientation: orientation.portrait)
     }
   
     
     
+  }
+  
+  
+  func renderPieChart(context: CGContext, currentOrientation: orientation) {
+    let height = frame.size.height
+    let width = frame.size.width
+    let legend = LegendRenderer(frame: self.frame)
+    legend.legendPadding(currentOrientation: currentOrientation)
+    
+    if currentOrientation == orientation.portrait {
+      if legendPosition == pielegendPlacing.right {
+        drawPieArc(context: context, radiusPercentage: 0.4, segments: data, centerX: width * 0.4, centerY: height * 0.5)
+      } else if legendPosition == pielegendPlacing.left {
+        drawPieArc(context: context, radiusPercentage: 0.4, segments: data, centerX: width * 0.6, centerY: height * 0.5)
+      } else {
+        drawPieArc(context: context, radiusPercentage: 0.4, segments: data, centerX: width * 0.5, centerY: height * 0.5)
+      }
+    } else {
+      drawPieArc(context: context, radiusPercentage: 0.4, segments: data, centerX: width * 0.5, centerY: height * 0.5)
+    }
+    
+    
+    legend.renderPieChartLegend(context: context, arrays: data.array, position: legendPosition, customX: customXlegend, customY: customYlegend)
   }
   
 }
