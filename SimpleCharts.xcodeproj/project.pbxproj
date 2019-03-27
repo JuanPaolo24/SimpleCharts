@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		281901872247EB1D00E352F8 /* CustomTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 281901862247EB1D00E352F8 /* CustomTypes.swift */; };
+		28190190224BDE4700E352F8 /* AnimationRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2819018F224BDE4700E352F8 /* AnimationRenderer.swift */; };
 		282ABB0D22240EB200785C78 /* HorizontalBarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282ABB0C22240EB200785C78 /* HorizontalBarChartView.swift */; };
 		282ABB1B22255C7800785C78 /* ArcRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282ABB1A22255C7800785C78 /* ArcRenderer.swift */; };
 		282ABB1D22255C9E00785C78 /* PieChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282ABB1C22255C9E00785C78 /* PieChartView.swift */; };
@@ -49,6 +50,7 @@
 
 /* Begin PBXFileReference section */
 		281901862247EB1D00E352F8 /* CustomTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTypes.swift; sourceTree = "<group>"; };
+		2819018F224BDE4700E352F8 /* AnimationRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationRenderer.swift; sourceTree = "<group>"; };
 		282ABB0C22240EB200785C78 /* HorizontalBarChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalBarChartView.swift; sourceTree = "<group>"; };
 		282ABB1A22255C7800785C78 /* ArcRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArcRenderer.swift; sourceTree = "<group>"; };
 		282ABB1C22255C9E00785C78 /* PieChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieChartView.swift; sourceTree = "<group>"; };
@@ -146,6 +148,7 @@
 				287F1E03221C640F00A61908 /* ChartData.swift */,
 				282ABB1A22255C7800785C78 /* ArcRenderer.swift */,
 				28F874D7222FD60C0042C082 /* TextRenderer.swift */,
+				2819018F224BDE4700E352F8 /* AnimationRenderer.swift */,
 			);
 			path = "Base Class";
 			sourceTree = "<group>";
@@ -339,6 +342,7 @@
 				287F1E12221DB4D700A61908 /* BarChartDataSet.swift in Sources */,
 				28827C4A2229574D00124E55 /* GeneralGraphCalculation.swift in Sources */,
 				28DA74B7223E5F67005C13D5 /* xAxisConfiguration.swift in Sources */,
+				28190190224BDE4700E352F8 /* AnimationRenderer.swift in Sources */,
 				287F1DFA221AA66200A61908 /* HelperFunctions.swift in Sources */,
 				287F1E10221DA22E00A61908 /* LineChartDataSet.swift in Sources */,
 				282ABB2C2225805F00785C78 /* CombinedChartView.swift in Sources */,

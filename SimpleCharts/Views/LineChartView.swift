@@ -53,7 +53,7 @@ open class LineChartView: ChartRenderer {
   open var yAxis:yAxisConfiguration = yAxisConfiguration()
   
   /// Line type
-  open var enableBezierCurve = true
+  open var enableBezierCurve = false
   
   
   public var data = LineChartDataSet(dataset: [LineChartData(dataset: [0], datasetName: "Test")])
