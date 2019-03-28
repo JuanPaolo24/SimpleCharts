@@ -10,6 +10,7 @@ import Foundation
 import CoreGraphics
 
 
+
 extension FloatingPoint {
   var degreesToRadians: Self {return self * .pi / 180}
 }
@@ -182,10 +183,9 @@ open class ChartRenderer: UIView {
     
   }
   
-  
   /// Base function for drawing single line graphs. Requires context, the array to be plotted and the max value of the whole data set
-  func drawLineGraph(context: CGContext, array: [Double], maxValue: Double, source: LineChartData, forCombined: Bool, offSet: offset, xGridlineCount: Double, yGridlineCount: Double) {
-    let calc = LineGraphCalculation(array: array, arrayCount: 0, maxValue: maxValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yGridlineCount, xAxisGridlineCount: xGridlineCount)
+  func drawLineGraph(context: CGContext, array: [Double], maxValue: Double, minValue: Double, source: LineChartData, forCombined: Bool, offSet: offset, xGridlineCount: Double, yGridlineCount: Double) {
+    let calc = LineGraphCalculation(array: array, arrayCount: 0, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yGridlineCount, xAxisGridlineCount: xGridlineCount)
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.alignment = .justified
     
@@ -226,11 +226,11 @@ open class ChartRenderer: UIView {
       if source.enableLineVisibility == true {
         drawLines(context: context, startingPoint: path, destinationPoint: CGPoint(x: xValue, y: yValue), source: source)
         drawFillLine(context: context, startingPoint: path2, destinationPoint: CGPoint(x: xValue, y: yValue))
-        
       }
       if source.enableDataPointLabel == true {
         textRenderer.renderText(text: "\(value)", textFrame: CGRect(x: xValue, y: yValue - 15, width: 40, height: 20))
       }
+      
     }
     
     if source.enableGraphFill == true {
@@ -244,8 +244,8 @@ open class ChartRenderer: UIView {
 
   
   /// Base function for drawing line graphs with bezier curve. Requires context, the array to be plotted and the max value of the whole data set
-  func drawBezierCurve(context: CGContext, array: [Double], maxValue: Double, source: LineChartData, forCombined:Bool, offSet: offset, xGridlineCount: Double, yGridlineCount: Double) {
-    let calc = LineGraphCalculation(array: array, arrayCount: 0, maxValue: maxValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yGridlineCount, xAxisGridlineCount: xGridlineCount)
+  func drawBezierCurve(context: CGContext, array: [Double], maxValue: Double, minValue: Double, source: LineChartData, forCombined:Bool, offSet: offset, xGridlineCount: Double, yGridlineCount: Double) {
+    let calc = LineGraphCalculation(array: array, arrayCount: 0, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yGridlineCount, xAxisGridlineCount: xGridlineCount)
     
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.alignment = .justified
@@ -372,7 +372,7 @@ open class ChartRenderer: UIView {
   
   /// Renders a special X axis gridline for the bar chart
   func barxAxisGridlines(context: CGContext, arrayCount: Int, offSet: offset) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, arrayCount: Double(arrayCount), offSet: offSet)
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, minValue:0, arrayCount: Double(arrayCount), offSet: offSet)
     
     for i in 0...arrayCount - 1 {
       let startPoint = calc.xGridlineStartCalculation(distanceIncrement: i)
@@ -388,9 +388,9 @@ open class ChartRenderer: UIView {
   
   
   /// Renders a horizontal bar graph
-  func drawHorizontalBarGraph(context: CGContext, array: [Double], maxValue: Double, data: BarChartData, overallCount: Double, arrayCount: Double, offSet: offset) {
+  func drawHorizontalBarGraph(context: CGContext, array: [Double], maxValue: Double, minValue: Double, data: BarChartData, overallCount: Double, arrayCount: Double, offSet: offset) {
 
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, arrayCount: Double(array.count), offSet: offSet)
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, minValue: minValue,arrayCount: Double(array.count), offSet: offSet)
     
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.alignment = .justified
@@ -412,9 +412,9 @@ open class ChartRenderer: UIView {
   
   
   // Renders a vertical bar graph with support for multiple data sets
-  func drawVerticalBarGraph(context: CGContext, array: [Double], maxValue: Double, data: BarChartData, overallCount: Double, arrayCount: Double, offSet: offset) {
+  func drawVerticalBarGraph(context: CGContext, array: [Double], maxValue: Double, minValue: Double, data: BarChartData, overallCount: Double, arrayCount: Double, offSet: offset) {
     
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, arrayCount: Double(array.count), offSet: offSet)
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, minValue: minValue, arrayCount: Double(array.count), offSet: offSet)
     
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.alignment = .justified
@@ -444,7 +444,7 @@ open class ChartRenderer: UIView {
   
   /// Y Gridlines used by the horizontal bar graph
   func horizontalBarGraphYGridlines(context: CGContext, arrayCount: Int, offSet: offset) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, arrayCount: Double(arrayCount), offSet: offSet)
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, minValue: 0, arrayCount: Double(arrayCount), offSet: offSet)
     for i in 0...arrayCount {
       let yStartPoint = calc.yHorizontalGridline(i: i, destination: position.start)
       let yEndPoint = calc.yHorizontalGridline(i: i, destination: position.end)
@@ -454,7 +454,7 @@ open class ChartRenderer: UIView {
   
   /// X Gridlines used by the horizontal bar graph
   func horizontalBarGraphXGridlines(context: CGContext, offSet: offset, gridline: Double) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, arrayCount: gridline, offSet: offSet)
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, minValue: 0, arrayCount: gridline, offSet: offSet)
     
     for i in 0...Int(gridline) {
       let startPoint = calc.xHorizontalGridline(i: i, destination: position.start)

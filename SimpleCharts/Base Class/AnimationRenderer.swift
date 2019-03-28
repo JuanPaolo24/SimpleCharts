@@ -9,26 +9,24 @@
 import Foundation
 
 
-class AnimationRenderer {
+open class AnimationRenderer: UIView {
   
-  func addAnimation(point: CGPoint) {
-    let shapeLayer = CAShapeLayer()
-    
-    let path = CGMutablePath()
-    path.move(to: point)
-    
+  open func addAnimation(path: CGMutablePath, shapeLayer: CAShapeLayer) {
     shapeLayer.path = path
     shapeLayer.strokeColor = UIColor.red.cgColor
     shapeLayer.lineWidth = 10
     shapeLayer.strokeEnd = 0
-    
-    let basicAnimation = CABasicAnimation(keyPath: "strokeEnd")
-    
+  }
+  
+  open func animate() -> CABasicAnimation {
+    let basicAnimation = CABasicAnimation(keyPath: "path")
+  
     basicAnimation.toValue = 1
     basicAnimation.duration = 2
+    basicAnimation.fillMode = CAMediaTimingFillMode.forwards
+    basicAnimation.isRemovedOnCompletion = false
     
-    shapeLayer.add(basicAnimation, forKey: "basic")
-    
+    return basicAnimation
   }
   
   

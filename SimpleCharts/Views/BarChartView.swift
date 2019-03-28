@@ -132,7 +132,7 @@ open class BarChartView: ChartRenderer {
     let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
     
     for (i, value) in array.enumerated() {
-      drawVerticalBarGraph(context: context, array: value, maxValue: max, data: data.array[i], overallCount: Double(i), arrayCount: Double(array.count), offSet: offSet)
+      drawVerticalBarGraph(context: context, array: value, maxValue: max, minValue: yAxis.setYAxisMinimumValue,data: data.array[i], overallCount: Double(i), arrayCount: Double(array.count), offSet: offSet)
     }
   }
 
@@ -144,17 +144,16 @@ open class BarChartView: ChartRenderer {
     let axis = AxisRenderer(frame: self.frame)
     
     var maxValue = 0.0
+    var minValue = 0.0
     
     let actualMax = helper.processMultipleArrays(array: convertedData)
     
     if enableAxisCustomisation == true {
-      if yAxis.enableMaximumValueCalculation == true {
-        maxValue = yAxis.setYAxisMaximumValue
-      } else {
-        maxValue = yAxis.setYAxisInterval * yAxis.setGridlineCount
-      }
+      maxValue = yAxis.setYAxisMaximumValue
+      minValue = yAxis.setYAxisMinimumValue
     } else {
       maxValue = actualMax
+      minValue = 0
     }
     
     
@@ -172,7 +171,7 @@ open class BarChartView: ChartRenderer {
     barxAxisGridlines(context: context, arrayCount: arrayCount, offSet: offSet)
     
     if yAxis.yAxisVisibility == true {
-      axis.yAxis(context: context, maxValue: maxValue, axisInverse: enableYAxisInverse, offSet: offSet, gridlineCount: yAxis.setGridlineCount)
+      axis.yAxis(context: context, maxValue: maxValue, minValue: minValue, axisInverse: enableYAxisInverse, offSet: offSet, gridlineCount: yAxis.setGridlineCount)
     }
     
     if xAxis.xAxisVisibility == true {

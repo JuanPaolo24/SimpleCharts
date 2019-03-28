@@ -125,9 +125,9 @@ open class CombinedChartView: ChartRenderer {
     for (i, value) in array.enumerated() {
       
       if enableLineBezier == true {
-        drawBezierCurve(context: context, array: value, maxValue: max, source: data.array[i], forCombined: true, offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
+        drawBezierCurve(context: context, array: value, maxValue: max, minValue: yAxis.setYAxisMinimumValue,source: data.array[i], forCombined: true, offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
       } else {
-        drawLineGraph(context: context, array: value, maxValue: max, source: data.array[i], forCombined: forCombined, offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
+        drawLineGraph(context: context, array: value, maxValue: max, minValue: yAxis.setYAxisMinimumValue ,source: data.array[i], forCombined: forCombined, offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
       }
     }
   }
@@ -138,7 +138,7 @@ open class CombinedChartView: ChartRenderer {
     let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
     
     for (i, value) in array.enumerated() {
-      drawVerticalBarGraph(context: context, array: value, maxValue: max, data: data.array[i], overallCount: Double(i), arrayCount: Double(array.count), offSet: offSet)
+      drawVerticalBarGraph(context: context, array: value, maxValue: max, minValue: yAxis.setYAxisMinimumValue ,data: data.array[i], overallCount: Double(i), arrayCount: Double(array.count), offSet: offSet)
     }
   }
   
@@ -178,7 +178,7 @@ open class CombinedChartView: ChartRenderer {
     barxAxisGridlines(context: context, arrayCount: arrayCount, offSet: offSet)
     
     if yAxis.yAxisVisibility == true {
-      axis.yAxis(context: context, maxValue: maxValue, axisInverse: yAxis.enableYAxisInverse, offSet: offSet, gridlineCount: yAxis.setGridlineCount)
+      axis.yAxis(context: context, maxValue: maxValue, minValue: yAxis.setYAxisMinimumValue, axisInverse: yAxis.enableYAxisInverse, offSet: offSet, gridlineCount: yAxis.setGridlineCount)
     }
     
     if xAxis.xAxisVisibility == true {

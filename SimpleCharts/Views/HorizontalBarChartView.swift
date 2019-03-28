@@ -129,7 +129,7 @@ open class HorizontalBarChartView: ChartRenderer {
     let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
     
     for (i, value) in array.enumerated() {
-      drawHorizontalBarGraph(context: context, array: value, maxValue: max, data: data.array[i], overallCount: Double(i), arrayCount: Double(array.count), offSet: offSet)
+      drawHorizontalBarGraph(context: context, array: value, maxValue: max, minValue: yAxis.setYAxisMinimumValue,data: data.array[i], overallCount: Double(i), arrayCount: Double(array.count), offSet: offSet)
     }
   }
  
@@ -156,7 +156,7 @@ open class HorizontalBarChartView: ChartRenderer {
     }
     
     if xAxis.xAxisVisibility == true {
-      axis.horizontalBarGraphXAxis(context: context, maxValue: maxValue, offSet: offSet, gridline: xAxis.setGridlineCount)
+      axis.horizontalBarGraphXAxis(context: context, maxValue: yAxis.setYAxisMaximumValue, minValue: yAxis.setYAxisMinimumValue, offSet: offSet, gridline: xAxis.setGridlineCount)
     }
     
     if legendVisibility == true {

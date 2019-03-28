@@ -53,7 +53,7 @@ open class LineChartView: ChartRenderer {
   open var yAxis:yAxisConfiguration = yAxisConfiguration()
   
   /// Line type
-  open var enableBezierCurve = false
+  open var enableBezierCurve = true
   
   
   public var data = LineChartDataSet(dataset: [LineChartData(dataset: [0], datasetName: "Test")])
@@ -67,6 +67,7 @@ open class LineChartView: ChartRenderer {
   public required init?(coder aDecoder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
   }
+  
   
 
   override open func draw(_ rect: CGRect) {
@@ -130,9 +131,9 @@ open class LineChartView: ChartRenderer {
     
     for (i, value) in array.enumerated() {
       if enableBezierCurve == true {
-        drawBezierCurve(context: context, array: value, maxValue: max, source: data.array[i], forCombined: false, offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
+        drawBezierCurve(context: context, array: value, maxValue: max, minValue: yAxis.setYAxisMinimumValue,source: data.array[i], forCombined: false, offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
       } else {
-        drawLineGraph(context: context, array: value, maxValue: max, source: data.array[i], forCombined: false, offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
+        drawLineGraph(context: context, array: value, maxValue: max, minValue: yAxis.setYAxisMinimumValue, source: data.array[i], forCombined: false, offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
       }
     }
   }
@@ -144,6 +145,7 @@ open class LineChartView: ChartRenderer {
     let axis = AxisRenderer(frame: self.frame)
     let convertedData = helper.convert(chartData: data.array)
     var maxValue = 0.0
+    var minValue = 0.0
     let arrayCount = helper.findArrayCountFrom(array: convertedData)
     let paddedLeftOffset = offSetLeft * landscapePadding
     let paddedRightOffset = offSetRight * landscapePadding
@@ -154,13 +156,11 @@ open class LineChartView: ChartRenderer {
     let actualMax = helper.processMultipleArrays(array: convertedData)
     
     if enableAxisCustomisation == true {
-      if yAxis.enableMaximumValueCalculation == true {
         maxValue = yAxis.setYAxisMaximumValue
-      } else {
-        maxValue = yAxis.setYAxisInterval * yAxis.setGridlineCount
-      }
+        minValue = yAxis.setYAxisMinimumValue
     } else {
       maxValue = actualMax
+      minValue = 0
     }
     
     
@@ -171,7 +171,7 @@ open class LineChartView: ChartRenderer {
     xAxisGridlines(context: context, arrayCount: arrayCount, offSet: offSet, gridlineCount: xAxis.setGridlineCount)
     
     if yAxis.yAxisVisibility == true {
-      axis.yAxis(context: context, maxValue: maxValue, axisInverse: yAxis.enableYAxisInverse, offSet: offSet, gridlineCount: yAxis.setGridlineCount)
+      axis.yAxis(context: context, maxValue: maxValue, minValue: minValue,axisInverse: yAxis.enableYAxisInverse, offSet: offSet, gridlineCount: yAxis.setGridlineCount)
     }
     
     if xAxis.xAxisVisibility == true {

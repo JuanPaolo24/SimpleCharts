@@ -30,7 +30,7 @@ open class GeneralGraphCalculation {
 
   
   func yGridlinePoint(i: Int, destination: position) -> CGPoint {
-    let frameScale = (frameHeight - offSet.bottom - offSet.top) / yAxisGridlineCount
+    let frameScale = (frameHeight - offSet.bottom - offSet.top) / (yAxisGridlineCount - 1)
     let yAxisPadding = frameHeight - offSet.bottom
     let xAxisPadding = frameWidth - offSet.right
     let actualValue = frameScale * Double(i)

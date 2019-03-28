@@ -14,16 +14,18 @@ open class BarGraphCalculation {
   private var frameWidth: Double
   private var frameHeight: Double
   private var maxValue: Double
+  private var minValue: Double
   private var arrayCount: Double
   
   private var offSet: offset
 
   
   /// Call this initializer unless you are using the horizontal gridline calculation
-  public required init(frameHeight: Double, frameWidth: Double, maxValue: Double, arrayCount: Double, offSet: offset) {
+  public required init(frameHeight: Double, frameWidth: Double, maxValue: Double, minValue: Double, arrayCount: Double, offSet: offset) {
     self.frameWidth = frameWidth
     self.frameHeight = frameHeight
     self.maxValue = maxValue
+    self.minValue = minValue
     self.arrayCount = arrayCount
     
     self.offSet = offSet
@@ -46,9 +48,19 @@ open class BarGraphCalculation {
   
   
   func yVerticalValue(value: Double) -> Double {
+    let frameScale = frameHeight - offSet.bottom - offSet.top
     let yAxisPadding = frameHeight - offSet.bottom
-    let yValuePosition = (yAxisPadding / maxValue) * value
-    let yValue = yAxisPadding - yValuePosition
+    
+    let remaining = maxValue - minValue
+    var negativeValue = 0.0
+    
+    if minValue < 0 {
+      negativeValue = abs(minValue)
+    }
+    
+    let negativePadding = (frameScale / remaining) * negativeValue
+    
+    let yValue = (yAxisPadding - negativePadding) - ((frameScale / remaining) * value)
     
     return yValue
   }
@@ -65,10 +77,20 @@ open class BarGraphCalculation {
   
   
   func verticalHeight(value: Double) -> Double {
+    let frameScale = frameHeight - offSet.bottom - offSet.top
     let yAxisPadding = frameHeight - offSet.bottom
-    let yValuePosition = (yAxisPadding / maxValue) * value
-    let yValue = yAxisPadding - yValuePosition
-    let height = yAxisPadding - yValue
+    
+    let remaining = maxValue - minValue
+    var negativeValue = 0.0
+    
+    if minValue < 0 {
+      negativeValue = abs(minValue)
+    }
+    
+    let negativePadding = (frameScale / remaining) * negativeValue
+    
+    let yValue = (yAxisPadding - negativePadding) - ((frameScale / remaining) * value)
+    let height = (yAxisPadding - negativePadding) - yValue
     
     return height
   }
@@ -85,9 +107,24 @@ open class BarGraphCalculation {
   }
   
   func yVerticalTextFrame(value: Double) -> Double {
+    let frameScale = frameHeight - offSet.bottom - offSet.top
     let yAxisPadding = frameHeight - offSet.bottom
-    let yValuePosition = (yAxisPadding / maxValue) * value
-    let yValue = (yAxisPadding - yValuePosition) - 15
+    
+    let remaining = maxValue - minValue
+    var negativeValue = 0.0
+    var labelPadding = -15.0
+    
+    if minValue < 0 {
+      negativeValue = abs(minValue)
+    }
+    
+    if value < 0 {
+      labelPadding = 5.0
+    }
+    
+    let negativePadding = (frameScale / remaining) * negativeValue
+    
+    let yValue = (yAxisPadding - negativePadding + labelPadding) - ((frameScale / remaining) * value)
     
     return yValue
   }
@@ -127,7 +164,20 @@ open class BarGraphCalculation {
   // Horizontal graph calculations
   
   func xHorizontalValue() -> Double{
-    return offSet.left
+    let frameScale = frameWidth - offSet.left - offSet.right
+    
+    let remaining = maxValue - minValue
+    var negativeValue = 0.0
+    
+    if minValue < 0 {
+      negativeValue = abs(minValue)
+    }
+    
+    let negativePadding = (frameScale / remaining) * negativeValue
+    
+    let xValue = offSet.left + negativePadding
+    
+    return xValue
   }
   
   func yHorizontalValue(i: Int, dataSetCount: Double, count: Double) -> Double {
@@ -142,9 +192,11 @@ open class BarGraphCalculation {
   
   func horizontalWidth(value: Double) -> Double {
     let xAxisPadding = frameWidth - (offSet.left + offSet.right)
+    let remaining = maxValue - minValue
     
     
-    let width = ((xAxisPadding / maxValue) * value)
+    
+    let width = ((xAxisPadding / remaining) * value)
     
     return width
   }
@@ -159,9 +211,23 @@ open class BarGraphCalculation {
   
   func xHorizontalTextFrame(value: Double) -> Double {
     
-    let xAxisPadding = frameWidth - (offSet.left + offSet.right)
-    let xValuePosition = (xAxisPadding / maxValue) * value
-    let xValue = (offSet.left + xValuePosition) + 5
+    let frameScale = frameWidth - (offSet.left + offSet.right)
+    let remaining = maxValue - minValue
+    var negativeValue = 0.0
+    var labelPadding = 5.0
+    
+    if minValue < 0 {
+      negativeValue = abs(minValue)
+    }
+    
+    if value < 0 {
+      labelPadding = -28.0
+    }
+    
+    let negativePadding = (frameScale / remaining) * negativeValue
+    
+    let xValuePosition = (frameScale / remaining) * value
+    let xValue = offSet.left + negativePadding + xValuePosition + labelPadding
     
     return xValue
   }
