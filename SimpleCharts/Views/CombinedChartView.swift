@@ -172,10 +172,13 @@ open class CombinedChartView: ChartRenderer {
     
     xAxisBase(context: context, offSet: offSet)
     yAxisBase(context: context, offSet: offSet)
-    barGraph(context: context, array: barConvertedData, data: barChartDataSet, max: maxValue, landscapePadding: landscapePadding)
-    lineGraph(context: context, array: lineConvertedData, max: maxValue, data: lineChartDataSet, forCombined: true, landscapePadding: landscapePadding)
+    context.saveGState()
     yAxisGridlines(context: context, offSet: offSet, gridlineCount: yAxis.setGridlineCount)
     barxAxisGridlines(context: context, arrayCount: arrayCount, offSet: offSet)
+    context.restoreGState()
+    barGraph(context: context, array: barConvertedData, data: barChartDataSet, max: maxValue, landscapePadding: landscapePadding)
+    lineGraph(context: context, array: lineConvertedData, max: maxValue, data: lineChartDataSet, forCombined: true, landscapePadding: landscapePadding)
+    
     
     if yAxis.yAxisVisibility == true {
       axis.yAxis(context: context, maxValue: maxValue, minValue: yAxis.setYAxisMinimumValue, axisInverse: yAxis.enableYAxisInverse, offSet: offSet, gridlineCount: yAxis.setGridlineCount)

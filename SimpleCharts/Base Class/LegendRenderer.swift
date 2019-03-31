@@ -63,9 +63,7 @@ open class LegendRenderer: UIView {
     let textCount = Double(6 * legendText.count)
     let textFrame = CGRect(x: Double(rectangleLegend.maxX) + 5 , y: y, width: textCount, height: 10)
     
-    let paragraphStyle = NSMutableParagraphStyle()
-    paragraphStyle.alignment = .justified
-    let textRenderer = TextRenderer(paragraphStyle: paragraphStyle, font: UIFont.systemFont(ofSize: 8.0), foreGroundColor: UIColor.black)
+    let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: 8.0), foreGroundColor: UIColor.black)
     
     textRenderer.renderText(text: legendText, textFrame: textFrame)
     legendMaximumDistance = textFrame.maxX + 5
@@ -84,9 +82,7 @@ open class LegendRenderer: UIView {
     let textCount = Double(6 * legendText.count)
     let textFrame = CGRect(x: Double(rectangleLegend.maxX) + 5 , y: y, width: textCount, height: 10)
     
-    let paragraphStyle = NSMutableParagraphStyle()
-    paragraphStyle.alignment = .justified
-    let textRenderer = TextRenderer(paragraphStyle: paragraphStyle, font: UIFont.systemFont(ofSize: 8.0), foreGroundColor: UIColor.black)
+    let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: 8.0), foreGroundColor: UIColor.black)
     
     textRenderer.renderText(text: legendText, textFrame: textFrame)
     pieLegendMaximumDistance = textFrame.maxX

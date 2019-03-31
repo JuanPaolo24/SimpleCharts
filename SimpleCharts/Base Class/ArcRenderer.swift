@@ -29,9 +29,7 @@ open class ArcRenderer: UIView {
     let viewCenter = CGPoint(x: centerX, y: centerY)
     let valueCount = segments.array.reduce(0, {$0 + $1.value})
     
-    let paragraphStyle = NSMutableParagraphStyle()
-    paragraphStyle.alignment = .justified
-    let textRenderer = TextRenderer(paragraphStyle: paragraphStyle, font: UIFont.systemFont(ofSize: 12.0, weight: .bold), foreGroundColor: UIColor(red:0.65, green:0.65, blue:0.65, alpha:1.0))
+    let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: 12.0, weight: .bold), foreGroundColor: UIColor(red:0.65, green:0.65, blue:0.65, alpha:1.0))
     
     var startAngle = -CGFloat.pi * 0.5
     

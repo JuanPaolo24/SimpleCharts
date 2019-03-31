@@ -167,8 +167,12 @@ open class BarChartView: ChartRenderer {
     
     xAxisBase(context: context, offSet: offSet)
     yAxisBase(context: context, offSet: offSet)
-    barGraph(context: context, array: convertedData, data: data, max: maxValue, landscapePadding: landscapePadding)
+    context.saveGState()
     barxAxisGridlines(context: context, arrayCount: arrayCount, offSet: offSet)
+    yAxisGridlines(context: context, offSet: offSet, gridlineCount: yAxis.setGridlineCount)
+    context.restoreGState()
+    barGraph(context: context, array: convertedData, data: data, max: maxValue, landscapePadding: landscapePadding)
+    
     
     if yAxis.yAxisVisibility == true {
       axis.yAxis(context: context, maxValue: maxValue, minValue: minValue, axisInverse: enableYAxisInverse, offSet: offSet, gridlineCount: yAxis.setGridlineCount)

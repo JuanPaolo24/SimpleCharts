@@ -32,3 +32,9 @@ public enum pielegendPlacing {
 public enum orientation {
   case landscape, portrait
 }
+
+public enum filltype {
+  case gradientFill, normalFill
+  
+  
+}

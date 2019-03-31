@@ -16,17 +16,21 @@ open class BarGraphCalculation {
   private var maxValue: Double
   private var minValue: Double
   private var arrayCount: Double
+  private var xAxisGridlineCount: Double
+  private var yAxisGridlineCount: Double
   
   private var offSet: offset
 
   
   /// Call this initializer unless you are using the horizontal gridline calculation
-  public required init(frameHeight: Double, frameWidth: Double, maxValue: Double, minValue: Double, arrayCount: Double, offSet: offset) {
+  public required init(frameHeight: Double, frameWidth: Double, maxValue: Double, minValue: Double, arrayCount: Double, yAxisGridlineCount: Double, xAxisGridlineCount: Double, offSet: offset) {
     self.frameWidth = frameWidth
     self.frameHeight = frameHeight
     self.maxValue = maxValue
     self.minValue = minValue
     self.arrayCount = arrayCount
+    self.xAxisGridlineCount = xAxisGridlineCount
+    self.yAxisGridlineCount = yAxisGridlineCount
     
     self.offSet = offSet
   }
@@ -247,9 +251,17 @@ open class BarGraphCalculation {
   
   func xHorizontalGridline(i: Int, destination: position) -> CGPoint {
     let spaceLeft = frameWidth - (offSet.left + offSet.right)
-    let increment = spaceLeft / arrayCount
-    let xValue = offSet.left + (increment * Double(i))
+    var increment = 0.0
+    let count = Double(arrayCount)
+    
     let yAxisPadding = frameHeight - offSet.bottom
+    
+    if count < xAxisGridlineCount {
+      increment = spaceLeft / (count - 1)
+    } else {
+      increment = spaceLeft / (xAxisGridlineCount - 1)
+    }
+    let xValue = offSet.left + (increment * Double(i))
     
     var point = CGPoint()
     

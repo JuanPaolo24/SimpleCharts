@@ -145,11 +145,15 @@ open class HorizontalBarChartView: ChartRenderer {
     let paddedRightOffset = offSetRight * landscapePadding
     let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
     
+    
     xAxisBase(context: context, offSet: offSet)
     yAxisBase(context: context, offSet: offSet)
-    barGraph(context: context, array: convertedData, data: data, max: maxValue, landscapePadding: landscapePadding)
+    context.saveGState()
     horizontalBarGraphXGridlines(context: context, offSet: offSet, gridline: xAxis.setGridlineCount)
     horizontalBarGraphYGridlines(context: context, arrayCount: arrayCount, offSet: offSet)
+    context.restoreGState()
+    barGraph(context: context, array: convertedData, data: data, max: maxValue, landscapePadding: landscapePadding)
+    
     
     if yAxis.yAxisVisibility == true {
       axis.horizontalBarGraphYAxis(context: context, arrayCount: arrayCount, offSet: offSet)

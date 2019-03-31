@@ -134,6 +134,7 @@ open class LineChartView: ChartRenderer {
         drawBezierCurve(context: context, array: value, maxValue: max, minValue: yAxis.setYAxisMinimumValue,source: data.array[i], forCombined: false, offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
       } else {
         drawLineGraph(context: context, array: value, maxValue: max, minValue: yAxis.setYAxisMinimumValue, source: data.array[i], forCombined: false, offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
+        
       }
     }
   }
@@ -166,9 +167,10 @@ open class LineChartView: ChartRenderer {
     
     xAxisBase(context: context, offSet: offSet)
     yAxisBase(context: context, offSet: offSet)
-    lineGraph(context: context, array: convertedData, max: maxValue, data: data, landscapePadding: landscapePadding)
     yAxisGridlines(context: context, offSet: offSet, gridlineCount: yAxis.setGridlineCount)
     xAxisGridlines(context: context, arrayCount: arrayCount, offSet: offSet, gridlineCount: xAxis.setGridlineCount)
+    lineGraph(context: context, array: convertedData, max: maxValue, data: data, landscapePadding: landscapePadding)
+    
     
     if yAxis.yAxisVisibility == true {
       axis.yAxis(context: context, maxValue: maxValue, minValue: minValue,axisInverse: yAxis.enableYAxisInverse, offSet: offSet, gridlineCount: yAxis.setGridlineCount)

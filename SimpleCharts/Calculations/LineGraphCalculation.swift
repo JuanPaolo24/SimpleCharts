@@ -104,6 +104,8 @@ open class LineGraphCalculation {
   func bezierGraphPoint(i: Int, value: Double) -> CGPoint {
     
     let arrayCount = Double(array.count)
+    
+    
     let spaceLeft = frameWidth - (offSet.left + offSet.right)
     let yOffSet = frameHeight - offSet.bottom - offSet.top
     let yAxisPadding = frameHeight - offSet.bottom
@@ -177,7 +179,6 @@ open class LineGraphCalculation {
     let yPoint = (yAxisPadding - negativePadding) - ((yOffSet / remaining) * start[i])
     let nextValue = (yAxisPadding - negativePadding) - ((yOffSet / remaining) * value)
     
-    
     let xIntensity = (xPoint - prevPoint) * intensity
     let yIntensity = (yPoint - nextValue) * intensity
     
@@ -193,8 +194,8 @@ open class LineGraphCalculation {
     return control
     
   }
-
   
+
    // Calculation for the bezier points  for combine charts
   
   func bezierControlCombinedPoint(i: Int, value: Double, intensity: Double, isControl1: Bool) -> CGPoint {

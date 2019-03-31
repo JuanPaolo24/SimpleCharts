@@ -52,10 +52,26 @@ open class LineChartData: ChartData {
   /// Set the intensity of the bezier curve (Default 0.2)
   open var setBezierCurveIntensity = 0.2
   
+
+
+  // This section is graph fill customisation //
+  
   /// Enable Graph Fill (Default = False)
   open var enableGraphFill = false
   
   /// Returns true if graph fill is visible
   open var isGraphFillEnabled: Bool {get {return enableGraphFill}}
+  
+  /// The type of fill the graph will have
+  open var fillType: filltype = .normalFill
+  
+  /// Array of colours for the gradient
+  open var gradientFillColours: [UIColor] = [UIColor.blue, UIColor.red]
+  
+  /// Graph Fill Colour for normal fill configuration (Default = Clear)
+  open var setGraphFill: UIColor = UIColor.clear
+  
+  /// Fill alpha/transparency (Default = 0.33)
+  open var setFillAlpha: CGFloat = 0.33
   
 }

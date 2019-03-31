@@ -39,9 +39,7 @@ open class AxisRenderer: UIView {
   func drawAxisLabels(x: Double, y: Double, text: String, width: Double, height: Double) {
     let textFrame = CGRect(x: x, y: y, width: width, height: height)
     
-    let paragraphStyle = NSMutableParagraphStyle()
-    paragraphStyle.alignment = .justified
-    let textRenderer = TextRenderer(paragraphStyle: paragraphStyle, font: UIFont.systemFont(ofSize: 8.0), foreGroundColor: UIColor.black)
+    let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: 8.0), foreGroundColor: UIColor.black)
     
     textRenderer.renderText(text: text, textFrame: textFrame)
   }
@@ -86,7 +84,8 @@ open class AxisRenderer: UIView {
   
   /// Renders the X axis label for the bar graph
   func barGraphxAxis(context: CGContext, arrayCount: Int, offSet: offset) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, minValue: 0 ,arrayCount: Double(arrayCount), offSet: offSet)
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, minValue: 0, arrayCount: Double(arrayCount), yAxisGridlineCount: 0, xAxisGridlineCount: 0, offSet: offSet)
+    
     for i in 0...arrayCount - 1 {
       let xValue = calc.xVerticalGraphxAxisLabel(i: i)
       let yValue = calc.xVerticalGraphyAxisLabel()
@@ -95,7 +94,8 @@ open class AxisRenderer: UIView {
   }
   
   func customiseBarGraphxAxis(context: CGContext, arrayCount: Int, label: [String], offSet: offset) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, minValue: 0 ,arrayCount: Double(arrayCount), offSet: offSet)
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, minValue: 0, arrayCount: Double(arrayCount), yAxisGridlineCount: 0, xAxisGridlineCount: 0, offSet: offSet)
+    
     for i in 0...arrayCount - 1 {
       let xValue = calc.xVerticalGraphxAxisLabel(i: i)
       let yValue = calc.xVerticalGraphyAxisLabel()
@@ -115,7 +115,8 @@ open class AxisRenderer: UIView {
   /// Renders the horizontal bar graphs Y axis labels
   func horizontalBarGraphYAxis(context: CGContext, arrayCount: Int, offSet: offset) {
 
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, minValue: 0,arrayCount: Double(arrayCount), offSet: offSet)
+    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, minValue: 0, arrayCount: Double(arrayCount), yAxisGridlineCount: 0, xAxisGridlineCount: 0, offSet: offSet)
+    
 
     for i in 0...arrayCount - 1 {
       let xValue = calc.horizontalYAxisLabelxPoint()
@@ -132,7 +133,6 @@ open class AxisRenderer: UIView {
     
     let calc = LineGraphCalculation(array: [], arrayCount: Int(gridline + 1), maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: gridline, xAxisGridlineCount: gridline)
     
-    let actualDataScale = Int(maxValue / gridline)
     
     for i in 0...Int(gridline) {
       let xValue = calc.xHorizontalAxisLabel(i: i)

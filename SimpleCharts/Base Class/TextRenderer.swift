@@ -12,12 +12,10 @@ import Foundation
 
 open class TextRenderer {
   
-  var paragraphStyle: NSMutableParagraphStyle
   var font: UIFont
   var foreGroundColor: UIColor
   
-  required public init(paragraphStyle: NSMutableParagraphStyle, font: UIFont, foreGroundColor: UIColor) {
-    self.paragraphStyle = paragraphStyle
+  required public init(font: UIFont, foreGroundColor: UIColor) {
     self.font = font
     self.foreGroundColor = foreGroundColor
   }
@@ -26,6 +24,9 @@ open class TextRenderer {
   /// Function for rendering text in the view
   open func renderText(text: String, textFrame: CGRect) {
 
+    let paragraphStyle = NSMutableParagraphStyle()
+    paragraphStyle.alignment = .justified
+    
     let attributes: [NSAttributedString.Key : Any] = [
       .paragraphStyle: paragraphStyle,
       .font: font,

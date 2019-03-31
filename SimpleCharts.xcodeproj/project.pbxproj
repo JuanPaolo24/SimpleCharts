@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		280447632250B14B004B2AE1 /* FillHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 280447622250B14B004B2AE1 /* FillHandler.swift */; };
 		281901872247EB1D00E352F8 /* CustomTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 281901862247EB1D00E352F8 /* CustomTypes.swift */; };
 		28190190224BDE4700E352F8 /* AnimationRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2819018F224BDE4700E352F8 /* AnimationRenderer.swift */; };
 		282ABB0D22240EB200785C78 /* HorizontalBarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282ABB0C22240EB200785C78 /* HorizontalBarChartView.swift */; };
@@ -32,6 +33,7 @@
 		28827C4822294DED00124E55 /* LineGraphCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28827C4722294DED00124E55 /* LineGraphCalculation.swift */; };
 		28827C4A2229574D00124E55 /* GeneralGraphCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28827C492229574D00124E55 /* GeneralGraphCalculation.swift */; };
 		28827C4C22295A9600124E55 /* BarGraphCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28827C4B22295A9600124E55 /* BarGraphCalculation.swift */; };
+		28C386952251059700EAA87C /* CustomExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28C386942251059700EAA87C /* CustomExtensions.swift */; };
 		28DA74B7223E5F67005C13D5 /* xAxisConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28DA74B6223E5F67005C13D5 /* xAxisConfiguration.swift */; };
 		28DA74C0223E6F6E005C13D5 /* yAxisConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28DA74BF223E6F6E005C13D5 /* yAxisConfiguration.swift */; };
 		28DCBF9621FA23B6006BB48F /* SimpleCharts.h in Headers */ = {isa = PBXBuildFile; fileRef = 28DCBF9421FA23B6006BB48F /* SimpleCharts.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -49,6 +51,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		280447622250B14B004B2AE1 /* FillHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FillHandler.swift; sourceTree = "<group>"; };
 		281901862247EB1D00E352F8 /* CustomTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTypes.swift; sourceTree = "<group>"; };
 		2819018F224BDE4700E352F8 /* AnimationRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationRenderer.swift; sourceTree = "<group>"; };
 		282ABB0C22240EB200785C78 /* HorizontalBarChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalBarChartView.swift; sourceTree = "<group>"; };
@@ -75,6 +78,7 @@
 		28827C4722294DED00124E55 /* LineGraphCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineGraphCalculation.swift; sourceTree = "<group>"; };
 		28827C492229574D00124E55 /* GeneralGraphCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralGraphCalculation.swift; sourceTree = "<group>"; };
 		28827C4B22295A9600124E55 /* BarGraphCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarGraphCalculation.swift; sourceTree = "<group>"; };
+		28C386942251059700EAA87C /* CustomExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomExtensions.swift; sourceTree = "<group>"; };
 		28DA74B6223E5F67005C13D5 /* xAxisConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = xAxisConfiguration.swift; sourceTree = "<group>"; };
 		28DA74BF223E6F6E005C13D5 /* yAxisConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = yAxisConfiguration.swift; sourceTree = "<group>"; };
 		28DCBF9121FA23B6006BB48F /* SimpleCharts.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SimpleCharts.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -149,6 +153,7 @@
 				282ABB1A22255C7800785C78 /* ArcRenderer.swift */,
 				28F874D7222FD60C0042C082 /* TextRenderer.swift */,
 				2819018F224BDE4700E352F8 /* AnimationRenderer.swift */,
+				280447622250B14B004B2AE1 /* FillHandler.swift */,
 			);
 			path = "Base Class";
 			sourceTree = "<group>";
@@ -158,6 +163,7 @@
 			children = (
 				287F1DF9221AA66200A61908 /* HelperFunctions.swift */,
 				281901862247EB1D00E352F8 /* CustomTypes.swift */,
+				28C386942251059700EAA87C /* CustomExtensions.swift */,
 			);
 			path = "Helper Class";
 			sourceTree = "<group>";
@@ -321,6 +327,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				28C386952251059700EAA87C /* CustomExtensions.swift in Sources */,
 				283C05E42226612000A984AB /* CombinedChartDataSet.swift in Sources */,
 				28827C4822294DED00124E55 /* LineGraphCalculation.swift in Sources */,
 				282ABB232225690100785C78 /* PieChartDataSet.swift in Sources */,
@@ -344,6 +351,7 @@
 				28DA74B7223E5F67005C13D5 /* xAxisConfiguration.swift in Sources */,
 				28190190224BDE4700E352F8 /* AnimationRenderer.swift in Sources */,
 				287F1DFA221AA66200A61908 /* HelperFunctions.swift in Sources */,
+				280447632250B14B004B2AE1 /* FillHandler.swift in Sources */,
 				287F1E10221DA22E00A61908 /* LineChartDataSet.swift in Sources */,
 				282ABB2C2225805F00785C78 /* CombinedChartView.swift in Sources */,
 				282ABB0D22240EB200785C78 /* HorizontalBarChartView.swift in Sources */,
