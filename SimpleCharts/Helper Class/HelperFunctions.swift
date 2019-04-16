@@ -102,5 +102,182 @@ class HelperFunctions {
   }
   
   
+  // This function will take in an array and a target number and return the closest number from the array to the target number
+  
+  ///Refactor this soon 
+  func findClosest(array: [CGPoint], target: CGPoint) -> CGPoint{
+    let n = array.count
+    var i = 0
+    var j = n
+    var mid = 0
+    
+    while i < j {
+      mid = (i + j) / 2
+      if target.x <= array[0].x {
+        return array[0]
+      }
+      
+      if target.x >= array[n-1].x {
+        return array[n-1]
+      }
+      
+      if array[mid] == target {
+        return array[mid]
+      }
+      
+      if target.x < array[mid].x {
+        if mid > 0 && target.x > array[mid-1].x {
+          return findClosestBetweenTwoValues(value1: array[mid-1], value2: array[mid], target: target)
+        }
+        j = mid
+      } else {
+        if mid < n-1 && target.x < array[mid+1].x {
+          return findClosestBetweenTwoValues(value1: array[mid], value2: array[mid+1], target: target)
+        }
+        i = mid + 1
+      }
+      
+    }
+    
+    return array[mid]
+  }
+  
+  /// Helper function for finding the closest value between two values
+  func findClosestBetweenTwoValues(value1: CGPoint, value2: CGPoint, target: CGPoint) -> CGPoint {
+    
+    if (target.x - value1.x) >= (value2.x - target.x) {
+      return value2
+    } else {
+      return value1
+    }
+  }
+  
+  
+  func findClosestY(array: [CGRect], target: CGPoint) -> CGRect {
+    let n = array.count
+    var i = 0
+    var j = n
+    var mid = 0
+    
+    while i < j {
+      mid = (i + j) / 2
+      if target.x <= array[0].midX {
+        return array[0]
+      }
+      
+      if target.x >= array[n-1].midX {
+        return array[n-1]
+      }
+      
+      if CGPoint(x: array[mid].midX, y: array[mid].minY) == target {
+        return array[mid]
+      }
+      
+      if target.x < array[mid].midX {
+        if mid > 0 && target.x > array[mid-1].midX {
+          return findClosestBetweenTwoValuesY(value1: array[mid-1], value2: array[mid], target: target)
+        }
+        j = mid
+      } else {
+        if mid < n-1 && target.x < array[mid+1].midX {
+          return findClosestBetweenTwoValuesY(value1: array[mid], value2: array[mid+1], target: target)
+        }
+        i = mid + 1
+      }
+      
+    }
+    
+    return array[mid]
+  }
+  
+  /// Helper function for finding the closest value between two values
+  func findClosestBetweenTwoValuesY(value1: CGRect, value2: CGRect, target: CGPoint) -> CGRect {
+    
+    if (target.x - value1.midX) >= (value2.midX - target.x) {
+      return value2
+    } else {
+      return value1
+    }
+  }
+  
+  
+  func findClosestHorizontal(array: [CGRect], target: CGPoint) -> CGRect {
+    let n = array.count
+    var i = 0
+    var j = n
+    var mid = 0
+    
+    while i < j {
+      mid = (i + j) / 2
+      if target.x <= array[0].midY {
+        return array[0]
+      }
+      
+      if target.x >= array[n-1].midY {
+        return array[n-1]
+      }
+      
+      if CGPoint(x: array[mid].minX, y: array[mid].midY) == target {
+        return array[mid]
+      }
+      
+      if target.y < array[mid].midY {
+        if mid > 0 && target.y > array[mid-1].midY {
+          return findClosestBetweenTwoValuesHorizontal(value1: array[mid-1], value2: array[mid], target: target)
+        }
+        j = mid
+      } else {
+        if mid < n-1 && target.y < array[mid+1].midY {
+          return findClosestBetweenTwoValuesHorizontal(value1: array[mid], value2: array[mid+1], target: target)
+        }
+        i = mid + 1
+      }
+      
+    }
+    
+    return array[mid]
+  }
+  
+  /// Helper function for finding the closest value between two values
+  func findClosestBetweenTwoValuesHorizontal(value1: CGRect, value2: CGRect, target: CGPoint) -> CGRect {
+    
+    if (target.y - value1.midY) >= (value2.midY - target.y) {
+      return value2
+    } else {
+      return value1
+    }
+  }
+  
 
+  /// Takes an array of array doubles and combines them in order
+  func combineArray(array: [[Double]]) -> [Double]{
+    let joined = Array(array.joined())
+    
+   return joined
+  }
+  
+  
+  /// Takes an array of array doubles and combines them in order
+  func combineCGPointArray(array: [CGPoint]) -> [CGPoint]{
+    let combinedArray = array.sorted(by: { return $0.x < $1.x })
+    
+    
+    return combinedArray
+  }
+  
+  func combineCGRectArray(array: [CGRect]) -> [CGRect] {
+    let combinedArray = array.sorted(by: { return $0.midX < $1.midX })
+    
+    return combinedArray
+    
+  }
+
+  
+  func combineCGRectHorizontalArray(array: [CGRect]) -> [CGRect] {
+    let combinedArray = array.sorted(by: { return $0.midY < $1.midY })
+    
+    return combinedArray
+    
+  }
+  
 }

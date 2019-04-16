@@ -21,8 +21,42 @@ public enum position {
   
 }
 
-public enum legendPlacing {
+@objc public enum legendPlacing: Int, RawRepresentable {
   case left, right, bottom, top, custom
+  
+  public typealias RawValue = String
+  
+  public var rawValue: RawValue {
+    switch self {
+    case.left:
+      return "left"
+    case.right:
+      return "right"
+    case.bottom:
+      return "bottom"
+    case.top:
+      return "top"
+    case.custom:
+      return "custom"
+    }
+  }
+  
+  public init?(rawValue: RawValue) {
+    switch rawValue {
+    case "left":
+      self = .left
+    case "right":
+      self = .right
+    case "bottom":
+      self = .bottom
+    case "top":
+      self = .top
+    case "custom":
+      self = .custom
+    default:
+      self = .bottom
+    }
+  }
 }
 
 public enum pielegendPlacing {
@@ -33,8 +67,29 @@ public enum orientation {
   case landscape, portrait
 }
 
-public enum filltype {
+@objc public enum filltype: Int, RawRepresentable {
   case gradientFill, normalFill
   
+  public typealias RawValue = String
+  
+  public var rawValue: RawValue {
+    switch self {
+    case.gradientFill:
+      return "gradientFill"
+    case.normalFill:
+      return "normalFill"
+    }
+  }
+  
+  public init?(rawValue: RawValue) {
+    switch rawValue {
+    case "gradientFill":
+      self = .gradientFill
+    case "normalFill":
+      self = .normalFill
+    default:
+      self = .normalFill
+    }
+  }
   
 }

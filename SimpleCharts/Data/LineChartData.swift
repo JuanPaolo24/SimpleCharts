@@ -29,16 +29,16 @@ open class LineChartData: ChartData {
   open var isLineVisible: Bool { get {return enableLineVisibility} }
   
   /// Set the graph colour both the circle point and the line
-  open var setLineGraphColour = UIColor.black.cgColor
+  open var setLineGraphColour = UIColor(red:0.67, green:0.92, blue:1.00, alpha:1.0).cgColor
   
-  /// Set Circle Point Radius (Default = 3)
-  open var setCirclePointRadius: CGFloat = 3.0
+  /// Set Circle Point Radius (Default = 5)
+  open var setCirclePointRadius: CGFloat = 5.0
   
   /// Set Line Point Width (Default = 1)
   open var setLineWidth: CGFloat = 1.0
   
   /// Enable the data point labels (Default = True)
-  open var enableDataPointLabel = true
+  open var enableDataPointLabel = false
   
   /// Returns true if data point label is visible
   open var isDataLabelVisible: Bool { get {return enableDataPointLabel} }

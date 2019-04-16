@@ -8,12 +8,12 @@
 
 import Foundation
 
-
+@IBDesignable
 open class xAxisConfiguration {
   
   //Axis
   /// X axis labels visibility (Default = True)
-  open var xAxisVisibility = true
+  open var xAxisVisibility: Bool = true
   
   /// Returns true if X Axis label is visible
   open var isxAxisLabelVisible: Bool { get {return xAxisVisibility} }

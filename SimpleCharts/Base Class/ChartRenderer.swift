@@ -23,7 +23,7 @@ open class ChartRenderer: UIView {
   
   
   public required init?(coder aDecoder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
+    super.init(coder: aDecoder)
   }
   
 
@@ -208,13 +208,124 @@ open class ChartRenderer: UIView {
       let locations:[CGFloat] = [0.0, 1.0]
       
       guard let gradient = CGGradient(colorSpace: colorSpace,colorComponents: colorComponents,locations: locations, count: locations.count) else { return }
-      
+      context.setAlpha(0.33)
       context.drawLinearGradient(gradient, start: gradientStart, end: gradientEnd, options: CGGradientDrawingOptions(rawValue: UInt32(0)))
     }
   }
   
+
   
   
+  func highlightValues(context: CGContext, array: [[Double]], touchPoint: CGPoint, maxValue: Double, minValue: Double, offSet: offset) {
+    let helper = HelperFunctions()
+    
+    var calc = LineGraphCalculation(array: [], arrayCount: 0, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: 0, xAxisGridlineCount: 0)
+    
+    var highlightValueArray: [CGPoint] = []
+    
+    for i in 0...(array.count - 1) {
+      calc = LineGraphCalculation(array: array[i], arrayCount: 0, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: 0, xAxisGridlineCount: 0)
+      for (i,value) in array[i].enumerated() {
+        let xValue = calc.xlineGraphPoint(i: i)
+        let yValue = calc.ylineGraphPoint(value: value)
+        highlightValueArray.append(CGPoint(x: xValue, y: yValue))
+      }
+    }
+//    /// The X value should be the one getting into order instead of the actual value
+    let sortedXPoint = helper.combineCGPointArray(array: highlightValueArray)
+    let newXPoint = helper.findClosest(array: sortedXPoint, target: touchPoint)
+
+    context.protectGState {
+      let gridLine = CGMutablePath()
+      gridLine.move(to: CGPoint(x: newXPoint.x, y: 20))
+      gridLine.addLine(to: CGPoint(x: newXPoint.x, y: frame.size.height - 62))
+      let anotherGridline = CGMutablePath()
+      anotherGridline.move(to: CGPoint(x: 32, y: newXPoint.y))
+      anotherGridline.addLine(to: CGPoint(x: frame.size.width - 32, y: newXPoint.y))
+      context.addPath(gridLine)
+      context.addPath(anotherGridline)
+      context.setStrokeColor(UIColor(red:0.95, green:0.87, blue:0.76, alpha:1.0).cgColor)
+      context.strokePath()
+      context.setLineWidth(0.5)
+      context.setLineDash(phase: 0, lengths: [1])
+    }
+    
+    
+  }
+  
+  
+  func barHighlightValues(context: CGContext, array: [[Double]], maxValue: Double, minValue: Double, arrayCount: Double, offSet: offset, touchPoint: CGPoint) {
+    var calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, minValue: minValue, arrayCount: Double(array.count), yAxisGridlineCount: 0, xAxisGridlineCount: 0, offSet: offSet)
+    
+    var highlightValueArray: [CGRect] = []
+    let helper = HelperFunctions()
+    var width = 0.0
+    var height = 0.0
+    var xValue = 0.0
+    
+    for i in 0...(array.count - 1) {
+      for (j, value) in array[i].enumerated() {
+        calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, minValue: minValue, arrayCount: Double(array[i].count), yAxisGridlineCount: 0, xAxisGridlineCount: 0, offSet: offSet)
+        
+        
+        width = calc.verticalWidth(count: arrayCount)
+        xValue = calc.xVerticalValue(i: j, dataSetCount: Double(i), count: arrayCount)
+        let yValue = calc.yVerticalValue(value: value)
+        
+        height = calc.verticalHeight(value: value)
+        highlightValueArray.append(CGRect(x: xValue, y: yValue, width: width, height: height))
+      }
+      
+    }
+    
+    //create a function that accepts cg rect
+    let sortedXPoint = helper.combineCGRectArray(array: highlightValueArray)
+    let newXPoint = helper.findClosestY(array: sortedXPoint, target: touchPoint)
+    context.protectGState {
+      context.setFillColor(UIColor(red:0.24, green:0.24, blue:0.24, alpha:0.5).cgColor)
+      context.setStrokeColor(UIColor(red:0.24, green:0.24, blue:0.24, alpha:0.5).cgColor)
+      context.setLineWidth(1.0)
+      context.addRect(newXPoint)
+      context.drawPath(using: .fillStroke)
+    }
+    
+    
+  }
+  
+  func horizontalBarHighlightValues(context: CGContext, array: [[Double]], maxValue: Double, minValue: Double, arrayCount: Double, offSet: offset, touchPoint: CGPoint) {
+    var calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, minValue: minValue, arrayCount: Double(array.count), yAxisGridlineCount: 0, xAxisGridlineCount: 0, offSet: offSet)
+    
+    var highlightValueArray: [CGRect] = []
+    let helper = HelperFunctions()
+    
+    for i in 0...(array.count - 1) {
+      for (j, value) in array[i].enumerated() {
+        calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, minValue: minValue, arrayCount: Double(array[i].count), yAxisGridlineCount: 0, xAxisGridlineCount: 0, offSet: offSet)
+        
+        let yValue = calc.yHorizontalValue(i: j, dataSetCount: Double(i), count: arrayCount)
+        let xValue = calc.xHorizontalValue()
+        let width = calc.horizontalWidth(value: value)
+        let height = calc.horizontalHeight(count: arrayCount)
+        
+        highlightValueArray.append(CGRect(x: xValue, y: yValue, width: width, height: height))
+      }
+      
+    }
+
+    let sortedXPoint = helper.combineCGRectHorizontalArray(array: highlightValueArray)
+    let newXPoint = helper.findClosestHorizontal(array: sortedXPoint, target: touchPoint)
+    print(sortedXPoint)
+    context.protectGState {
+      context.setFillColor(UIColor(red:0.24, green:0.24, blue:0.24, alpha:0.5).cgColor)
+      context.setStrokeColor(UIColor(red:0.24, green:0.24, blue:0.24, alpha:0.5).cgColor)
+      context.setLineWidth(1.0)
+      context.addRect(newXPoint)
+      context.drawPath(using: .fillStroke)
+    }
+    
+    
+  }
+
   /// Base function for drawing single line graphs. Requires context, the array to be plotted and the max value of the whole data set
   func drawLineGraph(context: CGContext, array: [Double], maxValue: Double, minValue: Double, source: LineChartData, forCombined: Bool, offSet: offset, xGridlineCount: Double, yGridlineCount: Double) {
     let calc = LineGraphCalculation(array: array, arrayCount: 0, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yGridlineCount, xAxisGridlineCount: xGridlineCount)
@@ -237,6 +348,8 @@ open class ChartRenderer: UIView {
     gradientPath.move(to: CGPoint(x: offSet.left, y: frameHeight() - offSet.bottom))
     var smallVal: [Double] = []
     
+    
+    
     var xValue: Double = 0.0
     var yValue: Double = 0.0
     
@@ -251,6 +364,7 @@ open class ChartRenderer: UIView {
       
       yValue = calc.ylineGraphPoint(value: value)
       
+      
       if source.enableLineVisibility == true {
         drawLines(context: context, startingPoint: linePath, destinationPoint: CGPoint(x: xValue, y: yValue), source: source)
         drawFillLine(context: context, startingPoint: fillPath, destinationPoint: CGPoint(x: xValue, y: yValue))
@@ -261,7 +375,7 @@ open class ChartRenderer: UIView {
       }
       
       if source.enableDataPointLabel == true {
-        textRenderer.renderText(text: "\(value)", textFrame: CGRect(x: xValue, y: yValue - 15, width: 40, height: 20))
+        textRenderer.renderText(text: "\(value)", textFrame: CGRect(x: xValue, y: yValue - 20, width: 40, height: 20))
       }
       
       gradientPath.addLine(to: CGPoint(x: xValue, y: yValue))
@@ -382,8 +496,8 @@ open class ChartRenderer: UIView {
     let rightBaseStartPoint = CGPoint(x: xAxisPadding, y: offSet.top)
     let rightBaseEndPoint = CGPoint(x: xAxisPadding, y: yAxisPadding)
     
-    drawAxisBase(context: context, start: leftBaseStartPoint, end: leftBaseEndPoint, strokeColour: setYAxisBaseColour, width: 3.0)
-    drawAxisBase(context: context, start: rightBaseStartPoint, end: rightBaseEndPoint, strokeColour: setYAxisBaseColour, width: 3.0)
+    drawAxisBase(context: context, start: leftBaseStartPoint, end: leftBaseEndPoint, strokeColour: setYAxisBaseColour, width: 1.0)
+    drawAxisBase(context: context, start: rightBaseStartPoint, end: rightBaseEndPoint, strokeColour: setYAxisBaseColour, width: 1.0)
   }
   
   /// A function that draw the X axis line used by Line and Bar Graph
@@ -399,8 +513,8 @@ open class ChartRenderer: UIView {
     let upperBaseStartPoint = CGPoint(x: offSet.left, y: offSet.top)
     let upperBaseEndPoint = CGPoint(x: xAxisPadding, y: offSet.top)
     
-    drawAxisBase(context: context, start: bottomBaseStartPoint, end: bottomBaseEndPoint, strokeColour: setXAxisBaseColour, width: 2.0)
-    drawAxisBase(context: context, start: upperBaseStartPoint, end: upperBaseEndPoint, strokeColour: setXAxisBaseColour, width: 2.0)
+    drawAxisBase(context: context, start: bottomBaseStartPoint, end: bottomBaseEndPoint, strokeColour: setXAxisBaseColour, width: 1.0)
+    drawAxisBase(context: context, start: upperBaseStartPoint, end: upperBaseEndPoint, strokeColour: setXAxisBaseColour, width: 1.0)
     
   }
   
@@ -487,13 +601,11 @@ open class ChartRenderer: UIView {
       let width = calc.verticalWidth(count: arrayCount)
       let xValue = calc.xVerticalValue(i: i, dataSetCount: overallCount, count: arrayCount)
       let yValue = calc.yVerticalValue(value: value)
-      
       let height = calc.verticalHeight(value: value)
       let xFrame = calc.xVerticalTextFrame(i: i, dataSetCount: overallCount, count: arrayCount)
       let yFrame = calc.yVerticalTextFrame(value: value)
       
       drawRectangle(context: context, x: xValue, y: yValue, width: width, height: height, source: data)
-      
       if data.enableDataPointLabel == true {
         textRenderer.renderText(text: "\(value)", textFrame: CGRect(x: xFrame, y: yFrame, width: 40, height: 20))
       }
