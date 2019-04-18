@@ -16,6 +16,7 @@
 		282ABB232225690100785C78 /* PieChartDataSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282ABB222225690100785C78 /* PieChartDataSet.swift */; };
 		282ABB2522256A1000785C78 /* PieChartData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282ABB2422256A1000785C78 /* PieChartData.swift */; };
 		282ABB2C2225805F00785C78 /* CombinedChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282ABB2B2225805F00785C78 /* CombinedChartView.swift */; };
+		282DB5BF2267885C00BFC5EF /* LineChartViewPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282DB5BE2267885C00BFC5EF /* LineChartViewPort.swift */; };
 		283C05E42226612000A984AB /* CombinedChartDataSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 283C05E32226612000A984AB /* CombinedChartDataSet.swift */; };
 		285AE74522280BFA00FCADBC /* SimpleChartsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 285AE74422280BFA00FCADBC /* SimpleChartsTests.swift */; };
 		285AE74722280BFA00FCADBC /* SimpleCharts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28DCBF9121FA23B6006BB48F /* SimpleCharts.framework */; };
@@ -60,6 +61,7 @@
 		282ABB222225690100785C78 /* PieChartDataSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieChartDataSet.swift; sourceTree = "<group>"; };
 		282ABB2422256A1000785C78 /* PieChartData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PieChartData.swift; sourceTree = "<group>"; };
 		282ABB2B2225805F00785C78 /* CombinedChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombinedChartView.swift; sourceTree = "<group>"; };
+		282DB5BE2267885C00BFC5EF /* LineChartViewPort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineChartViewPort.swift; sourceTree = "<group>"; };
 		283C05E32226612000A984AB /* CombinedChartDataSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombinedChartDataSet.swift; sourceTree = "<group>"; };
 		285AE74222280BFA00FCADBC /* SimpleChartsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SimpleChartsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		285AE74422280BFA00FCADBC /* SimpleChartsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleChartsTests.swift; sourceTree = "<group>"; };
@@ -112,6 +114,7 @@
 				282ABB1C22255C9E00785C78 /* PieChartView.swift */,
 				2866D576220DB73D0009005A /* BarChartView.swift */,
 				2866D568220C72060009005A /* LineChartView.swift */,
+				282DB5BE2267885C00BFC5EF /* LineChartViewPort.swift */,
 				282ABB2B2225805F00785C78 /* CombinedChartView.swift */,
 				282ABB0C22240EB200785C78 /* HorizontalBarChartView.swift */,
 			);
@@ -337,6 +340,7 @@
 				287F1E16221EB17C00A61908 /* AxisRenderer.swift in Sources */,
 				28DA74C0223E6F6E005C13D5 /* yAxisConfiguration.swift in Sources */,
 				282ABB1B22255C7800785C78 /* ArcRenderer.swift in Sources */,
+				282DB5BF2267885C00BFC5EF /* LineChartViewPort.swift in Sources */,
 				281901872247EB1D00E352F8 /* CustomTypes.swift in Sources */,
 				287F1E0A221D91EA00A61908 /* LegendRenderer.swift in Sources */,
 				282ABB1D22255C9E00785C78 /* PieChartView.swift in Sources */,
