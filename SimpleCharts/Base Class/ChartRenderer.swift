@@ -120,7 +120,7 @@ open class ChartRenderer: UIView {
     context.protectGState {
       startingPoint.addLine(to: destinationPoint)
       context.addPath(startingPoint)
-      context.setStrokeColor(source.setLineGraphColour)
+      context.setStrokeColor(UIColor.clear.cgColor)
       context.strokePath()
       context.setLineWidth(source.setLineWidth)
     }
@@ -223,18 +223,40 @@ open class ChartRenderer: UIView {
     
     var highlightValueArray: [CGPoint] = []
     
+    var originalValueArray: [CGPoint] = []
+    
+    
     for i in 0...(array.count - 1) {
       calc = LineGraphCalculation(array: array[i], arrayCount: 0, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: 0, xAxisGridlineCount: 0)
       for (i,value) in array[i].enumerated() {
         let xValue = calc.xlineGraphPoint(i: i)
         let yValue = calc.ylineGraphPoint(value: value)
         highlightValueArray.append(CGPoint(x: xValue, y: yValue))
+        originalValueArray.append(CGPoint(x: xValue, y: value))
       }
     }
-//    /// The X value should be the one getting into order instead of the actual value
+    
+    let paragraphStyle = NSMutableParagraphStyle()
+    paragraphStyle.alignment = .justified
+    
+    let attributes: [NSAttributedString.Key : Any] = [
+      .paragraphStyle: paragraphStyle,
+      .font: UIFont.systemFont(ofSize: 12),
+      .foregroundColor: UIColor.black,
+      .backgroundColor: UIColor.gray
+    ]
+    
+    
     let sortedXPoint = helper.combineCGPointArray(array: highlightValueArray)
     let newXPoint = helper.findClosest(array: sortedXPoint, target: touchPoint)
+    let sortedOriginalPoint = helper.combineCGPointArray(array: originalValueArray)
+    let originalPoint = helper.findClosest(array: sortedOriginalPoint, target: touchPoint)
+    
+    
 
+    let attributedString = NSAttributedString(string: "\(originalPoint.y)", attributes: attributes)
+    attributedString.draw(in: CGRect(x: newXPoint.x - 20, y: newXPoint.y - 25, width: 50, height: 40))
+    
     context.protectGState {
       let gridLine = CGMutablePath()
       gridLine.move(to: CGPoint(x: newXPoint.x, y: 20))
@@ -387,6 +409,7 @@ open class ChartRenderer: UIView {
     let gradientStartPoint = CGPoint(x: offSet.left, y: minimum)
     let gradientEndPoint = CGPoint(x: offSet.left, y: frameHeight() - offSet.bottom)
     
+    
     if source.enableGraphFill == true && forCombined == false {
       switch source.fillType {
       case.gradientFill:
@@ -396,11 +419,9 @@ open class ChartRenderer: UIView {
         addFill(context: context, path: fillPath, source: source)
       }
     }
-    
+   
   }
-  
-  
-  
+
   
   /// Base function for drawing line graphs with bezier curve. Requires context, the array to be plotted and the max value of the whole data set
   func drawBezierCurve(context: CGContext, array: [Double], maxValue: Double, minValue: Double, source: LineChartData, forCombined:Bool, offSet: offset, xGridlineCount: Double, yGridlineCount: Double) {
@@ -613,8 +634,8 @@ open class ChartRenderer: UIView {
     }
   }
   
-  
-  
+
+
   
   /// Y Gridlines used by the horizontal bar graph
   func horizontalBarGraphYGridlines(context: CGContext, arrayCount: Int, offSet: offset) {

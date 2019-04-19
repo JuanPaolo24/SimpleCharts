@@ -69,6 +69,9 @@ open class LineGraphCalculation {
     let negativePadding = (frameScale / remaining) * negativeValue
     let yValue = (yAxisPadding - negativePadding) - ((frameScale / remaining) * value)
 
+    
+    
+    
     return yValue
   }
   
