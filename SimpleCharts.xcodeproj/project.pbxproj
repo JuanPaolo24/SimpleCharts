@@ -121,6 +121,7 @@
 		283C05E622266B6500A984AB /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				287F1E03221C640F00A61908 /* ChartData.swift */,
 				282ABB2422256A1000785C78 /* PieChartData.swift */,
 				282ABB222225690100785C78 /* PieChartDataSet.swift */,
 				2866D57D2211E7530009005A /* BarChartData.swift */,
@@ -149,7 +150,6 @@
 				28DA74B6223E5F67005C13D5 /* xAxisConfiguration.swift */,
 				28DA74BF223E6F6E005C13D5 /* yAxisConfiguration.swift */,
 				287F1E09221D91EA00A61908 /* LegendRenderer.swift */,
-				287F1E03221C640F00A61908 /* ChartData.swift */,
 				282ABB1A22255C7800785C78 /* ArcRenderer.swift */,
 				28F874D7222FD60C0042C082 /* TextRenderer.swift */,
 				2819018F224BDE4700E352F8 /* AnimationRenderer.swift */,
