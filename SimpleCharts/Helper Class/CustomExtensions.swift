@@ -17,3 +17,8 @@ extension CGContext{
     restoreGState()
   }
 }
+
+
+extension FloatingPoint {
+  var degreesToRadians: Self {return self * .pi / 180}
+}

@@ -9,7 +9,7 @@
 import Foundation
 
 
-open class BarChartView: ChartRenderer {
+open class BarChartView: BarChartRenderer {
   
   
   /// Legend visibility (Default = True)
@@ -70,6 +70,11 @@ open class BarChartView: ChartRenderer {
   
   public required init?(coder aDecoder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
+  }
+  
+  
+  override open func layoutSubviews() {
+    //
   }
   
   override open func draw(_ rect: CGRect) {
@@ -156,20 +161,22 @@ open class BarChartView: ChartRenderer {
       minValue = 0
     }
     
+    let height = Double(frame.size.height)
+    let width = Double(frame.size.width)
     
     let arrayCount = helper.findArrayCountFrom(array: convertedData)
     
     let paddedLeftOffset = offSetLeft * landscapePadding
     let paddedRightOffset = offSetRight * landscapePadding
     let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
+     let generalCalculationHandler = GeneralGraphCalculation(frameHeight: height, frameWidth: width, arrayCount: Double(arrayCount), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
     
     legend.legendPadding(currentOrientation: currentOrientation)
     
-    xAxisBase(context: context, offSet: offSet)
-    yAxisBase(context: context, offSet: offSet)
+    axisBase(context: context, offSet: offSet)
     context.saveGState()
     barxAxisGridlines(context: context, arrayCount: arrayCount, offSet: offSet)
-    yAxisGridlines(context: context, offSet: offSet, gridlineCount: yAxis.setGridlineCount)
+    yAxisGridlines(context: context, calc: generalCalculationHandler, gridlineCount: yAxis.setGridlineCount)
     context.restoreGState()
     barGraph(context: context, array: convertedData, data: data, max: maxValue, landscapePadding: landscapePadding)
     

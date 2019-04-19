@@ -8,9 +8,6 @@
 
 import Foundation
 
-
-
-
 open class LegendRenderer: UIView {
 
 

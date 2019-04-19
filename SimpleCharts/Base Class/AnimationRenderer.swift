@@ -22,9 +22,9 @@ open class AnimationRenderer: UIView {
   }
   
   
-  func drawAnimatedLineGraph(array: [Double], maxValue: Double, minValue: Double, source: LineChartData, offSet: offset, xGridlineCount: Double, yGridlineCount: Double, height: Double, width: Double) -> CGMutablePath {
+  func drawAnimatedLineGraph(array: [[Double]], maxValue: Double, minValue: Double, offSet: offset, height: Double, width: Double, mainLayer: CALayer) {
     
-    let calc = LineGraphCalculation(array: array, arrayCount: 0, maxValue: maxValue, minValue: minValue, frameWidth: width, frameHeight: height, offSet: offSet, yAxisGridlineCount: yGridlineCount, xAxisGridlineCount: xGridlineCount)
+    var calc = LineGraphCalculation(array: array[0], arrayCount: 0, maxValue: maxValue, minValue: minValue, frameWidth: width, frameHeight: height, offSet: offSet, yAxisGridlineCount: 0, xAxisGridlineCount: 0)
     
     let connection = CGMutablePath()
     
@@ -33,15 +33,27 @@ open class AnimationRenderer: UIView {
     
     connection.move(to: CGPoint(x: startingXValue, y: startingYValue))
     
-    for (i, value) in array.enumerated() {
-      
-      let xValue = calc.xlineGraphPoint(i: i)
-      let yValue = calc.ylineGraphPoint(value: value)
-      
-      connection.addLine(to: CGPoint(x: xValue, y: yValue))
-    }
     
-    return connection
+    for i in 0...array.count - 1  {
+      for (j, value) in array[i].enumerated() {
+        calc = LineGraphCalculation(array: array[i], arrayCount: 0, maxValue: maxValue, minValue: minValue, frameWidth: width, frameHeight: height, offSet: offSet, yAxisGridlineCount: 0, xAxisGridlineCount: 0)
+        let xValue = calc.xlineGraphPoint(i: j)
+        let yValue = calc.ylineGraphPoint(value: value)
+        
+        connection.addLine(to: CGPoint(x: xValue, y: yValue))
+      }
+      let shapeLayer = CAShapeLayer()
+      shapeLayer.path = connection
+      shapeLayer.strokeColor = UIColor.blue.cgColor
+      shapeLayer.fillColor = nil
+      mainLayer.addSublayer(shapeLayer)
+      
+      let animation = CABasicAnimation(keyPath: "strokeEnd")
+      animation.fromValue = 0
+      animation.toValue = 1
+      animation.duration = 2
+      shapeLayer.add(animation, forKey: "line")
+    }
   }
   
   

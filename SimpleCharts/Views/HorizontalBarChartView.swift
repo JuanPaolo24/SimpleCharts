@@ -9,7 +9,7 @@
 import Foundation
 
 
-open class HorizontalBarChartView: ChartRenderer {
+open class HorizontalBarChartView: BarChartRenderer {
   
   /// Legend visibility (Default = True)
   open var legendVisibility = true
@@ -146,8 +146,7 @@ open class HorizontalBarChartView: ChartRenderer {
     let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
     
     
-    xAxisBase(context: context, offSet: offSet)
-    yAxisBase(context: context, offSet: offSet)
+    axisBase(context: context, offSet: offSet)
     context.saveGState()
     horizontalBarGraphXGridlines(context: context, offSet: offSet, gridline: xAxis.setGridlineCount)
     horizontalBarGraphYGridlines(context: context, arrayCount: arrayCount, offSet: offSet)
