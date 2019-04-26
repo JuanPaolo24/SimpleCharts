@@ -68,7 +68,7 @@ open class AnimationRenderer: UIView {
     
     for i in 0...array.count - 1 {
       for (j, value) in array[i].enumerated() {
-        calc = BarGraphCalculation(frameHeight: Double(frame.size.height), frameWidth: Double(frame.size.width), maxValue: maxValue, minValue: minValue, arrayCount: Double(array[i].count), yAxisGridlineCount: 0, xAxisGridlineCount: 0, offSet: offSet)
+        calc = BarGraphCalculation(frameHeight: Double(mainLayer.frame.height), frameWidth: Double(mainLayer.frame.width), maxValue: maxValue, minValue: minValue, arrayCount: Double(array[i].count), yAxisGridlineCount: 0, xAxisGridlineCount: 0, offSet: offSet)
         
         let width = calc.verticalWidth(count: arrayCount)
         let xValue = calc.xVerticalValue(i: j, dataSetCount: Double(i), count: arrayCount)
@@ -93,7 +93,6 @@ open class AnimationRenderer: UIView {
         
       }
     }
-    
     
     
     

@@ -74,7 +74,15 @@ open class BarChartView: BarChartRenderer {
   
   
   override open func layoutSubviews() {
-    //
+    let scale = 70.0/31.0
+    
+    if UIDevice.current.orientation.isLandscape {
+      renderAnimatedBar(landscapePadding: scale, currentOrientation: .landscape)
+    } else {
+      renderAnimatedBar(landscapePadding: 1.0, currentOrientation: .portrait)
+    }
+  
+    
   }
   
   override open func draw(_ rect: CGRect) {
@@ -140,6 +148,37 @@ open class BarChartView: BarChartRenderer {
       drawVerticalBarGraph(context: context, array: value, maxValue: max, minValue: yAxis.setYAxisMinimumValue,data: data.array[i], overallCount: Double(i), arrayCount: Double(array.count), offSet: offSet)
     }
   }
+  
+  
+  func renderAnimatedBar(landscapePadding: Double, currentOrientation: orientation) {
+    self.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
+    let helper = HelperFunctions()
+    let legend = LegendRenderer(frame: self.frame)
+    let convertedData = helper.convert(chartData: data.array)
+    
+    let axis = AxisRenderer(frame: self.frame)
+    
+    var maxValue = 0.0
+    var minValue = 0.0
+    
+    let actualMax = helper.processMultipleArrays(array: convertedData)
+    
+    if enableAxisCustomisation == true {
+      maxValue = yAxis.setYAxisMaximumValue
+      minValue = yAxis.setYAxisMinimumValue
+    } else {
+      maxValue = actualMax
+      minValue = 0
+    }
+    let paddedLeftOffset = offSetLeft * landscapePadding
+    let paddedRightOffset = offSetRight * landscapePadding
+    let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
+    let animator = AnimationRenderer()
+    
+    animator.drawAnimatedBar(array: convertedData, maxValue: maxValue, minValue: minValue, arrayCount: Double(convertedData.count), offSet: offSet, mainLayer: layer)
+    
+    
+  }
 
   func renderVerticalBarGraph(context: CGContext, landscapePadding: Double, currentOrientation: orientation) {
     let helper = HelperFunctions()
@@ -178,8 +217,7 @@ open class BarChartView: BarChartRenderer {
     barxAxisGridlines(context: context, arrayCount: arrayCount, offSet: offSet)
     yAxisGridlines(context: context, calc: generalCalculationHandler, gridlineCount: yAxis.setGridlineCount)
     context.restoreGState()
-    barGraph(context: context, array: convertedData, data: data, max: maxValue, landscapePadding: landscapePadding)
-    
+    //barGraph(context: context, array: convertedData, data: data, max: maxValue, landscapePadding: landscapePadding)
     
     if yAxis.yAxisVisibility == true {
       axis.yAxis(context: context, maxValue: maxValue, minValue: minValue, axisInverse: enableYAxisInverse, offSet: offSet, gridlineCount: yAxis.setGridlineCount)
