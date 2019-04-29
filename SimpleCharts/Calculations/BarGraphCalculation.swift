@@ -46,7 +46,6 @@ open class BarGraphCalculation {
     let start = (offSet.left + 10.0) + (((scale) * dataSetCount) - 5.0) //Increase this to increase gap between data set
     let xValue = start + (increment * Double(i))
     
-    
     return xValue
   }
   

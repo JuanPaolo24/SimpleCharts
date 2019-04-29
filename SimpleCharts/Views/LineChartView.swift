@@ -264,8 +264,12 @@ open class LineChartView: LineChartRenderer {
       minValue = 0
     }
     
+    for (i, value) in convertedData.enumerated() {
+      animationHandler.drawAnimatedLineGraph(array: value, maxValue: maxValue, minValue: minValue, offSet: offSet, height: height, width: width, mainLayer: layer, source: data.array[i])
+    }
     
-    animationHandler.drawAnimatedLineGraph(array: convertedData, maxValue: maxValue, minValue: minValue, offSet: offSet, height: height, width: width, mainLayer: layer)
+    
+    
     
   
     

@@ -9,18 +9,18 @@
 import Foundation
 
 
-class FillHandler {
-  
-  let fill: filltype
-  
-  required init(fill: filltype) {
-    self.fill = fill
-  }
-  
-  
-    
-  }
-  
+//class FillHandler {
+//  
+//  let fill: filltype
+//  
+//  required init(fill: filltype) {
+//    self.fill = fill
+//  }
+//  
+//  
+//    
+//  }
+//  
   
   
 

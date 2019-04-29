@@ -37,6 +37,21 @@ open class PieChartView: ArcRenderer {
     fatalError("init(coder:) has not been implemented")
   }
   
+  open override func layoutSubviews() {
+    let scale = 70.0/31.0
+    let animation = AnimationRenderer(frame: self.frame)
+    let height = frame.size.height
+    let width = frame.size.width
+    print(height)
+    
+    if UIDevice.current.orientation.isLandscape {
+      //animation.drawAnimatedPie(radiusPercentage: 0.4, segments: data, centerX: width * 0.5, centerY: height * 0.5, mainLayer: layer)
+    } else {
+      //animation.drawAnimatedPie(radiusPercentage: 0.4, segments: data, centerX: width * 0.5, centerY: height * 0.5, mainLayer: layer)
+    }
+  }
+  
+  
   override open func draw(_ rect: CGRect) {
     super.draw(rect)
     
@@ -45,11 +60,7 @@ open class PieChartView: ArcRenderer {
       return
     }
     
-    
-    
-    
-    
-    
+  
     if UIDevice.current.orientation.isLandscape {
       renderPieChart(context: context, currentOrientation: orientation.landscape)
     } else {

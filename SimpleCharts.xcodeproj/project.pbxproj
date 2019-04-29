@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		280447632250B14B004B2AE1 /* FillHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 280447622250B14B004B2AE1 /* FillHandler.swift */; };
 		281901872247EB1D00E352F8 /* CustomTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 281901862247EB1D00E352F8 /* CustomTypes.swift */; };
 		28190190224BDE4700E352F8 /* AnimationRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2819018F224BDE4700E352F8 /* AnimationRenderer.swift */; };
 		282ABB0D22240EB200785C78 /* HorizontalBarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 282ABB0C22240EB200785C78 /* HorizontalBarChartView.swift */; };
@@ -54,7 +53,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		280447622250B14B004B2AE1 /* FillHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FillHandler.swift; sourceTree = "<group>"; };
 		281901862247EB1D00E352F8 /* CustomTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTypes.swift; sourceTree = "<group>"; };
 		2819018F224BDE4700E352F8 /* AnimationRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimationRenderer.swift; sourceTree = "<group>"; };
 		282ABB0C22240EB200785C78 /* HorizontalBarChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalBarChartView.swift; sourceTree = "<group>"; };
@@ -161,7 +159,6 @@
 				282ABB1A22255C7800785C78 /* ArcRenderer.swift */,
 				28F874D7222FD60C0042C082 /* TextRenderer.swift */,
 				2819018F224BDE4700E352F8 /* AnimationRenderer.swift */,
-				280447622250B14B004B2AE1 /* FillHandler.swift */,
 				282DB5D22269D9CB00BFC5EF /* HighlightRenderer.swift */,
 			);
 			path = "Base Class";
@@ -362,7 +359,6 @@
 				28190190224BDE4700E352F8 /* AnimationRenderer.swift in Sources */,
 				282DB5D32269D9CB00BFC5EF /* HighlightRenderer.swift in Sources */,
 				287F1DFA221AA66200A61908 /* HelperFunctions.swift in Sources */,
-				280447632250B14B004B2AE1 /* FillHandler.swift in Sources */,
 				287F1E10221DA22E00A61908 /* LineChartDataSet.swift in Sources */,
 				282ABB2C2225805F00785C78 /* CombinedChartView.swift in Sources */,
 				28F0EA932269E1CA004DCFCD /* BarChartRenderer.swift in Sources */,

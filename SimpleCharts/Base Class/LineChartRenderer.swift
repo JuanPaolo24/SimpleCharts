@@ -12,6 +12,16 @@ import CoreGraphics
 open class LineChartRenderer: ChartRenderer {
   
   
+  public override init(frame: CGRect) {
+    super.init(frame: frame)
+  }
+  
+  
+  public required init?(coder aDecoder: NSCoder) {
+    super.init(coder: aDecoder)
+  }
+  
+  
   func addGradient(context: CGContext, path: CGMutablePath, endLine: CGPoint, gradientStart: CGPoint, gradientEnd: CGPoint, source: LineChartData) {
     context.protectGState {
       path.addLine(to: endLine)
@@ -141,6 +151,40 @@ open class LineChartRenderer: ChartRenderer {
       }
     }
 
+  }
+  
+  /// Base function for drawing single line graphs. Requires context, the array to be plotted and the max value of the whole data set
+  func drawLineForCombine(context: CGContext, array: [Double], maxValue: Double, minValue: Double, source: LineChartData, offSet: offset, xGridlineCount: Double, yGridlineCount: Double) {
+    let calc = LineGraphCalculation(array: array, arrayCount: 0, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yGridlineCount, xAxisGridlineCount: xGridlineCount)
+    
+    let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: source.setTextLabelFont), foreGroundColor: source.setTextLabelColour)
+    
+    let startingYValue = calc.ylineGraphStartPoint()
+    let startingXValue = calc.xlineCombinePoint(i: 0)
+    
+    let linePath = CGMutablePath()
+    linePath.move(to: CGPoint(x: startingXValue, y: startingYValue))
+    
+    for (i, value) in array.enumerated() {
+    
+      let xValue = calc.xlineCombinePoint(i: i)
+      let yValue = calc.ylineGraphPoint(value: value)
+      
+      if source.enableLineVisibility == true {
+        context.protectGState {
+          linePath.addLine(to: CGPoint(x: xValue, y: yValue))
+          context.addPath(linePath)
+          context.setStrokeColor(source.setLineGraphColour)
+          context.strokePath()
+          context.setLineWidth(source.setLineWidth)
+        }
+      }
+      
+      if source.enableDataPointLabel == true {
+        textRenderer.renderText(text: "\(value)", textFrame: CGRect(x: xValue, y: yValue - 20, width: 40, height: 20))
+      }
+    }
+    
   }
   
   

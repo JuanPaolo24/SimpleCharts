@@ -146,6 +146,7 @@ open class BarChartView: BarChartRenderer {
     
     for (i, value) in array.enumerated() {
       drawVerticalBarGraph(context: context, array: value, maxValue: max, minValue: yAxis.setYAxisMinimumValue,data: data.array[i], overallCount: Double(i), arrayCount: Double(array.count), offSet: offSet)
+      print(value)
     }
   }
   
@@ -175,8 +176,10 @@ open class BarChartView: BarChartRenderer {
     let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
     let animator = AnimationRenderer()
     
-    animator.drawAnimatedBar(array: convertedData, maxValue: maxValue, minValue: minValue, arrayCount: Double(convertedData.count), offSet: offSet, mainLayer: layer)
     
+    for (i, value) in convertedData.enumerated() {
+      animator.drawAnimatedBar(array: value, maxValue: maxValue, minValue: minValue, arrayCount: Double(convertedData.count), dataSetCount: i, offSet: offSet, mainLayer: layer, source: data.array[i])
+    }
     
   }
 
@@ -211,7 +214,6 @@ open class BarChartView: BarChartRenderer {
      let generalCalculationHandler = GeneralGraphCalculation(frameHeight: height, frameWidth: width, arrayCount: Double(arrayCount), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
     
     legend.legendPadding(currentOrientation: currentOrientation)
-    
     axisBase(context: context, offSet: offSet)
     context.saveGState()
     barxAxisGridlines(context: context, arrayCount: arrayCount, offSet: offSet)

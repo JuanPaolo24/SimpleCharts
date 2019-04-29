@@ -11,6 +11,16 @@ import Foundation
 open class BarChartRenderer: ChartRenderer {
   
   
+  public override init(frame: CGRect) {
+    super.init(frame: frame)
+  }
+  
+  
+  public required init?(coder aDecoder: NSCoder) {
+    super.init(coder: aDecoder)
+  }
+  
+  
   /// Base function for drawing rectangles
   func drawRectangle(context: CGContext, x: Double, y: Double, width: Double, height: Double, source: BarChartData) {
     let rectangle = CGRect(x: x, y: y, width: width, height: height)
@@ -81,7 +91,6 @@ open class BarChartRenderer: ChartRenderer {
       if data.enableDataPointLabel == true {
         textRenderer.renderText(text: "\(value)", textFrame: CGRect(x: xFrame, y: yFrame, width: 40, height: 20))
       }
-      
     }
   }
   
