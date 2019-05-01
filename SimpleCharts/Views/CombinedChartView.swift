@@ -249,7 +249,7 @@ open class CombinedChartView: ChartRenderer {
     }
 
     if xAxis.xAxisVisibility == true {
-      axis.barGraphxAxis(context: context, arrayCount: arrayCount, offSet: offSet)
+      //axis.barGraphxAxis(context: context, arrayCount: arrayCount, offSet: offSet)
     }
 
     if legendVisibility == true {

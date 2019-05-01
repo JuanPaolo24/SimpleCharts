@@ -10,8 +10,8 @@ import Foundation
 
 
 open class AxisLabelRenderer: ChartRenderer {
-
-  let customisationSource = ChartData()
+  
+  var customisationSource = ChartData()
   
   /// Base function for drawing Axis labels using the create label helper function
   func drawAxisLabels(x: Double, y: Double, text: String, width: Double, height: Double) {
@@ -24,15 +24,15 @@ open class AxisLabelRenderer: ChartRenderer {
   
   
   /// Renders the Y axis labels
-  func drawYAxisLabel(on context: CGContext, using gridlineCount: Double, with axisInverse: Bool) {
+  func drawYAxisLabel(on context: CGContext, using gridlineCount: Double, withAxisInverse axisInverse: Bool) {
     for increment in 0...Int(gridlineCount) {
       let leftLabelPoint = calculate.yAxisLabel(using: increment, andisLeft: true)
       let rightLabelPoint = calculate.yAxisLabel(using: increment, andisLeft: false)
       var label = ""
       if axisInverse == true {
-        label = calculate.yAxisLabelText(i: Int(gridlineCount - 1) - increment)
+        label = calculate.yAxisLabelText(using: Int(gridlineCount - 1) - increment)
       } else {
-        label = calculate.yAxisLabelText(i: increment)
+        label = calculate.yAxisLabelText(using: increment)
       }
       
       let leftTextFrame = CGRect(x: leftLabelPoint.x, y: leftLabelPoint.y, width: 20, height: 40)
@@ -63,62 +63,49 @@ open class AxisLabelRenderer: ChartRenderer {
   
   
   /// Renders the X axis label for the bar graph
-  func drawbarXAxisLabel(on context: CGContext, using arrayCount: Int) {
+  func drawbarXAxisLabel(on context: CGContext, withCustomisation: Bool, using arrayCount: Int, and label: [String] ) {
     
     for increment in 0...arrayCount - 1 {
       let labelPoint = calculate.barXAxisLabel(using: increment)
+      let textFrame = CGRect(x: labelPoint.x, y: labelPoint.y, width: 20, height: 40)
+      let customisedTextFrame = CGRect(x: labelPoint.x, y: labelPoint.y, width: 60, height: 40)
+      let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: 8.0), foreGroundColor: UIColor.black)
+      
+      if withCustomisation == true {
+        if label.count < arrayCount {
+          var placeholderArray = label
+          placeholderArray.append(contentsOf: Array(repeating: "Placeholder", count: arrayCount - label.count))
+          textRenderer.renderText(text: placeholderArray[increment], textFrame: customisedTextFrame)
+        } else {
+          textRenderer.renderText(text: label[increment], textFrame: customisedTextFrame)
+        }
+      } else {
+        textRenderer.renderText(text: String(increment + 1), textFrame: textFrame)
+      }
+    }
+  }
+
+  
+  /// Renders the horizontal bar graphs Y axis labels
+  func drawHorizontalYAxisLabel(on context: CGContext, using arrayCount: Int) {
+    for increment in 0...arrayCount - 1 {
+      let labelPoint = calculate.horizontalYAxisLabel(using: increment)
       let textFrame = CGRect(x: labelPoint.x, y: labelPoint.y, width: 20, height: 40)
       let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: 8.0), foreGroundColor: UIColor.black)
       textRenderer.renderText(text: String(increment + 1), textFrame: textFrame)
     }
   }
   
-  func customiseBarGraphxAxis(context: CGContext, arrayCount: Int, label: [String], offSet: offset) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, minValue: 0, arrayCount: Double(arrayCount), yAxisGridlineCount: 0, xAxisGridlineCount: 0, offSet: offSet)
-    
-    for i in 0...arrayCount - 1 {
-//      let xValue = calc.xVerticalGraphxAxisLabel(i: i)
-//      let yValue = calc.xVerticalGraphyAxisLabel()
-//      if label.count < arrayCount {
-//        var placeholderArray = label
-//        placeholderArray.append(contentsOf: Array(repeating: "Placeholder", count: arrayCount - label.count))
-//        drawAxisLabels(x: xValue, y: yValue, text: placeholderArray[i], width: 60, height: 40)
-//      } else {
-//        drawAxisLabels(x: xValue, y: yValue, text: label[i], width: 40, height: 40)
-//      }
-//
-    }
-  }
-  
-
-  
-  /// Renders the horizontal bar graphs Y axis labels
-  func horizontalBarGraphYAxis(context: CGContext, arrayCount: Int, offSet: offset) {
-
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, minValue: 0, arrayCount: Double(arrayCount), yAxisGridlineCount: 0, xAxisGridlineCount: 0, offSet: offSet)
-    
-
-    for i in 0...arrayCount - 1 {
-//      let xValue = calc.horizontalYAxisLabelxPoint()
-//      let yValue = calc.horizontalYAxisLabelyPoint(i: i)
-//      drawAxisLabels(x: xValue, y: yValue, text: String(i + 1), width: 20, height: 40)
-//      
-//      
-    }
-  }
-  
   
   /// Renders the horizontal bar graphs X axis labels
-  func horizontalBarGraphXAxis(context: CGContext, maxValue: Double, minValue: Double, offSet: offset, gridline: Double) {
-    
-    let calc = LineGraphCalculation(array: [], arrayCount: Int(gridline + 1), maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: gridline, xAxisGridlineCount: gridline)
-    
-    
-    for i in 0...Int(gridline) {
-//      let xValue = calc.xHorizontalAxisLabel(i: i)
-//      let yValue = calc.xAxisLabelyValue(isBottom: true)
-//      let label = calc.yAxisLabelText(i: i)
-//      drawAxisLabels(x: xValue, y: yValue, text: label, width: 20, height: 40)
+  func drawHorizontalXAxisLabel(on context: CGContext, using gridline: Double) {
+    for increment in 0...Int(gridline) {
+      let labelPoint = calculate.horizontalXAxisLabel(using: increment)
+      let textFrame = CGRect(x: labelPoint.x, y: labelPoint.y, width: 20, height: 40)
+      let label = calculate.yAxisLabelText(using: increment)
+      let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: 8.0), foreGroundColor: UIColor.black)
+      textRenderer.renderText(text: label, textFrame: textFrame)
+
     }
     
   }

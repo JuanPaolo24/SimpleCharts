@@ -21,4 +21,7 @@ open class xAxisConfiguration {
   /// Number of gridlines (Default = 6)
   open var setGridlineCount:Double = 6
   
+  /// Accepts an array of string which will be used for the X axis label.
+  open var setXAxisLabel: [String] = []
+  
 }

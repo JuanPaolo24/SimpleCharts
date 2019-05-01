@@ -29,7 +29,7 @@ open class BarChartView: BarChartRenderer {
   
   
   /// Enables the axis label customisation (Default = false)
-  open var enableAxisCustomisation = false
+  open var enableAxisCustomisation = true
   
   /// Set X Axis label (Pass in a string array with the same number of labels as the data set)
   open var setXAxisLabel:[String] = []
@@ -226,18 +226,21 @@ open class BarChartView: BarChartRenderer {
 //    drawHorizontalYGridlines(on: context, using: arrayCount)
     context.restoreGState()
     
+    axis.calculate = LineGraphCalculation(array: [], arrayCount: arrayCount, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
     
     if yAxis.yAxisVisibility == true {
       //axis.yAxis(context: context, maxValue: maxValue, minValue: minValue, axisInverse: enableYAxisInverse, offSet: offSet, gridlineCount: yAxis.setGridlineCount)
+      //axis.drawYAxisLabel(on: context, using: yAxis.setGridlineCount, withAxisInverse: false)
+      axis.drawHorizontalYAxisLabel(on: context, using: arrayCount)
     }
     
     if xAxis.xAxisVisibility == true {
-      if enableAxisCustomisation == true {
-        axis.customiseBarGraphxAxis(context: context, arrayCount: arrayCount, label: setXAxisLabel, offSet: offSet)
-      } else {
-        axis.barGraphxAxis(context: context, arrayCount: arrayCount, offSet: offSet)
-      }
-      
+//      if enableAxisCustomisation == true {
+//        axis.drawbarXAxisLabel(on: context, withCustomisation: true, using: arrayCount, and: setXAxisLabel)
+//      } else {
+//        axis.drawbarXAxisLabel(on: context, withCustomisation: false, using: arrayCount, and: [])
+//      }
+      axis.drawHorizontalXAxisLabel(on: context, using: xAxis.setGridlineCount)
     }
     
     if legendVisibility == true {
@@ -268,11 +271,11 @@ open class BarChartView: BarChartRenderer {
     
     
     if yAxis.yAxisVisibility == true {
-      axis.horizontalBarGraphYAxis(context: context, arrayCount: arrayCount, offSet: offSet)
+      axis.drawHorizontalYAxisLabel(on: context, using: arrayCount)
     }
     
     if xAxis.xAxisVisibility == true {
-      axis.horizontalBarGraphXAxis(context: context, maxValue: yAxis.setYAxisMaximumValue, minValue: yAxis.setYAxisMinimumValue, offSet: offSet, gridline: xAxis.setGridlineCount)
+      //axis.horizontalBarGraphXAxis(context: context, maxValue: yAxis.setYAxisMaximumValue, minValue: yAxis.setYAxisMinimumValue, offSet: offSet, gridline: xAxis.setGridlineCount)
     }
     
     if legendVisibility == true {

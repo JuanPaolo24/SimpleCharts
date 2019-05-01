@@ -202,7 +202,7 @@ open class LineChartView: LineChartRenderer {
     if yAxis.yAxisVisibility == true {
       //axis.yAxis(context: context, maxValue: maxValue, minValue: minValue,axisInverse: yAxis.enableYAxisInverse, offSet: offSet, gridlineCount: yAxis.setGridlineCount)
       
-      axis.drawYAxisLabel(on: context, using: yAxis.setGridlineCount, with: yAxis.enableYAxisInverse)
+      axis.drawYAxisLabel(on: context, using: yAxis.setGridlineCount, withAxisInverse: yAxis.enableYAxisInverse)
     }
     
     if xAxis.xAxisVisibility == true {

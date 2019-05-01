@@ -41,4 +41,6 @@ open class BarChartData: ChartData {
   /// Returns true if data point label is visible
   open var isDataLabelVisible: Bool { get {return enableDataPointLabel} }
   
+
+  
 }
