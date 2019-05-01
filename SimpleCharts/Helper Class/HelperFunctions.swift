@@ -12,8 +12,9 @@ import Foundation
 class HelperFunctions {
   
   
-  /// Takes in multiple arrays and determines the highest value within all arrays and returns it
-  open func processMultipleArrays(array: [[Double]]) -> Double {
+  /// Takes in an array of array doubles and returns the max value between all of them
+  //Also adds a bit of padding to make sure that the graph does not go off axis. Currently adds 20%
+  open func findMaxValueFrom(_ array: [[Double]]) -> Double {
     var max = 0.0
     var newArray: [Double] = []
     
@@ -27,34 +28,10 @@ class HelperFunctions {
       max = newMax
     }
     
-    // This padding is to make sure that the graph does not go off axis. Currently adds 20%
     let maxPadding = max * 0.2
     
     return max + maxPadding
   }
-  
-  /// Returns the max value from an array
-  open func returnPaddedMaxValueFrom(array: [Double]) -> Double {
-    var max = 0.0
-    if let maxValue = array.max() {
-      max = maxValue
-    }
-    
-    // This padding is to make sure that the graph does not go off axis. Currently adds 20%
-    let maxPadding = max * 0.2
-    
-    return max + maxPadding
-  }
-  
-  /// Returns the max value from an array
-  open func returnMaxValueFrom(array: [Double]) -> Double {
-    var max = 0.0
-    if let maxValue = array.max() {
-      max = maxValue
-    }
-    return max
-  }
-  
   
   
   /// Takes in multiple arrays and within those array determine the array with the highest count and returns that count
@@ -72,9 +49,11 @@ class HelperFunctions {
     
     return arrayCount
   }
+  
+  
 
   /// Converts the an array of chart data into an array of array doubles
-  open func convert(chartData: [ChartData]) -> [[Double]] {
+  open func convertToDouble(from chartData: [ChartData]) -> [[Double]] {
     var array: [[Double]] = []
     for i in 0...chartData.count-1 {
       array.append(chartData[i].array)
@@ -83,7 +62,7 @@ class HelperFunctions {
   }
   
   /// Converts chart data into an array of doubles
-  open func convert(chartData: ChartData) -> [Double] {
+  open func convertToDouble(from chartData: ChartData) -> [Double] {
     var array: [Double] = []
     for i in 0...chartData.array.count-1 {
       array.append(chartData.array[i])
@@ -91,24 +70,14 @@ class HelperFunctions {
     return array
   }
   
-  
-  /// Check if the bounds of the array has been reached
-  func checkBounds(_ i: Int, array: [Double]) -> Double? {
-    guard i >= array.startIndex, i < array.endIndex else {
-      return nil
-    }
-    return array[i]
-    
-  }
-  
-  
+
   // This function will take in an array and a target number and return the closest number from the array to the target number
   
   ///Refactor this soon 
-  func findClosest(array: [CGPoint], target: CGPoint) -> CGPoint{
-    let n = array.count
+  func findClosest(_ target: CGPoint, from array: [CGPoint]) -> CGPoint{
+    let arrayCount = array.count
     var i = 0
-    var j = n
+    var j = arrayCount
     var mid = 0
     
     while i < j {
@@ -117,8 +86,8 @@ class HelperFunctions {
         return array[0]
       }
       
-      if target.x >= array[n-1].x {
-        return array[n-1]
+      if target.x >= array[arrayCount-1].x {
+        return array[arrayCount-1]
       }
       
       if array[mid] == target {
@@ -127,12 +96,12 @@ class HelperFunctions {
       
       if target.x < array[mid].x {
         if mid > 0 && target.x > array[mid-1].x {
-          return findClosestBetweenTwoValues(value1: array[mid-1], value2: array[mid], target: target)
+          return findClosestValue(target, between: array[mid-1], and: array[mid])
         }
         j = mid
       } else {
-        if mid < n-1 && target.x < array[mid+1].x {
-          return findClosestBetweenTwoValues(value1: array[mid], value2: array[mid+1], target: target)
+        if mid < arrayCount-1 && target.x < array[mid+1].x {
+          return findClosestValue(target, between: array[mid], and: array[mid+1])
         }
         i = mid + 1
       }
@@ -143,7 +112,7 @@ class HelperFunctions {
   }
   
   /// Helper function for finding the closest value between two values
-  func findClosestBetweenTwoValues(value1: CGPoint, value2: CGPoint, target: CGPoint) -> CGPoint {
+  func findClosestValue(_ target: CGPoint, between value1: CGPoint, and value2: CGPoint) -> CGPoint {
     
     if (target.x - value1.x) >= (value2.x - target.x) {
       return value2

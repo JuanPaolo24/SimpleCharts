@@ -16,6 +16,7 @@ class SimpleChartsTests: XCTestCase {
   var max: Double!
   var calcPortrait: LineGraphCalculation!
   var calcLandscape: LineGraphCalculation!
+  let helper = HelperFunctions()
   
   override func setUp() {
 
@@ -24,6 +25,21 @@ class SimpleChartsTests: XCTestCase {
   override func tearDown() {
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     
+  }
+  
+  
+  func testfindArrayMaxValueFunction() {
+    let sampleData:[[Double]] = [[100.0,200.0,150.0,60.0],[30.0,230.0,400.0]]
+    let testFunction = helper.findMaxValueFrom(sampleData)
+    
+    XCTAssertEqual(testFunction, 480.0)
+  }
+  
+  func testfindArrayCountFunction() {
+    let sampleData:[[Double]] = [[100.0,200.0,150.0,60.0],[30.0,230.0,400.0],[100.0,200.0,150.0,60.0,30.0,230.0,400.0]]
+    let testFunction = helper.findArrayCountFrom(array: sampleData)
+    
+    XCTAssertEqual(testFunction, 7)
   }
   
   
@@ -38,15 +54,7 @@ class SimpleChartsTests: XCTestCase {
     
   }
 
-  func testCombineArrayFunction() {
-    let helper = HelperFunctions()
-    let array = [[20.0,30.0,55.0,65.0,100.0],[30.0,40.0,70.0]]
-    
-    let result = helper.combineArray(array: array)
-    
-    XCTAssertEqual(result, [20.0,30.0,30.0,40.0,55.0,65.0,70.0,100.0])
-    
-  }
+
   
   func testCombinedCGPointArrayFunction() {
     let helper = HelperFunctions()

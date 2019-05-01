@@ -63,7 +63,7 @@ open class LineChartView: LineChartRenderer {
   
   open var touchPosition = CGPoint(x: 0, y: 0)
   
-  public var data = LineChartDataSet(dataset: [LineChartData(dataset: [0], datasetName: "Test")])
+  public var data = LineChartDataSet()
   
   override public init(frame: CGRect) {
     super.init(frame: frame)
@@ -164,22 +164,19 @@ open class LineChartView: LineChartRenderer {
     let helper = HelperFunctions()
     let legend = LegendRenderer(frame: self.frame)
     let axis = AxisLabelRenderer(frame: self.frame)
-    let convertedData = helper.convert(chartData: data.array)
+    let convertedData = helper.convertToDouble(from: data.array)
     var maxValue = 0.0
     var minValue = 0.0
     let paddedLeftOffset = offSetLeft * landscapePadding
     let paddedRightOffset = offSetRight * landscapePadding
     let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
-    let highlight = HighlightRenderer(frame: self.frame)
-    
-    let height = Double(frame.size.height)
-    let width = Double(frame.size.width)
+
     let arrayCount = helper.findArrayCountFrom(array: convertedData)
-    
+    let highlight = HighlightRenderer(frame: self.frame)
     
     legend.legendPadding(currentOrientation: currentOrientation)
     
-    let actualMax = helper.processMultipleArrays(array: convertedData)
+    let actualMax = helper.findMaxValueFrom(convertedData)
     
     if enableAxisCustomisation == true {
         maxValue = yAxis.setYAxisMaximumValue
@@ -188,15 +185,15 @@ open class LineChartView: LineChartRenderer {
       maxValue = actualMax
       minValue = 0
     }
-    
-    
+  
     drawLineGraph(context: context, array: convertedData, max: maxValue, data: data, landscapePadding: landscapePadding)
+    
     axisBase(context: context, offSet: offSet)
     drawXAxisGridline(on: context, using: xAxis.setGridlineCount)
     drawYAxisGridline(on: context, using: yAxis.setGridlineCount)
-    
-    highlight.highlightValues(context: context, array: convertedData, touchPoint: touchPosition, maxValue: maxValue, minValue: minValue, offSet: offSet)
+    highlightValues(in: context, using: convertedData, and: touchPosition, with: maxValue, minValue, offSet)
 
+    
     
     axis.calculate = LineGraphCalculation(array: [], arrayCount: arrayCount, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
     if yAxis.yAxisVisibility == true {
@@ -220,13 +217,14 @@ open class LineChartView: LineChartRenderer {
   func drawLineGraph(context: CGContext, array: [[Double]], max: Double, data: LineChartDataSet, landscapePadding: Double) {
     let paddedLeftOffset = offSetLeft * landscapePadding
     let paddedRightOffset = offSetRight * landscapePadding
-    let convertedData = helper.convert(chartData: data.array)
+    let convertedData = helper.convertToDouble(from: data.array)
     let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
     let arrayCount = helper.findArrayCountFrom(array: convertedData)
     
     for (i, value) in array.enumerated() {
       calculate = LineGraphCalculation(array: value, arrayCount: arrayCount, maxValue: max, minValue: yAxis.setYAxisMinimumValue, frameWidth: Double(frame.size.width), frameHeight: Double(frame.size.height), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
       sourceData = data.array[i]
+      
       if enableBezierCurve == true {
         if enableAnimation == false {
           addBezierLine(to: context, from: value, for: .singleChart)
@@ -246,9 +244,9 @@ open class LineChartView: LineChartRenderer {
   
   func drawAnimatedLine(landscapePadding: Double) {
     self.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
-    let animationHandler = AnimationRenderer()
+    let animationHandler = AnimationRenderer(frame: self.frame)
     let helper = HelperFunctions()
-    let convertedData = helper.convert(chartData: data.array)
+    let convertedData = helper.convertToDouble(from: data.array)
     
     var maxValue = 0.0
     var minValue = 0.0
@@ -256,13 +254,8 @@ open class LineChartView: LineChartRenderer {
     let paddedLeftOffset = offSetLeft * landscapePadding
     let paddedRightOffset = offSetRight * landscapePadding
     let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
-    let highlight = HighlightRenderer(frame: self.frame)
     
-    let height = Double(frame.size.height)
-    let width = Double(frame.size.width)
-    
-    
-    let actualMax = helper.processMultipleArrays(array: convertedData)
+    let actualMax = helper.findMaxValueFrom(convertedData)
     
     if enableAxisCustomisation == true {
       maxValue = yAxis.setYAxisMaximumValue
@@ -273,7 +266,9 @@ open class LineChartView: LineChartRenderer {
     }
     
     for (i, value) in convertedData.enumerated() {
-      animationHandler.drawAnimatedLineGraph(array: value, maxValue: maxValue, minValue: minValue, offSet: offSet, height: height, width: width, mainLayer: layer, source: data.array[i])
+      animationHandler.calculate = LineGraphCalculation(array: value, arrayCount: arrayCount, maxValue: maxValue, minValue: minValue, frameWidth: Double(frame.size.width), frameHeight: Double(frame.size.height), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
+      animationHandler.lineCustomisationSource = data.array[i]
+      animationHandler.drawAnimatedLineGraph(on: layer, using: value)
       
     }
     

@@ -158,8 +158,8 @@ open class LegendRenderer: UIView {
     let lineChartDataSet = data.lineData
     let barChartDataSet = data.barData
     
-    let lineConvertedData = helper.convert(chartData: lineChartDataSet.array)
-    let barConvertedData = helper.convert(chartData: barChartDataSet.array)
+    let lineConvertedData = helper.convertToDouble(from: lineChartDataSet.array)
+    let barConvertedData = helper.convertToDouble(from: barChartDataSet.array)
     let dataCount = (lineConvertedData.count + barConvertedData.count) - 1
     var legendName: [String] = []
     var legendColour: [CGColor] = []

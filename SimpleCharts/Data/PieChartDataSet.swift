@@ -17,4 +17,7 @@ open class PieChartDataSet {
     self.array = dataset
   }
   
+  required public init() {
+    self.array = [PieChartData(color: UIColor.white, value: 0, name: "")]
+  }
 }

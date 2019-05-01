@@ -16,4 +16,9 @@ open class LineChartDataSet {
   required public init(dataset: [LineChartData]) {
     self.array = dataset
   }
+  
+  required public init() {
+    self.array = [LineChartData(dataset: [0], datasetName: "Test")]
+  }
+  
 }

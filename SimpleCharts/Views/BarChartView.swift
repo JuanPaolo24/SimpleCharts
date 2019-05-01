@@ -62,7 +62,9 @@ open class BarChartView: BarChartRenderer {
   /// The orientation of the graph
   open var orientation: barOrientation = .vertical
   
-  public var data = BarChartDataSet(dataset: [BarChartData(dataset: [0], datasetName: "Test")])
+  public var data = BarChartDataSet()
+  
+  open var touchPosition = CGPoint(x: 0, y: 0)
   
   override public init(frame: CGRect) {
     super.init(frame: frame)
@@ -79,9 +81,9 @@ open class BarChartView: BarChartRenderer {
     let scale = 70.0/31.0
     
     if UIDevice.current.orientation.isLandscape {
-      renderAnimatedBar(landscapePadding: scale, currentOrientation: .landscape)
+      //renderAnimatedBar(landscapePadding: scale, currentOrientation: .landscape)
     } else {
-      renderAnimatedBar(landscapePadding: 1.0, currentOrientation: .portrait)
+      //renderAnimatedBar(landscapePadding: 1.0, currentOrientation: .portrait)
     }
   
     
@@ -106,6 +108,24 @@ open class BarChartView: BarChartRenderer {
     }
     
   }
+  
+  override open func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    if let touch = touches.first {
+      let position = touch.location(in: self)
+      touchPosition = position
+      setNeedsDisplay()
+    }
+  }
+  
+  
+  override open func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+    if let touch = touches.first {
+      let position = touch.location(in: self)
+      touchPosition = position
+      setNeedsDisplay()
+    }
+  }
+  
   
   // Changes offset configuration based on the position of the legend
   // This is for the default configuration
@@ -162,14 +182,14 @@ open class BarChartView: BarChartRenderer {
     self.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
     let helper = HelperFunctions()
     let legend = LegendRenderer(frame: self.frame)
-    let convertedData = helper.convert(chartData: data.array)
+    let convertedData = helper.convertToDouble(from: data.array)
     
     let axis = AxisLabelRenderer(frame: self.frame)
     
     var maxValue = 0.0
     var minValue = 0.0
     
-    let actualMax = helper.processMultipleArrays(array: convertedData)
+    let actualMax = helper.findMaxValueFrom(convertedData)
     
     if enableAxisCustomisation == true {
       maxValue = yAxis.setYAxisMaximumValue
@@ -185,7 +205,10 @@ open class BarChartView: BarChartRenderer {
     
     
     for (i, value) in convertedData.enumerated() {
-      animator.drawAnimatedBar(array: value, maxValue: maxValue, minValue: minValue, arrayCount: Double(convertedData.count), dataSetCount: i, offSet: offSet, mainLayer: layer, source: data.array[i])
+      animator.calculate = LineGraphCalculation(array: value, arrayCount: value.count, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
+      animator.barCustomisationSource = data.array[i]
+      animator.offSet = offSet
+      animator.drawAnimatedBar(on: layer, using: value, with: Double(i), and: Double(convertedData.count), for: .vertical)
     }
     
   }
@@ -193,14 +216,14 @@ open class BarChartView: BarChartRenderer {
   func renderVerticalBarGraph(context: CGContext, landscapePadding: Double, currentOrientation: orientation) {
     let helper = HelperFunctions()
     let legend = LegendRenderer(frame: self.frame)
-    let convertedData = helper.convert(chartData: data.array)
+    let convertedData = helper.convertToDouble(from: data.array)
     
     let axis = AxisLabelRenderer(frame: self.frame)
     
     var maxValue = 0.0
     var minValue = 0.0
     
-    let actualMax = helper.processMultipleArrays(array: convertedData)
+    let actualMax = helper.findMaxValueFrom(convertedData)
     
     if enableAxisCustomisation == true {
       maxValue = yAxis.setYAxisMaximumValue
@@ -225,6 +248,9 @@ open class BarChartView: BarChartRenderer {
 //    drawHorizontalXGridlines(on: context, using: xAxis.setGridlineCount)
 //    drawHorizontalYGridlines(on: context, using: arrayCount)
     context.restoreGState()
+    
+    //highlightValues(in: context, using: convertedData, and: touchPosition, with: maxValue, minValue, Double(convertedData.count), offSet)
+    highlightHorizontalValues(in: context, using: convertedData, and: touchPosition, with: maxValue, minValue, Double(convertedData.count), offSet)
     
     axis.calculate = LineGraphCalculation(array: [], arrayCount: arrayCount, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
     
@@ -252,10 +278,10 @@ open class BarChartView: BarChartRenderer {
   func renderHorizontalBarGraph(context: CGContext, landscapePadding: Double, currentOrientation: orientation) {
     let helper = HelperFunctions()
     let legend = LegendRenderer(frame: self.frame)
-    let convertedData = helper.convert(chartData: data.array)
+    let convertedData = helper.convertToDouble(from: data.array)
     let axis = AxisLabelRenderer(frame: self.frame)
     
-    let maxValue = helper.processMultipleArrays(array: convertedData)
+    let maxValue = helper.findMaxValueFrom(convertedData)
     let arrayCount = helper.findArrayCountFrom(array: convertedData)
     let paddedLeftOffset = offSetLeft * landscapePadding
     let paddedRightOffset = offSetRight * landscapePadding

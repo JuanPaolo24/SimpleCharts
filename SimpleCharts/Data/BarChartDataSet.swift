@@ -15,4 +15,8 @@ open class BarChartDataSet {
   required public init(dataset: [BarChartData]) {
     self.array = dataset
   }
+  
+  required public init() {
+    self.array = [BarChartData(dataset: [0], datasetName: "Test")]
+  }
 }

@@ -26,7 +26,7 @@ open class PieChartView: ArcRenderer {
   open var customYlegend: Double = 0.0
   
   
-  public var data = PieChartDataSet(dataset: [PieChartData(color: UIColor.white, value: 0, name: "")])
+  public var data = PieChartDataSet()
   
   override public init(frame: CGRect) {
     super.init(frame: frame)
@@ -38,17 +38,17 @@ open class PieChartView: ArcRenderer {
   }
   
   open override func layoutSubviews() {
-    let scale = 70.0/31.0
-    let animation = AnimationRenderer(frame: self.frame)
-    let height = frame.size.height
-    let width = frame.size.width
-    print(height)
-    
-    if UIDevice.current.orientation.isLandscape {
-      animation.drawAnimatedPie(radiusPercentage: 0.4, segments: data, centerX: width * 0.5, centerY: height * 0.5, mainLayer: layer)
-    } else {
-      animation.drawAnimatedPie(radiusPercentage: 0.4, segments: data, centerX: width * 0.5, centerY: height * 0.5, mainLayer: layer)
-    }
+//    let scale = 70.0/31.0
+//    let animation = AnimationRenderer(frame: self.frame)
+//    let height = frame.size.height
+//    let width = frame.size.width
+//    print(height)
+//    
+//    if UIDevice.current.orientation.isLandscape {
+//      animation.drawAnimatedPie(radiusPercentage: 0.4, segments: data, centerX: width * 0.5, centerY: height * 0.5, mainLayer: layer)
+//    } else {
+//      animation.drawAnimatedPie(radiusPercentage: 0.4, segments: data, centerX: width * 0.5, centerY: height * 0.5, mainLayer: layer)
+//    }
   }
   
   

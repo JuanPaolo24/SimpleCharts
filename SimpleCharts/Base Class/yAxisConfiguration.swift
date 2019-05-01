@@ -13,9 +13,6 @@ open class yAxisConfiguration {
   /// Y axis labels visibility (Default = True)
   open var yAxisVisibility = true
   
-  /// Returns true if Y Axis label is visible
-  open var isyAxisLabelVisible: Bool { get {return yAxisVisibility} }
-  
   /// If you want to just set a custom maximum value then use this variable along with the gridline count to set the preferred number of gridline. 
   open var setYAxisMaximumValue: Double = 0.0
   

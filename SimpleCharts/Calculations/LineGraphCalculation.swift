@@ -37,6 +37,32 @@ open class LineGraphCalculation {
     self.xAxisGridlineCount = xAxisGridlineCount
   }
   
+  required public init(array: [Double], maxValue: Double, minValue: Double, frameWidth: Double, frameHeight: Double, offSet:offset) {
+    self.array = array
+    self.arrayCount = 0
+    self.maxValue = maxValue
+    self.minValue = minValue
+    self.frameWidth = frameWidth
+    self.frameHeight = frameHeight
+    
+    self.offSet = offSet
+    self.yAxisGridlineCount = 0
+    self.xAxisGridlineCount = 0
+  }
+  
+  required public init(arrayCount: Int, maxValue: Double, minValue: Double, frameWidth: Double, frameHeight: Double, offSet:offset) {
+    self.array = []
+    self.arrayCount = arrayCount
+    self.maxValue = maxValue
+    self.minValue = minValue
+    self.frameWidth = frameWidth
+    self.frameHeight = frameHeight
+    
+    self.offSet = offSet
+    self.yAxisGridlineCount = 0
+    self.xAxisGridlineCount = 0
+  }
+  
   required public init() {
     self.array = []
     self.arrayCount = 0
@@ -113,7 +139,7 @@ open class LineGraphCalculation {
   }
   
   
-  func ylineGraphPoint(value: Double) -> Double {
+  func ylineGraphPoint(from value: Double) -> Double {
     let frameScale = frameHeight - offSet.bottom - offSet.top
     let yAxisPadding = frameHeight - offSet.bottom
     let remaining = maxValue - minValue

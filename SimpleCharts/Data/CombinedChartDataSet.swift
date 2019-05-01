@@ -19,4 +19,9 @@ open class CombinedChartDataSet {
     self.barData = barData
   }
   
+  required public init() {
+    self.lineData = LineChartDataSet(dataset: [LineChartData(dataset: [0], datasetName: "Test")])
+    self.barData = BarChartDataSet(dataset: [BarChartData(dataset: [0], datasetName: "Test2")])
+  }
+  
 }

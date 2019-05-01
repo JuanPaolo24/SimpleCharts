@@ -8,16 +8,22 @@
 
 import Foundation
 
-
-
 open class TextRenderer {
   
   var font: UIFont
   var foreGroundColor: UIColor
+  var backGroundColor: UIColor
   
   required public init(font: UIFont, foreGroundColor: UIColor) {
     self.font = font
     self.foreGroundColor = foreGroundColor
+    self.backGroundColor = UIColor.clear
+  }
+  
+  required public init(font: UIFont, foreGroundColor: UIColor, backGroundColor: UIColor) {
+    self.font = font
+    self.foreGroundColor = foreGroundColor
+    self.backGroundColor = backGroundColor
   }
   
   
@@ -30,7 +36,8 @@ open class TextRenderer {
     let attributes: [NSAttributedString.Key : Any] = [
       .paragraphStyle: paragraphStyle,
       .font: font,
-      .foregroundColor: foreGroundColor
+      .foregroundColor: foreGroundColor,
+      .backgroundColor: backGroundColor
     ]
     
     let attributedString = NSAttributedString(string: text, attributes: attributes)

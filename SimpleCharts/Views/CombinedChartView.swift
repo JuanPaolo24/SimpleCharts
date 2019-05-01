@@ -48,7 +48,7 @@ open class CombinedChartView: ChartRenderer {
   open var enableLineBezier = false
   
   /// Add the data source
-  public var data = CombinedChartDataSet(lineData: LineChartDataSet(dataset: [LineChartData(dataset: [0], datasetName: "Test")]), barData: BarChartDataSet(dataset: [BarChartData(dataset: [0], datasetName: "Test2")]))
+  public var data = CombinedChartDataSet()
   
   
   override public init(frame: CGRect) {
@@ -144,11 +144,11 @@ open class CombinedChartView: ChartRenderer {
     let lineChartDataSet = data.lineData
     let barChartDataSet = data.barData
     
-    let lineConvertedData = helper.convert(chartData: lineChartDataSet.array)
-    let barConvertedData = helper.convert(chartData: barChartDataSet.array)
+    let lineConvertedData = helper.convertToDouble(from: lineChartDataSet.array)
+    let barConvertedData = helper.convertToDouble(from: barChartDataSet.array)
     
-    let lineMaxValue = helper.processMultipleArrays(array: lineConvertedData)
-    let barMaxValue = helper.processMultipleArrays(array: barConvertedData)
+    let lineMaxValue = helper.findMaxValueFrom(lineConvertedData)
+    let barMaxValue = helper.findMaxValueFrom(barConvertedData)
     let maxValue = max(lineMaxValue, barMaxValue)
     
     let lineArrayCount = helper.findArrayCountFrom(array: lineConvertedData)
@@ -159,11 +159,11 @@ open class CombinedChartView: ChartRenderer {
     
     
     for (i, value) in barConvertedData.enumerated() {
-      animationHandler.drawAnimatedBar(array: value, maxValue: maxValue, minValue: 0, arrayCount: Double(barConvertedData.count), dataSetCount: i, offSet: offSet, mainLayer: layer, source: barChartDataSet.array[i])
+      //animationHandler.drawAnimatedBar(array: value, maxValue: maxValue, minValue: 0, arrayCount: Double(barConvertedData.count), dataSetCount: i, offSet: offSet, mainLayer: layer, source: barChartDataSet.array[i])
     }
     
     for (i, value) in lineConvertedData.enumerated() {
-      animationHandler.drawAnimatedLineGraph(array: value, maxValue: maxValue, minValue: 0, offSet: offSet, height: frameHeight(), width: frameWidth(), mainLayer: layer, source: lineChartDataSet.array[i])
+      //animationHandler.drawAnimatedLineGraph(array: value, maxValue: maxValue, minValue: 0, offSet: offSet, height: frameHeight(), width: frameWidth(), mainLayer: layer, source: lineChartDataSet.array[i])
       
     }
     
@@ -217,11 +217,11 @@ open class CombinedChartView: ChartRenderer {
     let lineChartDataSet = data.lineData
     let barChartDataSet = data.barData
 
-    let lineConvertedData = helper.convert(chartData: lineChartDataSet.array)
-    let barConvertedData = helper.convert(chartData: barChartDataSet.array)
+    let lineConvertedData = helper.convertToDouble(from: lineChartDataSet.array)
+    let barConvertedData = helper.convertToDouble(from: barChartDataSet.array)
 
-    let lineMaxValue = helper.processMultipleArrays(array: lineConvertedData)
-    let barMaxValue = helper.processMultipleArrays(array: barConvertedData)
+    let lineMaxValue = helper.findMaxValueFrom(lineConvertedData)
+    let barMaxValue = helper.findMaxValueFrom(barConvertedData)
     let maxValue = max(lineMaxValue, barMaxValue)
 
     let lineArrayCount = helper.findArrayCountFrom(array: lineConvertedData)

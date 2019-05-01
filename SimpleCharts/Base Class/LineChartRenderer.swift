@@ -28,7 +28,7 @@ open class LineChartRenderer: ChartRenderer {
     for (increment, value) in array.enumerated() {
       
       xValue = calculate.xlineGraphPoint(for: .singleChart, from: increment)
-      let yValue = calculate.ylineGraphPoint(value: value)
+      let yValue = calculate.ylineGraphPoint(from: value)
       
       gradientFillPath.addLine(to: CGPoint(x: xValue, y: yValue))
       gradientPath.addLine(to: CGPoint(x: xValue, y: yValue))
@@ -150,7 +150,7 @@ open class LineChartRenderer: ChartRenderer {
     for (increment, value) in array.enumerated() {
       
       let xValue = calculate.xlineGraphPoint(for: .singleChart, from: increment)
-      let yValue = calculate.ylineGraphPoint(value: value)
+      let yValue = calculate.ylineGraphPoint(from: value)
       
       if sourceData.enableCirclePointVisibility == true {
         context.addArc(center: CGPoint(x: xValue, y: yValue), radius: sourceData.setCirclePointRadius, startAngle: CGFloat(0).degreesToRadians, endAngle: CGFloat(360).degreesToRadians, clockwise: true)
@@ -175,7 +175,7 @@ open class LineChartRenderer: ChartRenderer {
     for (increment, value) in array.enumerated() {
       
       let xValue = calculate.xlineGraphPoint(for: type, from: increment)
-      let yValue = calculate.ylineGraphPoint(value: value)
+      let yValue = calculate.ylineGraphPoint(from: value)
       
       if sourceData.enableLineVisibility == true {
         context.protectGState {
@@ -227,6 +227,52 @@ open class LineChartRenderer: ChartRenderer {
         textRenderer.renderText(text: "\(value)", textFrame: CGRect(x: destination.x, y: destination.y - 15, width: 40, height: 20))
       }
     }
+  }
+  
+  func highlightValues(in context: CGContext, using array: [[Double]], and touchPoint: CGPoint, with maxValue: Double, _ minValue: Double, _ offSet: offset) {
+    let helper = HelperFunctions()
+    var highlightValueArray: [CGPoint] = []
+    var originalValueArray: [CGPoint] = []
+    let height = Double(frame.size.height)
+    let width = Double(frame.size.width)
+    var calc = LineGraphCalculation()
+    
+    for i in 0...(array.count - 1) {
+      for (increment,value) in array[i].enumerated() {
+        calc = LineGraphCalculation(array: array[i], maxValue: maxValue, minValue: minValue, frameWidth: width, frameHeight: height, offSet: offSet)
+        //Having its own instance is better for performance
+        let xValue = calc.xlineGraphPoint(for: .singleChart, from: increment)
+        let yValue = calc.ylineGraphPoint(from: value)
+        highlightValueArray.append(CGPoint(x: xValue, y: yValue))
+        originalValueArray.append(CGPoint(x: xValue, y: value))
+      }
+    }
+    
+    let sortedXPointArray = helper.combineCGPointArray(array: highlightValueArray)
+    let newXPoint = helper.findClosest(touchPoint, from: sortedXPointArray)
+    let sortedOriginalPointArray = helper.combineCGPointArray(array: originalValueArray)
+    let originalPoint = helper.findClosest(touchPoint, from: sortedOriginalPointArray)
+    
+    let textFrame = CGRect(x: newXPoint.x - 20, y: newXPoint.y - 25, width: 50, height: 40)
+    let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: 12), foreGroundColor: UIColor.black, backGroundColor: UIColor.gray)
+    textRenderer.renderText(text: "\(originalPoint.y)", textFrame: textFrame)
+    
+    context.protectGState {
+      let gridLine = CGMutablePath()
+      gridLine.move(to: CGPoint(x: newXPoint.x, y: 20))
+      gridLine.addLine(to: CGPoint(x: newXPoint.x, y: frame.size.height - 62))
+      let anotherGridline = CGMutablePath()
+      anotherGridline.move(to: CGPoint(x: 32, y: newXPoint.y))
+      anotherGridline.addLine(to: CGPoint(x: frame.size.width - 32, y: newXPoint.y))
+      context.addPath(gridLine)
+      context.addPath(anotherGridline)
+      context.setStrokeColor(UIColor(red:0.95, green:0.87, blue:0.76, alpha:1.0).cgColor)
+      context.strokePath()
+      context.setLineWidth(0.5)
+      context.setLineDash(phase: 0, lengths: [1])
+    }
+    
+    
   }
   
   

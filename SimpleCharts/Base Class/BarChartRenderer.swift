@@ -11,6 +11,7 @@ import Foundation
 open class BarChartRenderer: ChartRenderer {
   
   var customisationSource = BarChartData()
+  let helper = HelperFunctions()
 
   /// Renders a special X axis gridline for the bar chart
   func drawBarXAxisGridline(on context: CGContext, using arrayCount: Int) {
@@ -95,6 +96,66 @@ open class BarChartRenderer: ChartRenderer {
       let startPoint = calculate.xHorizontalGridline(using: increment, for: .start )
       let endPoint = calculate.xHorizontalGridline(using: increment, for: .end)
       drawGridLines(context: context, start: startPoint, end: endPoint)
+    }
+  }
+  
+  func highlightHorizontalValues(in context: CGContext, using array: [[Double]], and touchPoint: CGPoint, with maxValue: Double,  _ minValue: Double,  _ arrayCount: Double,  _ offSet: offset) {
+    var calc = LineGraphCalculation()
+    
+    var highlightValueArray: [CGRect] = []
+    
+    for i in 0...(array.count - 1) {
+      for (increment, value) in array[i].enumerated() {
+        calc = LineGraphCalculation(arrayCount: array[i].count, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet)
+
+        let yValue = calc.yHorizontalValue(i: increment, dataSetCount: Double(i), count: arrayCount)
+        let xValue = calc.xHorizontalValue()
+        let width = calc.horizontalWidth(value: value)
+        let height = calc.horizontalHeight(count: arrayCount)
+        highlightValueArray.append(CGRect(x: xValue, y: yValue, width: width, height: height))
+      }
+    }
+    
+    let sortedXPoint = helper.combineCGRectHorizontalArray(array: highlightValueArray)
+    let newXPoint = helper.findClosestHorizontal(array: sortedXPoint, target: touchPoint)
+    context.protectGState {
+      context.setFillColor(UIColor(red:0.24, green:0.24, blue:0.24, alpha:0.5).cgColor)
+      context.setStrokeColor(UIColor(red:0.24, green:0.24, blue:0.24, alpha:0.5).cgColor)
+      context.setLineWidth(1.0)
+      context.addRect(newXPoint)
+      context.drawPath(using: .fillStroke)
+    }
+  }
+  
+  
+  func highlightValues(in context: CGContext, using array: [[Double]], and touchPoint: CGPoint, with maxValue: Double,  _ minValue: Double, _ arrayCount: Double,  _ offSet: offset) {
+    var calc = LineGraphCalculation()
+    var highlightValueArray: [CGRect] = []
+    var width = 0.0
+    var height = 0.0
+    var xValue = 0.0
+    
+    for i in 0...(array.count - 1) {
+      for (increment, value) in array[i].enumerated() {
+        calc = LineGraphCalculation(arrayCount: array[i].count, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet)
+        
+        width = calc.verticalWidth(count: arrayCount)
+        xValue = calc.xVerticalValue(i: increment, dataSetCount: Double(i), count: arrayCount)
+        let yValue = calc.yVerticalValue(value: value)
+        
+        height = calc.verticalHeight(value: value)
+        highlightValueArray.append(CGRect(x: xValue, y: yValue, width: width, height: height))
+      }
+    }
+    
+    let sortedXPoint = helper.combineCGRectArray(array: highlightValueArray)
+    let newXPoint = helper.findClosestY(array: sortedXPoint, target: touchPoint)
+    context.protectGState {
+      context.setFillColor(UIColor(red:0.24, green:0.24, blue:0.24, alpha:0.5).cgColor)
+      context.setStrokeColor(UIColor(red:0.24, green:0.24, blue:0.24, alpha:0.5).cgColor)
+      context.setLineWidth(1.0)
+      context.addRect(newXPoint)
+      context.drawPath(using: .fillStroke)
     }
   }
 

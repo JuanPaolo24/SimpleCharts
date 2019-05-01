@@ -15,13 +15,10 @@ open class xAxisConfiguration {
   /// X axis labels visibility (Default = True)
   open var xAxisVisibility: Bool = true
   
-  /// Returns true if X Axis label is visible
-  open var isxAxisLabelVisible: Bool { get {return xAxisVisibility} }
-  
   /// Number of gridlines (Default = 6)
   open var setGridlineCount:Double = 6
   
-  /// Accepts an array of string which will be used for the X axis label.
+  /// Accepts an array of string which will be used for the X axis label. Does not apply to horizontal bar graph
   open var setXAxisLabel: [String] = []
   
 }
