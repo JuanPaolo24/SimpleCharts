@@ -66,9 +66,9 @@ open class CombinedChartView: ChartRenderer {
     let scale = 70.0/31.0
     
     if UIDevice.current.orientation.isLandscape {
-      renderAnimatedCombined(landscapePadding: scale)
+      //renderAnimatedCombined(landscapePadding: scale)
     } else {
-      renderAnimatedCombined(landscapePadding: 1.0)
+      //renderAnimatedCombined(landscapePadding: 1.0)
     }
     
     
@@ -134,7 +134,7 @@ open class CombinedChartView: ChartRenderer {
     self.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
     let animationHandler = AnimationRenderer()
     let helper = HelperFunctions()
-    let axis = AxisRenderer(frame: self.frame)
+    let axis = AxisLabelRenderer(frame: self.frame)
     let legend = LegendRenderer(frame: self.frame)
     
     let paddedLeftOffset = offSetLeft * landscapePadding
@@ -175,15 +175,19 @@ open class CombinedChartView: ChartRenderer {
     let paddedRightOffset = offSetRight * landscapePadding
     let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
     let renderer = LineChartRenderer(frame: self.frame)
+    
 
     for (i, value) in array.enumerated() {
-
+      renderer.calculate = LineGraphCalculation(array: value, arrayCount: 0, maxValue: max, minValue: yAxis.setYAxisMinimumValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
+      renderer.sourceData = data.array[i]
       if enableLineBezier == true {
         //renderer.drawBezierCurve(context: context, array: value, maxValue: max, minValue: yAxis.setYAxisMinimumValue,source: data.array[i], forCombined: true, offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
+        renderer.addBezierLine(to: context, from: value, for: .combineChart)
         //renderer.drawCircles(context: context, array: value, maxValue: max, minValue: yAxis.setYAxisMinimumValue, source: data.array[i], offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
       } else {
-        //renderer.drawLineForCombine(context: context, array: value, maxValue: max, minValue: yAxis.setYAxisMinimumValue ,source: data.array[i],  offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
-        renderer.drawCircles(context: context, array: value, maxValue: max, minValue: yAxis.setYAxisMinimumValue, source: data.array[i], offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
+        //renderer.drawLineForCombine(context: context, array: value)
+        renderer.addLine(to: context, from: value, for: .combineChart)
+        //renderer.drawCircles(context: context, array: value, maxValue: max, minValue: yAxis.setYAxisMinimumValue, source: data.array[i], offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
       }
     }
   }
@@ -195,14 +199,15 @@ open class CombinedChartView: ChartRenderer {
     let renderer = BarChartRenderer(frame: self.frame)
     
     for (i, value) in array.enumerated() {
-      renderer.drawVerticalBarGraph(context: context, array: value, maxValue: max, minValue: yAxis.setYAxisMinimumValue ,data: data.array[i], overallCount: Double(i), arrayCount: Double(array.count), offSet: offSet)
-      print(value)
+      renderer.calculate = LineGraphCalculation(array: value, arrayCount: value.count, maxValue: max, minValue: yAxis.setYAxisMinimumValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
+      renderer.customisationSource = data.array[i]
+      renderer.addVerticalBarGraph(to: context, from: value, with: Double(i), and: Double(array.count))
     }
   }
 
   func renderCombinedChart(context: CGContext, landscapePadding: Double, currentOrientation: orientation) {
     let helper = HelperFunctions()
-    let axis = AxisRenderer(frame: self.frame)
+    let axis = AxisLabelRenderer(frame: self.frame)
     let legend = LegendRenderer(frame: self.frame)
 
     let paddedLeftOffset = offSetLeft * landscapePadding
@@ -230,15 +235,17 @@ open class CombinedChartView: ChartRenderer {
     
     let barRenderer = BarChartRenderer(frame: self.frame)
     axisBase(context: context, offSet: offSet)
-    context.saveGState()
-    yAxisGridlines(context: context, calc: generalCalculationHandler, gridlineCount: yAxis.setGridlineCount)
-    barRenderer.barxAxisGridlines(context: context, arrayCount: arrayCount, offSet: offSet)
-    context.restoreGState()
-    //barGraph(context: context, array: barConvertedData, data: barChartDataSet, max: maxValue, landscapePadding: landscapePadding)
+    barGraph(context: context, array: barConvertedData, data: barChartDataSet, max: maxValue, landscapePadding: landscapePadding)
     lineGraph(context: context, array: lineConvertedData, max: maxValue, data: lineChartDataSet, forCombined: true, landscapePadding: landscapePadding)
+    context.saveGState()
+    drawYAxisGridline(on: context, using: yAxis.setGridlineCount)
+    //barRenderer.barxAxisGridlines(context: context, arrayCount: arrayCount, offSet: offSet)
+    context.restoreGState()
+    
+    
 
     if yAxis.yAxisVisibility == true {
-      axis.yAxis(context: context, maxValue: maxValue, minValue: yAxis.setYAxisMinimumValue, axisInverse: yAxis.enableYAxisInverse, offSet: offSet, gridlineCount: yAxis.setGridlineCount)
+      //axis.yAxis(context: context, maxValue: maxValue, minValue: yAxis.setYAxisMinimumValue, axisInverse: yAxis.enableYAxisInverse, offSet: offSet, gridlineCount: yAxis.setGridlineCount)
     }
 
     if xAxis.xAxisVisibility == true {

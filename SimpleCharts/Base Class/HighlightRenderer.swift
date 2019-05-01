@@ -33,12 +33,12 @@ open class HighlightRenderer: UIView {
       for (j, value) in array[i].enumerated() {
         calc = BarGraphCalculation(frameHeight: height, frameWidth: width, maxValue: maxValue, minValue: minValue, arrayCount: Double(array[i].count), yAxisGridlineCount: 0, xAxisGridlineCount: 0, offSet: offSet)
         
-        let yValue = calc.yHorizontalValue(i: j, dataSetCount: Double(i), count: arrayCount)
-        let xValue = calc.xHorizontalValue()
-        let width = calc.horizontalWidth(value: value)
-        let height = calc.horizontalHeight(count: arrayCount)
-        
-        highlightValueArray.append(CGRect(x: xValue, y: yValue, width: width, height: height))
+//        let yValue = calc.yHorizontalValue(i: j, dataSetCount: Double(i), count: arrayCount)
+//        let xValue = calc.xHorizontalValue()
+//        let width = calc.horizontalWidth(value: value)
+//        let height = calc.horizontalHeight(count: arrayCount)
+//
+//        highlightValueArray.append(CGRect(x: xValue, y: yValue, width: width, height: height))
       }
       
     }
@@ -74,12 +74,12 @@ open class HighlightRenderer: UIView {
         calc = BarGraphCalculation(frameHeight: frameheight, frameWidth: framewidth, maxValue: maxValue, minValue: minValue, arrayCount: Double(array[i].count), yAxisGridlineCount: 0, xAxisGridlineCount: 0, offSet: offSet)
         
         
-        width = calc.verticalWidth(count: arrayCount)
-        xValue = calc.xVerticalValue(i: j, dataSetCount: Double(i), count: arrayCount)
-        let yValue = calc.yVerticalValue(value: value)
-        
-        height = calc.verticalHeight(value: value)
-        highlightValueArray.append(CGRect(x: xValue, y: yValue, width: width, height: height))
+//        width = calc.verticalWidth(count: arrayCount)
+//        xValue = calc.xVerticalValue(i: j, dataSetCount: Double(i), count: arrayCount)
+//        let yValue = calc.yVerticalValue(value: value)
+//        
+//        height = calc.verticalHeight(value: value)
+//        highlightValueArray.append(CGRect(x: xValue, y: yValue, width: width, height: height))
       }
       
     }
@@ -115,7 +115,7 @@ open class HighlightRenderer: UIView {
     for i in 0...(array.count - 1) {
       calc = LineGraphCalculation(array: array[i], arrayCount: 0, maxValue: maxValue, minValue: minValue, frameWidth: width, frameHeight: height, offSet: offSet, yAxisGridlineCount: 0, xAxisGridlineCount: 0)
       for (i,value) in array[i].enumerated() {
-        let xValue = calc.xlineGraphPoint(i: i)
+        let xValue = calc.xlineGraphPoint(for: .singleChart, from: i)
         let yValue = calc.ylineGraphPoint(value: value)
         highlightValueArray.append(CGPoint(x: xValue, y: yValue))
         originalValueArray.append(CGPoint(x: xValue, y: value))

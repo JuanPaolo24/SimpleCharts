@@ -29,7 +29,7 @@
 		287F1E0A221D91EA00A61908 /* LegendRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 287F1E09221D91EA00A61908 /* LegendRenderer.swift */; };
 		287F1E10221DA22E00A61908 /* LineChartDataSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 287F1E0F221DA22E00A61908 /* LineChartDataSet.swift */; };
 		287F1E12221DB4D700A61908 /* BarChartDataSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 287F1E11221DB4D700A61908 /* BarChartDataSet.swift */; };
-		287F1E16221EB17C00A61908 /* AxisRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 287F1E15221EB17C00A61908 /* AxisRenderer.swift */; };
+		287F1E16221EB17C00A61908 /* AxisLabelRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 287F1E15221EB17C00A61908 /* AxisLabelRenderer.swift */; };
 		28827C4822294DED00124E55 /* LineGraphCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28827C4722294DED00124E55 /* LineGraphCalculation.swift */; };
 		28827C4A2229574D00124E55 /* GeneralGraphCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28827C492229574D00124E55 /* GeneralGraphCalculation.swift */; };
 		28827C4C22295A9600124E55 /* BarGraphCalculation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28827C4B22295A9600124E55 /* BarGraphCalculation.swift */; };
@@ -76,7 +76,7 @@
 		287F1E09221D91EA00A61908 /* LegendRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegendRenderer.swift; sourceTree = "<group>"; };
 		287F1E0F221DA22E00A61908 /* LineChartDataSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineChartDataSet.swift; sourceTree = "<group>"; };
 		287F1E11221DB4D700A61908 /* BarChartDataSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarChartDataSet.swift; sourceTree = "<group>"; };
-		287F1E15221EB17C00A61908 /* AxisRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AxisRenderer.swift; sourceTree = "<group>"; };
+		287F1E15221EB17C00A61908 /* AxisLabelRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AxisLabelRenderer.swift; sourceTree = "<group>"; };
 		28827C4722294DED00124E55 /* LineGraphCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineGraphCalculation.swift; sourceTree = "<group>"; };
 		28827C492229574D00124E55 /* GeneralGraphCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralGraphCalculation.swift; sourceTree = "<group>"; };
 		28827C4B22295A9600124E55 /* BarGraphCalculation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarGraphCalculation.swift; sourceTree = "<group>"; };
@@ -152,7 +152,7 @@
 				2866D55E220C5C2D0009005A /* ChartRenderer.swift */,
 				28F0EA902269DF40004DCFCD /* LineChartRenderer.swift */,
 				28F0EA922269E1CA004DCFCD /* BarChartRenderer.swift */,
-				287F1E15221EB17C00A61908 /* AxisRenderer.swift */,
+				287F1E15221EB17C00A61908 /* AxisLabelRenderer.swift */,
 				28DA74B6223E5F67005C13D5 /* xAxisConfiguration.swift */,
 				28DA74BF223E6F6E005C13D5 /* yAxisConfiguration.swift */,
 				287F1E09221D91EA00A61908 /* LegendRenderer.swift */,
@@ -341,7 +341,7 @@
 				2866D55F220C5C2D0009005A /* ChartRenderer.swift in Sources */,
 				287F1E04221C640F00A61908 /* ChartData.swift in Sources */,
 				28F0EA912269DF40004DCFCD /* LineChartRenderer.swift in Sources */,
-				287F1E16221EB17C00A61908 /* AxisRenderer.swift in Sources */,
+				287F1E16221EB17C00A61908 /* AxisLabelRenderer.swift in Sources */,
 				28DA74C0223E6F6E005C13D5 /* yAxisConfiguration.swift in Sources */,
 				282ABB1B22255C7800785C78 /* ArcRenderer.swift in Sources */,
 				281901872247EB1D00E352F8 /* CustomTypes.swift in Sources */,

@@ -82,12 +82,7 @@ open class HorizontalBarChartView: BarChartRenderer {
     changeOffset(position: legendPosition)
     let scale = 70.0/31.0
     
-    if UIDevice.current.orientation.isLandscape {
-      renderHorizontalBarGraph(context: context, landscapePadding: scale, currentOrientation: .landscape)
-    } else {
-      renderHorizontalBarGraph(context: context, landscapePadding: 1.0, currentOrientation: .portrait)
-    }
-    
+
   }
   
   // Changes offset configuration based on the position of the legend
@@ -122,50 +117,6 @@ open class HorizontalBarChartView: BarChartRenderer {
     }
     
   }
-  
-  func barGraph(context: CGContext, array: [[Double]], data: BarChartDataSet, max: Double, landscapePadding: Double) {
-    let paddedLeftOffset = offSetLeft * landscapePadding
-    let paddedRightOffset = offSetRight * landscapePadding
-    let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
-    
-    for (i, value) in array.enumerated() {
-      drawHorizontalBarGraph(context: context, array: value, maxValue: max, minValue: yAxis.setYAxisMinimumValue,data: data.array[i], overallCount: Double(i), arrayCount: Double(array.count), offSet: offSet)
-    }
-  }
- 
-  func renderHorizontalBarGraph(context: CGContext, landscapePadding: Double, currentOrientation: orientation) {
-    let helper = HelperFunctions()
-    let legend = LegendRenderer(frame: self.frame)
-    let convertedData = helper.convert(chartData: data.array)
-    let axis = AxisRenderer(frame: self.frame)
-    
-    let maxValue = helper.processMultipleArrays(array: convertedData)
-    let arrayCount = helper.findArrayCountFrom(array: convertedData)
-    let paddedLeftOffset = offSetLeft * landscapePadding
-    let paddedRightOffset = offSetRight * landscapePadding
-    let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
-    
-    
-    axisBase(context: context, offSet: offSet)
-    context.saveGState()
-    horizontalBarGraphXGridlines(context: context, offSet: offSet, gridline: xAxis.setGridlineCount)
-    horizontalBarGraphYGridlines(context: context, arrayCount: arrayCount, offSet: offSet)
-    context.restoreGState()
-    barGraph(context: context, array: convertedData, data: data, max: maxValue, landscapePadding: landscapePadding)
-    
-    
-    if yAxis.yAxisVisibility == true {
-      axis.horizontalBarGraphYAxis(context: context, arrayCount: arrayCount, offSet: offSet)
-    }
-    
-    if xAxis.xAxisVisibility == true {
-      axis.horizontalBarGraphXAxis(context: context, maxValue: yAxis.setYAxisMaximumValue, minValue: yAxis.setYAxisMinimumValue, offSet: offSet, gridline: xAxis.setGridlineCount)
-    }
-    
-    if legendVisibility == true {
-      legend.renderBarChartLegend(context: context, arrays: data.array, position: legendPosition, customX: customXlegend, customY: customYlegend)
-    }
-    
-  }
+
   
 }

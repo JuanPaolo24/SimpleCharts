@@ -11,46 +11,44 @@ import CoreGraphics
 
 open class ChartRenderer: UIView {
   
+  var calculate = LineGraphCalculation()
+  
   public override init(frame: CGRect) {
     super.init(frame: frame)
   }
   
   
   public required init?(coder aDecoder: NSCoder) {
-    super.init(coder: aDecoder)
+    fatalError("init(coder:) has not been implemented")
   }
   
-
   //General
   /// Enable the Y gridline on the chart
-  open var enableYGridline = true
-  
-  /// Returns true if Y gridline is visible
-  open var isYGridlineVisible: Bool { get {return enableYGridline} }
+  open var enableYGridVisibility: Bool = true
   
   /// Enable the X gridline on the chart
-  open var enableXGridline = true
+  open var enableXGridVisibility: Bool = true
   
-  /// Returns true if X gridline is visible
-  open var isXGridlineVisible: Bool { get {return enableXGridline} }
-  
-  /// Set the Y Axis base colour (Default = Black)
-  open var setYAxisBaseColour = UIColor.black.cgColor
-  
-  /// Set the X Axis base colour (Default = Black)
-  open var setXAxisBaseColour = UIColor.black.cgColor
+  /// Set the Axis base colour (Default = Black)
+  open var setAxisBaseColour: UIColor = UIColor.black
+
+  /// Set axis base width (Default = 1.0)
+  open var setAxisBaseWidth: CGFloat = 1.0
   
   /// Set Gridline colour (Default = Black)
-  open var setGridlineColour = UIColor.black.cgColor
+  open var setGridlineColour: UIColor = UIColor.black
   
   /// Set Gridline Line Width (Default = 0.5)
-  open var setGridlineWidth = CGFloat(0.5)
+  open var setGridlineWidth: CGFloat = 0.5
   
   /// Set the Gridline stroke design (Default = True)
-  open var enableGridLineDash = true
+  open var enableGridLineDash: Bool = true
   
-  /// Returns true if gridline dash is enabled
-  open var isGridlineDashEnabled: Bool { get {return enableGridLineDash} }
+  /// Only works when enable gridline dash is set to true (Default = 0.0)
+  open var setGridlineDashPhase: CGFloat = 0.0
+  
+  /// Only works when enable gridline dash is set to true (Default = [1])
+  open var setGridlineDashLengths: [CGFloat] = [1]
   
   /// Returns the height of the current frame as a double
   func frameHeight() -> Double {
@@ -68,13 +66,13 @@ open class ChartRenderer: UIView {
   
 
   // Base function for drawing axis bases
-  func drawAxisBase(context: CGContext, start: CGPoint, end: CGPoint, strokeColour: CGColor, width: CGFloat) {
+  func drawAxisBase(context: CGContext, start: CGPoint, end: CGPoint) {
     let axisBase = CGMutablePath()
     axisBase.move(to: start)
     axisBase.addLine(to: end)
     context.addPath(axisBase)
-    context.setLineWidth(width)
-    context.setStrokeColor(strokeColour)
+    context.setLineWidth(setAxisBaseWidth)
+    context.setStrokeColor(setAxisBaseColour.cgColor)
     context.strokePath()
   }
   
@@ -95,10 +93,10 @@ open class ChartRenderer: UIView {
     let upperBaseStartPoint = CGPoint(x: offSet.left, y: offSet.top)
     let upperBaseEndPoint = CGPoint(x: xAxisPadding, y: offSet.top)
     
-    drawAxisBase(context: context, start: leftBaseStartPoint, end: leftBaseEndPoint, strokeColour: setYAxisBaseColour, width: 1.0)
-    drawAxisBase(context: context, start: rightBaseStartPoint, end: rightBaseEndPoint, strokeColour: setYAxisBaseColour, width: 1.0)
-    drawAxisBase(context: context, start: bottomBaseStartPoint, end: bottomBaseEndPoint, strokeColour: setXAxisBaseColour, width: 1.0)
-    drawAxisBase(context: context, start: upperBaseStartPoint, end: upperBaseEndPoint, strokeColour: setXAxisBaseColour, width: 1.0)
+    drawAxisBase(context: context, start: leftBaseStartPoint, end: leftBaseEndPoint)
+    drawAxisBase(context: context, start: rightBaseStartPoint, end: rightBaseEndPoint)
+    drawAxisBase(context: context, start: bottomBaseStartPoint, end: bottomBaseEndPoint)
+    drawAxisBase(context: context, start: upperBaseStartPoint, end: upperBaseEndPoint)
     
   }
   
@@ -109,24 +107,24 @@ open class ChartRenderer: UIView {
     gridLine.move(to: start)
     gridLine.addLine(to: end)
     context.addPath(gridLine)
-    context.setStrokeColor(setGridlineColour)
+    context.setStrokeColor(setGridlineColour.cgColor)
     context.strokePath()
     context.setLineWidth(setGridlineWidth)
     
     if enableGridLineDash == true {
-      context.setLineDash(phase: 0, lengths: [1])
+      context.setLineDash(phase: setGridlineDashPhase, lengths: setGridlineDashLengths)
     }
     
   }
 
   /// Renders the Y axis Gridlines
-  func yAxisGridlines(context: CGContext, calc: GeneralGraphCalculation, gridlineCount: Double) {
+  func drawYAxisGridline(on context: CGContext, using gridlineCount: Double) {
     context.protectGState {
-      for i in 0...Int(gridlineCount) {
-        let yStartPoint = calc.yGridlinePoint(i: i, destination: position.start)
-        let yEndPoint = calc.yGridlinePoint(i: i, destination: position.end)
+      for increment in 0...Int(gridlineCount) {
+        let yStartPoint = calculate.yGridlinePoint(using: increment, for: .start)
+        let yEndPoint = calculate.yGridlinePoint(using: increment, for: .end)
         
-        if enableYGridline == true {
+        if enableYGridVisibility == true {
           drawGridLines(context: context, start: yStartPoint, end: yEndPoint)
         }
       }
@@ -135,12 +133,12 @@ open class ChartRenderer: UIView {
   }
   
   /// Renders the X axis Gridlines
-  func xAxisGridlines(context: CGContext, calc: GeneralGraphCalculation, gridlineCount: Double) {
+  func drawXAxisGridline(on context: CGContext, using gridlineCount: Double) {
     context.protectGState {
-      for i in 0...Int(gridlineCount) {
-        let startPoint = calc.xGridlinePoint(distanceIncrement: i, destination: position.start)
-        let endPoint = calc.xGridlinePoint(distanceIncrement: i, destination: position.end)
-        if enableXGridline == true {
+      for increment in 0...Int(gridlineCount) {
+        let startPoint = calculate.xGridlinePoint(using: increment, for: .start)
+        let endPoint = calculate.xGridlinePoint(using: increment, for: .end)
+        if enableXGridVisibility == true {
           drawGridLines(context: context, start: startPoint, end: endPoint)
         }
         

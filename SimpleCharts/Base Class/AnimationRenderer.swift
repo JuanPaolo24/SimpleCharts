@@ -29,13 +29,13 @@ open class AnimationRenderer: UIView {
     let connection = CGMutablePath()
     
     let startingYValue = calc.ylineGraphStartPoint()
-    let startingXValue = calc.xlineGraphPoint(i: 0)
+    let startingXValue = calc.xlineGraphPoint(for: .singleChart, from: 0)
     
     connection.move(to: CGPoint(x: startingXValue, y: startingYValue))
     
     
     for (j, value) in array.enumerated() {
-        let xValue = calc.xlineGraphPoint(i: j)
+        let xValue = calc.xlineGraphPoint(for: .singleChart, from: j)
         let yValue = calc.ylineGraphPoint(value: value)
         
         connection.addLine(to: CGPoint(x: xValue, y: yValue))
@@ -67,34 +67,35 @@ open class AnimationRenderer: UIView {
     //for i in 0...array.count - 1 {
       for (j, value) in array.enumerated() {
         calc = BarGraphCalculation(frameHeight: Double(mainLayer.frame.height), frameWidth: Double(mainLayer.frame.width), maxValue: maxValue, minValue: minValue, arrayCount: Double(array.count), yAxisGridlineCount: 0, xAxisGridlineCount: 0, offSet: offSet)
-        
-        let width = calc.verticalWidth(count: arrayCount)
-        let xValue = calc.xVerticalValue(i: j, dataSetCount: Double(dataSetCount), count: arrayCount)
-        let yValue = calc.yVerticalValue(value: value)
-        let height = calc.verticalHeight(value: value)
-        
-        initialBound = CGRect(x: xValue, y: Double(mainLayer.frame.height) - offSet.bottom, width: width, height: 0)
-        finalBound = CGRect(x: xValue, y: yValue, width: width, height: height)
-        
-        increaseBar = CABasicAnimation(keyPath: "bounds")
-        increaseBar.fromValue = initialBound
-        increaseBar.toValue = finalBound
-        increaseBar.duration = 2.0
-        
-        let barLayer = CALayer()
-        // my code line
-        barLayer.anchorPoint = CGPoint(x: 1, y: 1)
-        barLayer.frame = finalBound
-        barLayer.backgroundColor = source.setBarGraphFillColour
-        barLayer.add(increaseBar, forKey: nil)
-        mainLayer.addSublayer(barLayer)
-        
+//
+//        let width = calc.verticalWidth(count: arrayCount)
+//        let xValue = calc.xVerticalValue(i: j, dataSetCount: Double(dataSetCount), count: arrayCount)
+//        let yValue = calc.yVerticalValue(value: value)
+//        let height = calc.verticalHeight(value: value)
+//
+//        initialBound = CGRect(x: xValue, y: Double(mainLayer.frame.height) - offSet.bottom, width: width, height: 0)
+//        finalBound = CGRect(x: xValue, y: yValue, width: width, height: height)
+//
+//        increaseBar = CABasicAnimation(keyPath: "bounds")
+//        increaseBar.fromValue = initialBound
+//        increaseBar.toValue = finalBound
+//        increaseBar.duration = 2.0
+//
+//        let barLayer = CALayer()
+//        // my code line
+//        barLayer.anchorPoint = CGPoint(x: 1, y: 1)
+//        barLayer.frame = finalBound
+//        barLayer.backgroundColor = source.setBarGraphFillColour
+//        barLayer.add(increaseBar, forKey: nil)
+//        mainLayer.addSublayer(barLayer)
+//
       }
     //}
   
   }
   
   
+
   func drawAnimatedPie(radiusPercentage: CGFloat, segments: PieChartDataSet, centerX: CGFloat, centerY: CGFloat, mainLayer: CALayer) {
     let radius = min(frame.size.width, frame.size.height) * radiusPercentage
     //let viewCenter = CGPoint(x: bounds.size.width * 0.4, y: bounds.size.height * 0.5)

@@ -59,6 +59,8 @@ open class BarChartView: BarChartRenderer {
   /// An instance of the yAxis to provide customisation through this
   open var yAxis:yAxisConfiguration = yAxisConfiguration()
   
+  /// The orientation of the graph
+  open var orientation: barOrientation = .vertical
   
   public var data = BarChartDataSet(dataset: [BarChartData(dataset: [0], datasetName: "Test")])
   
@@ -145,8 +147,13 @@ open class BarChartView: BarChartRenderer {
     let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
     
     for (i, value) in array.enumerated() {
-      drawVerticalBarGraph(context: context, array: value, maxValue: max, minValue: yAxis.setYAxisMinimumValue,data: data.array[i], overallCount: Double(i), arrayCount: Double(array.count), offSet: offSet)
-      print(value)
+      calculate = LineGraphCalculation(array: value, arrayCount: value.count, maxValue: max, minValue: yAxis.setYAxisMinimumValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
+      customisationSource = data.array[i]
+      if orientation == .horizontal {
+        addHorizontalBarGraph(to: context, from: value, with: Double(i), and: Double(array.count))
+      } else {
+        addVerticalBarGraph(to: context, from: value, with: Double(i), and: Double(array.count))
+      }
     }
   }
   
@@ -157,7 +164,7 @@ open class BarChartView: BarChartRenderer {
     let legend = LegendRenderer(frame: self.frame)
     let convertedData = helper.convert(chartData: data.array)
     
-    let axis = AxisRenderer(frame: self.frame)
+    let axis = AxisLabelRenderer(frame: self.frame)
     
     var maxValue = 0.0
     var minValue = 0.0
@@ -188,7 +195,7 @@ open class BarChartView: BarChartRenderer {
     let legend = LegendRenderer(frame: self.frame)
     let convertedData = helper.convert(chartData: data.array)
     
-    let axis = AxisRenderer(frame: self.frame)
+    let axis = AxisLabelRenderer(frame: self.frame)
     
     var maxValue = 0.0
     var minValue = 0.0
@@ -203,26 +210,25 @@ open class BarChartView: BarChartRenderer {
       minValue = 0
     }
     
-    let height = Double(frame.size.height)
-    let width = Double(frame.size.width)
-    
     let arrayCount = helper.findArrayCountFrom(array: convertedData)
     
     let paddedLeftOffset = offSetLeft * landscapePadding
     let paddedRightOffset = offSetRight * landscapePadding
     let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
-     let generalCalculationHandler = GeneralGraphCalculation(frameHeight: height, frameWidth: width, arrayCount: Double(arrayCount), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
-    
     legend.legendPadding(currentOrientation: currentOrientation)
+    
     axisBase(context: context, offSet: offSet)
+    barGraph(context: context, array: convertedData, data: data, max: maxValue, landscapePadding: landscapePadding)
     context.saveGState()
-    barxAxisGridlines(context: context, arrayCount: arrayCount, offSet: offSet)
-    yAxisGridlines(context: context, calc: generalCalculationHandler, gridlineCount: yAxis.setGridlineCount)
+    drawBarXAxisGridline(on: context, using: arrayCount)
+    drawYAxisGridline(on: context, using: yAxis.setGridlineCount)
+//    drawHorizontalXGridlines(on: context, using: xAxis.setGridlineCount)
+//    drawHorizontalYGridlines(on: context, using: arrayCount)
     context.restoreGState()
-    //barGraph(context: context, array: convertedData, data: data, max: maxValue, landscapePadding: landscapePadding)
+    
     
     if yAxis.yAxisVisibility == true {
-      axis.yAxis(context: context, maxValue: maxValue, minValue: minValue, axisInverse: enableYAxisInverse, offSet: offSet, gridlineCount: yAxis.setGridlineCount)
+      //axis.yAxis(context: context, maxValue: maxValue, minValue: minValue, axisInverse: enableYAxisInverse, offSet: offSet, gridlineCount: yAxis.setGridlineCount)
     }
     
     if xAxis.xAxisVisibility == true {
@@ -232,6 +238,41 @@ open class BarChartView: BarChartRenderer {
         axis.barGraphxAxis(context: context, arrayCount: arrayCount, offSet: offSet)
       }
       
+    }
+    
+    if legendVisibility == true {
+      legend.renderBarChartLegend(context: context, arrays: data.array, position: legendPosition, customX: customXlegend, customY: customYlegend)
+    }
+    
+  }
+  
+  func renderHorizontalBarGraph(context: CGContext, landscapePadding: Double, currentOrientation: orientation) {
+    let helper = HelperFunctions()
+    let legend = LegendRenderer(frame: self.frame)
+    let convertedData = helper.convert(chartData: data.array)
+    let axis = AxisLabelRenderer(frame: self.frame)
+    
+    let maxValue = helper.processMultipleArrays(array: convertedData)
+    let arrayCount = helper.findArrayCountFrom(array: convertedData)
+    let paddedLeftOffset = offSetLeft * landscapePadding
+    let paddedRightOffset = offSetRight * landscapePadding
+    let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
+    
+    
+    axisBase(context: context, offSet: offSet)
+    context.saveGState()
+//    drawHorizontalXGridlines(on: context, using: xAxis.setGridlineCount)
+//    drawHorizontalYGridlines(on: context, using: arrayCount)
+    context.restoreGState()
+    barGraph(context: context, array: convertedData, data: data, max: maxValue, landscapePadding: landscapePadding)
+    
+    
+    if yAxis.yAxisVisibility == true {
+      axis.horizontalBarGraphYAxis(context: context, arrayCount: arrayCount, offSet: offSet)
+    }
+    
+    if xAxis.xAxisVisibility == true {
+      axis.horizontalBarGraphXAxis(context: context, maxValue: yAxis.setYAxisMaximumValue, minValue: yAxis.setYAxisMinimumValue, offSet: offSet, gridline: xAxis.setGridlineCount)
     }
     
     if legendVisibility == true {

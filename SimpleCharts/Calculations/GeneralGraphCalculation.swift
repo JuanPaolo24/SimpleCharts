@@ -29,43 +29,6 @@ open class GeneralGraphCalculation {
   }
 
   
-  func yGridlinePoint(i: Int, destination: position) -> CGPoint {
-    let frameScale = (frameHeight - offSet.bottom - offSet.top) / (yAxisGridlineCount - 1)
-    let yAxisPadding = frameHeight - offSet.bottom
-    let xAxisPadding = frameWidth - offSet.right
-    let actualValue = frameScale * Double(i)
-    var point = CGPoint()
-    
-    if destination == position.start {
-      point = CGPoint(x: offSet.left, y: yAxisPadding - actualValue)
-    } else {
-      point = CGPoint(x: xAxisPadding, y: yAxisPadding - actualValue)
-    }
-    
-    
-    return point
-  }
-  
-  func xGridlinePoint(distanceIncrement: Int, destination: position) -> CGPoint {
-    let yAxisPadding = frameHeight - offSet.bottom
-    let spaceLeft = frameWidth - (offSet.left + offSet.right)
-    var increment = 0.0
-    if arrayCount < xAxisGridlineCount {
-      increment = spaceLeft / (arrayCount - 1)
-    } else {
-      increment = spaceLeft / xAxisGridlineCount
-    }
-    
-    let xValue = offSet.left + (increment * Double(distanceIncrement))
-    var point = CGPoint()
-    
-    if destination == position.start {
-      point = CGPoint(x: xValue, y: offSet.top)
-    } else {
-      point = CGPoint(x: xValue, y: yAxisPadding)
-    }
-    
-    return point
-  }
+
   
 }

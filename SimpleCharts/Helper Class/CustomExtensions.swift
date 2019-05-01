@@ -8,7 +8,7 @@
 
 import CoreGraphics
 
-extension CGContext{
+extension CGContext {
   
   /// This extension is thanks to an article made by (https://www.bignerdranch.com/blog/core-graphics-part-2-contextually-speaking/)
   func protectGState(_ drawStuff: () -> Void) {

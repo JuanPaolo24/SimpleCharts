@@ -15,6 +15,10 @@ open class BarChartData: ChartData {
     super.init(dataset: dataset, datasetName: datasetName)
   }
   
+  required public init() {
+    super.init(dataset: [], datasetName: "init")
+  }
+  
   //Bar Chart
   /// Set Bar Graph inside colour (Default = Black)
   open var setBarGraphFillColour = UIColor.black.cgColor

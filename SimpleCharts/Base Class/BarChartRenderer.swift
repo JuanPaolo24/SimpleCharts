@@ -10,39 +10,15 @@ import Foundation
 
 open class BarChartRenderer: ChartRenderer {
   
-  
-  public override init(frame: CGRect) {
-    super.init(frame: frame)
-  }
-  
-  
-  public required init?(coder aDecoder: NSCoder) {
-    super.init(coder: aDecoder)
-  }
-  
-  
-  /// Base function for drawing rectangles
-  func drawRectangle(context: CGContext, x: Double, y: Double, width: Double, height: Double, source: BarChartData) {
-    let rectangle = CGRect(x: x, y: y, width: width, height: height)
-    context.protectGState {
-      context.setFillColor(source.setBarGraphFillColour)
-      context.setStrokeColor(source.setBarGraphStrokeColour)
-      context.setLineWidth(source.setBarGraphLineWidth)
-      context.addRect(rectangle)
-      context.drawPath(using: .fillStroke)
-    }
-  }
-  
+  var customisationSource = BarChartData()
 
   /// Renders a special X axis gridline for the bar chart
-  func barxAxisGridlines(context: CGContext, arrayCount: Int, offSet: offset) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, minValue: 0, arrayCount: Double(arrayCount), yAxisGridlineCount: 0, xAxisGridlineCount: 0, offSet: offSet)
-    
-    for i in 0...arrayCount - 1 {
-      let startPoint = calc.xGridlineStartCalculation(distanceIncrement: i)
-      let endPoint = calc.xGridlineEndCalculation(distanceIncrement: i)
+  func drawBarXAxisGridline(on context: CGContext, using arrayCount: Int) {
+    for increment in 0...arrayCount - 1 {
+      let startPoint = calculate.barXGridlinePoint(using: increment, for: .start)
+      let endPoint = calculate.barXGridlinePoint(using: increment, for: .end)
       
-      if enableXGridline == true {
+      if enableYGridVisibility == true {
         drawGridLines(context: context, start: startPoint, end: endPoint)
       }
     }
@@ -50,21 +26,25 @@ open class BarChartRenderer: ChartRenderer {
   
   
   /// Renders a horizontal bar graph
-  func drawHorizontalBarGraph(context: CGContext, array: [Double], maxValue: Double, minValue: Double, data: BarChartData, overallCount: Double, arrayCount: Double, offSet: offset) {
+  func addHorizontalBarGraph(to context: CGContext, from array: [Double], with dataSetIncrement: Double, and dataSetCount: Double) {
     
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, minValue: minValue, arrayCount: Double(array.count), yAxisGridlineCount: 0, xAxisGridlineCount: 0, offSet: offSet)
+    let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: customisationSource.setTextLabelFont), foreGroundColor: customisationSource.setTextLabelColour)
     
-    let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: data.setTextLabelFont), foreGroundColor: data.setTextLabelColour)
-    
-    for (i, value) in array.enumerated() {
-      let yValue = calc.yHorizontalValue(i: i, dataSetCount: overallCount, count: arrayCount)
-      let xValue = calc.xHorizontalValue()
-      let width = calc.horizontalWidth(value: value)
-      let height = calc.horizontalHeight(count: arrayCount)
-      let xFrame = calc.xHorizontalTextFrame(value: value)
-      let yFrame = calc.yHorizontalTextFrame(i: i, dataSetCount: overallCount, count: arrayCount)
+    for (increment, value) in array.enumerated() {
+      let yValue = calculate.yHorizontalValue(i: increment, dataSetCount: dataSetIncrement, count: dataSetCount)
+      let xValue = calculate.xHorizontalValue()
+      let width = calculate.horizontalWidth(value: value)
+      let height = calculate.horizontalHeight(count: dataSetCount)
+      let xFrame = calculate.xHorizontalTextFrame(value: value)
+      let yFrame = calculate.yHorizontalTextFrame(i: increment, dataSetCount: dataSetIncrement, count: dataSetCount)
       
-      drawRectangle(context: context, x: xValue, y: yValue, width: width, height: height, source: data)
+      context.protectGState {
+        context.setFillColor(customisationSource.setBarGraphFillColour)
+        context.setStrokeColor(customisationSource.setBarGraphStrokeColour)
+        context.setLineWidth(customisationSource.setBarGraphLineWidth)
+        context.addRect(CGRect(x: xValue, y: yValue, width: width, height: height))
+        context.drawPath(using: .fillStroke)
+      }
       textRenderer.renderText(text: "\(value)", textFrame: CGRect(x: xFrame, y: yFrame, width: 40, height: 20))
     }
     
@@ -72,23 +52,28 @@ open class BarChartRenderer: ChartRenderer {
   
   
   // Renders a vertical bar graph with support for multiple data sets
-  func drawVerticalBarGraph(context: CGContext, array: [Double], maxValue: Double, minValue: Double, data: BarChartData, overallCount: Double, arrayCount: Double, offSet: offset) {
+  func addVerticalBarGraph(to context: CGContext, from array: [Double], with dataSetIncrement: Double, and dataSetCount: Double) {
     
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: maxValue, minValue: minValue, arrayCount: Double(array.count), yAxisGridlineCount: 0, xAxisGridlineCount: 0, offSet: offSet)
+    let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: customisationSource.setTextLabelFont), foreGroundColor: customisationSource.setTextLabelColour)
     
-    let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: data.setTextLabelFont), foreGroundColor: data.setTextLabelColour)
-    
-    for (i, value) in array.enumerated() {
+    for (increment, value) in array.enumerated() {
       
-      let width = calc.verticalWidth(count: arrayCount)
-      let xValue = calc.xVerticalValue(i: i, dataSetCount: overallCount, count: arrayCount)
-      let yValue = calc.yVerticalValue(value: value)
-      let height = calc.verticalHeight(value: value)
-      let xFrame = calc.xVerticalTextFrame(i: i, dataSetCount: overallCount, count: arrayCount)
-      let yFrame = calc.yVerticalTextFrame(value: value)
+      let width = calculate.verticalWidth(count: dataSetCount)
+      let xValue = calculate.xVerticalValue(i: increment, dataSetCount: dataSetIncrement, count: dataSetCount)
+      let yValue = calculate.yVerticalValue(value: value)
+      let height = calculate.verticalHeight(value: value)
+      let xFrame = calculate.xVerticalTextFrame(i: increment, dataSetCount: dataSetIncrement, count: dataSetCount)
+      let yFrame = calculate.yVerticalTextFrame(value: value)
       
-      drawRectangle(context: context, x: xValue, y: yValue, width: width, height: height, source: data)
-      if data.enableDataPointLabel == true {
+      context.protectGState {
+        context.setFillColor(customisationSource.setBarGraphFillColour)
+        context.setStrokeColor(customisationSource.setBarGraphStrokeColour)
+        context.setLineWidth(customisationSource.setBarGraphLineWidth)
+        context.addRect(CGRect(x: xValue, y: yValue, width: width, height: height))
+        context.drawPath(using: .fillStroke)
+      }
+      
+      if customisationSource.enableDataPointLabel == true {
         textRenderer.renderText(text: "\(value)", textFrame: CGRect(x: xFrame, y: yFrame, width: 40, height: 20))
       }
     }
@@ -96,26 +81,21 @@ open class BarChartRenderer: ChartRenderer {
   
   
   /// Y Gridlines used by the horizontal bar graph
-  func horizontalBarGraphYGridlines(context: CGContext, arrayCount: Int, offSet: offset) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, minValue: 0, arrayCount: Double(arrayCount), yAxisGridlineCount: 0, xAxisGridlineCount: 0, offSet: offSet)
-    
-    for i in 0...arrayCount {
-      let yStartPoint = calc.yHorizontalGridline(i: i, destination: position.start)
-      let yEndPoint = calc.yHorizontalGridline(i: i, destination: position.end)
+  func drawHorizontalYGridlines(on context: CGContext, using arrayCount: Int) {
+    for increment in 0...arrayCount {
+      let yStartPoint = calculate.yHorizontalGridline(using: increment, for: .start)
+      let yEndPoint = calculate.yHorizontalGridline(using: increment, for: .end)
       drawGridLines(context: context, start: yStartPoint, end: yEndPoint)
     }
   }
   
   /// X Gridlines used by the horizontal bar graph
-  func horizontalBarGraphXGridlines(context: CGContext, offSet: offset, gridline: Double) {
-    let calc = BarGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), maxValue: 0, minValue: 0, arrayCount: gridline, yAxisGridlineCount: 0, xAxisGridlineCount: gridline, offSet: offSet)
-    
-    for i in 0...Int(gridline) {
-      let startPoint = calc.xHorizontalGridline(i: i, destination: position.start)
-      let endPoint = calc.xHorizontalGridline(i: i, destination: position.end)
-      
+  func drawHorizontalXGridlines(on context: CGContext, using gridline: Double) {
+    for increment in 0...Int(gridline) {
+      let startPoint = calculate.xHorizontalGridline(using: increment, for: .start )
+      let endPoint = calculate.xHorizontalGridline(using: increment, for: .end)
       drawGridLines(context: context, start: startPoint, end: endPoint)
     }
   }
-  
+
 }

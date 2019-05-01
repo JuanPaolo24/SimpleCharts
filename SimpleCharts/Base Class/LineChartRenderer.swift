@@ -11,80 +11,50 @@ import CoreGraphics
 
 open class LineChartRenderer: ChartRenderer {
   
+  var sourceData = LineChartData()
+  let helper = HelperFunctions()
+
   
-  public override init(frame: CGRect) {
-    super.init(frame: frame)
-  }
-  
-  
-  public required init?(coder aDecoder: NSCoder) {
-    super.init(coder: aDecoder)
-  }
-  
-  
-  func addGradient(context: CGContext, path: CGMutablePath, endLine: CGPoint, gradientStart: CGPoint, gradientEnd: CGPoint, source: LineChartData) {
-    context.protectGState {
-      path.addLine(to: endLine)
-      path.closeSubpath()
-      context.addPath(path)
-      
-      context.clip()
-      
-      let colorSpace = CGColorSpaceCreateDeviceRGB()
-      
-      var colorComponents: [CGFloat] = []
-      
-      for colours in source.gradientFillColours {
-        
-        guard let components = colours.cgColor.components else { return }
-        colorComponents.append(components[0])
-        colorComponents.append(components[1])
-        colorComponents.append(components[2])
-        colorComponents.append(components[3])
-      }
-      
-      let locations:[CGFloat] = [0.0, 1.0]
-      
-      guard let gradient = CGGradient(colorSpace: colorSpace,colorComponents: colorComponents,locations: locations, count: locations.count) else { return }
-      context.setAlpha(0.33)
-      context.drawLinearGradient(gradient, start: gradientStart, end: gradientEnd, options: CGGradientDrawingOptions(rawValue: UInt32(0)))
-    }
-  }
-  
-  
-  func addGradientPath(context: CGContext, array: [Double], maxValue: Double, minValue: Double, source: LineChartData, offSet: offset, xGridlineCount: Double, yGridlineCount: Double) {
-    let calc = LineGraphCalculation(array: array, arrayCount: 0, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yGridlineCount, xAxisGridlineCount: xGridlineCount)
-    
-    let startingXValue = calc.xlineGraphPoint(i: 0)
-    
+  func addGradient(to context: CGContext, using array: [Double], offSet: offset) {
     let gradientPath = CGMutablePath()
     gradientPath.move(to: CGPoint(x: offSet.left, y: frameHeight() - offSet.bottom))
     let gradientFillPath = CGMutablePath()
-    gradientFillPath.move(to: CGPoint(x: startingXValue, y: frameHeight() - offSet.bottom))
+    gradientFillPath.move(to: CGPoint(x: calculate.xlineGraphPoint(for: .singleChart, from: 0), y: frameHeight() - offSet.bottom))
     
     var xValue = 0.0
-    var yValue = 0.0
     
-    var smallVal: [Double] = []
-    for (i, value) in array.enumerated() {
+    var yValueArray: [Double] = []
+    
+    for (increment, value) in array.enumerated() {
       
-      xValue = calc.xlineGraphPoint(i: i)
-      yValue = calc.ylineGraphPoint(value: value)
+      xValue = calculate.xlineGraphPoint(for: .singleChart, from: increment)
+      let yValue = calculate.ylineGraphPoint(value: value)
       
       gradientFillPath.addLine(to: CGPoint(x: xValue, y: yValue))
       gradientPath.addLine(to: CGPoint(x: xValue, y: yValue))
-      smallVal.append(yValue)
+      yValueArray.append(yValue)
     }
-    
-    guard let minimum = smallVal.min() else { return }
+    guard let minimum = yValueArray.min() else { return }
     
     let gradientStartPoint = CGPoint(x: offSet.left, y: minimum)
     let gradientEndPoint = CGPoint(x: offSet.left, y: frameHeight() - offSet.bottom)
     
-    if source.enableGraphFill == true {
-      switch source.fillType {
+    if sourceData.enableGraphFill == true {
+      switch sourceData.fillType {
       case.gradientFill:
-        addGradient(context: context, path: gradientPath, endLine: CGPoint(x: frameWidth() - offSet.right, y: frameHeight() - offSet.bottom), gradientStart: gradientStartPoint, gradientEnd: gradientEndPoint, source: source)
+        context.protectGState {
+          gradientPath.addLine(to: CGPoint(x: frameWidth() - offSet.right, y: frameHeight() - offSet.bottom))
+          gradientPath.closeSubpath()
+          context.addPath(gradientPath)
+          context.clip()
+          let colorComponents = helper.createColourStructure(from: sourceData.gradientFillColours)
+          
+          let locations:[CGFloat] = [0.0, 1.0]
+          
+          guard let gradient = CGGradient(colorSpace: CGColorSpaceCreateDeviceRGB() ,colorComponents: colorComponents,locations: locations, count: locations.count) else { return }
+          context.setAlpha(0.33)
+          context.drawLinearGradient(gradient, start: gradientStartPoint, end: gradientEndPoint, options: CGGradientDrawingOptions(rawValue: UInt32(0)))
+        }
       case.normalFill:
         context.protectGState {
           gradientFillPath.addLine(to: CGPoint(x: xValue, y: frameHeight() - offSet.bottom))
@@ -93,106 +63,18 @@ open class LineChartRenderer: ChartRenderer {
           context.setLineWidth(3)
           context.beginPath()
           context.addPath(gradientFillPath)
-          context.setFillColor(source.setGraphFill.cgColor)
-          context.setAlpha(source.setFillAlpha)
+          context.setFillColor(sourceData.setGraphFill.cgColor)
+          context.setAlpha(sourceData.setFillAlpha)
           context.fillPath()
         }
       }
     }
   }
   
-  func drawCircles(context: CGContext, array: [Double], maxValue: Double, minValue: Double, source: LineChartData, offSet: offset, xGridlineCount: Double, yGridlineCount: Double) {
-    let calc = LineGraphCalculation(array: array, arrayCount: 0, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yGridlineCount, xAxisGridlineCount: xGridlineCount)
+  func addBezierGradient(to context: CGContext, using array: [Double], offSet: offset) {
     
-    for (i, value) in array.enumerated() {
-      
-      let xValue = calc.xlineGraphPoint(i: i)
-      let yValue = calc.ylineGraphPoint(value: value)
-      
-      if source.enableCirclePointVisibility == true {
-        context.addArc(center: CGPoint(x: xValue, y: yValue), radius: source.setCirclePointRadius, startAngle: CGFloat(0).degreesToRadians, endAngle: CGFloat(360).degreesToRadians, clockwise: true)
-        context.setFillColor(source.setLineGraphColour)
-        context.fillPath()
-      }
-    }
-    
-  }
-  
-  
-  /// Base function for drawing single line graphs. Requires context, the array to be plotted and the max value of the whole data set
-  func drawLine(context: CGContext, array: [Double], maxValue: Double, minValue: Double, source: LineChartData, offSet: offset, xGridlineCount: Double, yGridlineCount: Double) {
-    let calc = LineGraphCalculation(array: array, arrayCount: 0, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yGridlineCount, xAxisGridlineCount: xGridlineCount)
-    
-    let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: source.setTextLabelFont), foreGroundColor: source.setTextLabelColour)
-    
-    let startingYValue = calc.ylineGraphStartPoint()
-    let startingXValue = calc.xlineGraphPoint(i: 0)
-    
-    let linePath = CGMutablePath()
-    linePath.move(to: CGPoint(x: startingXValue, y: startingYValue))
-    
-    for (i, value) in array.enumerated() {
-      
-      let xValue = calc.xlineGraphPoint(i: i)
-      let yValue = calc.ylineGraphPoint(value: value)
-      
-      if source.enableLineVisibility == true {
-        context.protectGState {
-          linePath.addLine(to: CGPoint(x: xValue, y: yValue))
-          context.addPath(linePath)
-          context.setStrokeColor(source.setLineGraphColour)
-          context.strokePath()
-          context.setLineWidth(source.setLineWidth)
-        }
-      }
-      
-      if source.enableDataPointLabel == true {
-        textRenderer.renderText(text: "\(value)", textFrame: CGRect(x: xValue, y: yValue - 20, width: 40, height: 20))
-      }
-    }
-
-  }
-  
-  /// Base function for drawing single line graphs. Requires context, the array to be plotted and the max value of the whole data set
-  func drawLineForCombine(context: CGContext, array: [Double], maxValue: Double, minValue: Double, source: LineChartData, offSet: offset, xGridlineCount: Double, yGridlineCount: Double) {
-    let calc = LineGraphCalculation(array: array, arrayCount: 0, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yGridlineCount, xAxisGridlineCount: xGridlineCount)
-    
-    let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: source.setTextLabelFont), foreGroundColor: source.setTextLabelColour)
-    
-    let startingYValue = calc.ylineGraphStartPoint()
-    let startingXValue = calc.xlineCombinePoint(i: 0)
-    
-    let linePath = CGMutablePath()
-    linePath.move(to: CGPoint(x: startingXValue, y: startingYValue))
-    
-    for (i, value) in array.enumerated() {
-    
-      let xValue = calc.xlineCombinePoint(i: i)
-      let yValue = calc.ylineGraphPoint(value: value)
-      
-      if source.enableLineVisibility == true {
-        context.protectGState {
-          linePath.addLine(to: CGPoint(x: xValue, y: yValue))
-          context.addPath(linePath)
-          context.setStrokeColor(source.setLineGraphColour)
-          context.strokePath()
-          context.setLineWidth(source.setLineWidth)
-        }
-      }
-      
-      if source.enableDataPointLabel == true {
-        textRenderer.renderText(text: "\(value)", textFrame: CGRect(x: xValue, y: yValue - 20, width: 40, height: 20))
-      }
-    }
-    
-  }
-  
-  
-  func addBezierGradientPath(context: CGContext, array: [Double], maxValue: Double, minValue: Double, source: LineChartData, offSet: offset, xGridlineCount: Double, yGridlineCount: Double) {
-    let calc = LineGraphCalculation(array: array, arrayCount: 0, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yGridlineCount, xAxisGridlineCount: xGridlineCount)
-    
-    let startingYValue = calc.ylineGraphStartPoint()
-    let startingXValue = calc.xlineGraphPoint(i: 0)
+    let startingYValue = calculate.ylineGraphStartPoint()
+    let startingXValue = calculate.xlineGraphPoint(for: .singleChart, from: 0)
     
     let gradientPath = CGMutablePath()
     gradientPath.move(to: CGPoint(x: offSet.left, y: frameHeight() - offSet.bottom))
@@ -202,39 +84,50 @@ open class LineChartRenderer: ChartRenderer {
     gradientFillPath.addLine(to: CGPoint(x: offSet.left, y: startingYValue))
     
     var destination = CGPoint()
-    var control1 = CGPoint()
-    var control2 = CGPoint()
     
-    var smallVal: [Double] = []
-    smallVal.append(startingYValue)
+    var yValueArray: [Double] = []
+    yValueArray.append(startingYValue)
     
     let index = Array(array.dropFirst())
     
-    for (i, value) in index.enumerated() {
+    for (increment, value) in index.enumerated() {
       
-      destination = calc.bezierGraphPoint(i: i, value: value)
-      control1 = calc.bezierControlPoint(i: i, value: value, intensity: source.setBezierCurveIntensity, isControl1: true)
-      control2 = calc.bezierControlPoint(i: i, value: value, intensity: source.setBezierCurveIntensity, isControl1: false)
+      destination = calculate.bezierGraphPoint(for: .singleChart, from: increment, and: value)
+      let control1 = calculate.bezierControlPoint(1, for: .singleChart, from: increment, and: value, with: sourceData.setBezierCurveIntensity)
+      let control2 = calculate.bezierControlPoint(2, for: .singleChart, from: increment, and: value, with: sourceData.setBezierCurveIntensity)
       
       gradientFillPath.addCurve(to: destination, control1: control1, control2: control2)
       context.addPath(gradientFillPath)
       context.setStrokeColor(UIColor.clear.cgColor)
       context.strokePath()
-
+      
       gradientPath.addCurve(to: destination, control1: control1, control2: control2)
       
-      smallVal.append(Double(destination.y))
+      yValueArray.append(Double(destination.y))
     }
     
-    guard let minimum = smallVal.min() else { return }
+    guard let minimum = yValueArray.min() else { return }
     
     let gradientStartPoint = CGPoint(x: offSet.left, y: minimum)
     let gradientEndPoint = CGPoint(x: offSet.left, y: frameHeight() - offSet.bottom)
     
-    if source.enableGraphFill == true {
-      switch source.fillType {
+    if sourceData.enableGraphFill == true {
+      switch sourceData.fillType {
       case.gradientFill:
-        addGradient(context: context, path: gradientPath, endLine: CGPoint(x: frameWidth() - offSet.right, y: frameHeight() - offSet.bottom), gradientStart: gradientStartPoint, gradientEnd: gradientEndPoint, source: source)
+        context.protectGState {
+          gradientPath.addLine(to: CGPoint(x: frameWidth() - offSet.right, y: frameHeight() - offSet.bottom))
+          gradientPath.closeSubpath()
+          context.addPath(gradientPath)
+          context.clip()
+          
+          let colorComponents = helper.createColourStructure(from: sourceData.gradientFillColours)
+          
+          let locations:[CGFloat] = [0.0, 1.0]
+          
+          guard let gradient = CGGradient(colorSpace: CGColorSpaceCreateDeviceRGB() ,colorComponents: colorComponents,locations: locations, count: locations.count) else { return }
+          context.setAlpha(0.33)
+          context.drawLinearGradient(gradient, start: gradientStartPoint, end: gradientEndPoint, options: CGGradientDrawingOptions(rawValue: UInt32(0)))
+        }
       case.normalFill:
         context.protectGState {
           gradientFillPath.addLine(to: CGPoint(x: Double(destination.x), y: frameHeight() - offSet.bottom))
@@ -243,60 +136,94 @@ open class LineChartRenderer: ChartRenderer {
           context.setLineWidth(3)
           context.beginPath()
           context.addPath(gradientFillPath)
-          context.setFillColor(source.setGraphFill.cgColor)
-          context.setAlpha(source.setFillAlpha)
+          context.setFillColor(sourceData.setGraphFill.cgColor)
+          context.setAlpha(sourceData.setFillAlpha)
           context.fillPath()
         }
       }
     }
-  
+    
   }
   
   
-  /// Base function for drawing line graphs with bezier curve. Requires context, the array to be plotted and the max value of the whole data set
-  func drawBezierCurve(context: CGContext, array: [Double], maxValue: Double, minValue: Double, source: LineChartData, forCombined:Bool, offSet: offset, xGridlineCount: Double, yGridlineCount: Double) {
-    let calc = LineGraphCalculation(array: array, arrayCount: 0, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yGridlineCount, xAxisGridlineCount: xGridlineCount)
-    
-    let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: source.setTextLabelFont), foreGroundColor: source.setTextLabelColour)
-    
-    let startingYValue = calc.ylineGraphStartPoint()
-    var startingXValue = 0.0
-    
-    if forCombined == true {
-      startingXValue = calc.xlineCombinePoint(i: 0)
-    } else {
-      startingXValue = calc.xlineGraphPoint(i: 0)
+  func addCircles(to context: CGContext, from array: [Double]) {
+    for (increment, value) in array.enumerated() {
+      
+      let xValue = calculate.xlineGraphPoint(for: .singleChart, from: increment)
+      let yValue = calculate.ylineGraphPoint(value: value)
+      
+      if sourceData.enableCirclePointVisibility == true {
+        context.addArc(center: CGPoint(x: xValue, y: yValue), radius: sourceData.setCirclePointRadius, startAngle: CGFloat(0).degreesToRadians, endAngle: CGFloat(360).degreesToRadians, clockwise: true)
+        context.setFillColor(sourceData.setLineGraphColour)
+        context.fillPath()
+      }
     }
+  }
+  
+  
+  /// Base function for drawing single line graphs. Requires context, the array to be plotted and the max value of the whole data set
+  func addLine(to context: CGContext, from array: [Double], for type: chartType) {
+    
+    let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: sourceData.setTextLabelFont), foreGroundColor: sourceData.setTextLabelColour)
+    
+    let startingYValue = calculate.ylineGraphStartPoint()
+    let startingXValue = calculate.xlineGraphPoint(for: type, from: 0)
+    
+    let linePath = CGMutablePath()
+    linePath.move(to: CGPoint(x: startingXValue, y: startingYValue))
+    
+    for (increment, value) in array.enumerated() {
+      
+      let xValue = calculate.xlineGraphPoint(for: type, from: increment)
+      let yValue = calculate.ylineGraphPoint(value: value)
+      
+      if sourceData.enableLineVisibility == true {
+        context.protectGState {
+          linePath.addLine(to: CGPoint(x: xValue, y: yValue))
+          context.addPath(linePath)
+          context.setStrokeColor(sourceData.setLineGraphColour)
+          context.strokePath()
+          context.setLineWidth(sourceData.setLineWidth)
+        }
+      }
+      
+      if sourceData.enableDataPointLabel == true {
+        textRenderer.renderText(text: "\(value)", textFrame: CGRect(x: xValue, y: yValue - 20, width: 40, height: 20))
+      }
+    }
+  }
+  
+  
+
+  
+  
+  /// Base function for drawing line graphs with bezier curve. Requires context, the array to be plotted and the max value of the whole data set
+  func addBezierLine(to context: CGContext, from array: [Double], for type: chartType) {
+    let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: sourceData.setTextLabelFont), foreGroundColor: sourceData.setTextLabelColour)
+    
+    let startingYValue = calculate.ylineGraphStartPoint()
+    let startingXValue = calculate.xlineGraphPoint(for: type, from: 0)
     
     let path = CGMutablePath()
     path.move(to: CGPoint(x: startingXValue, y: startingYValue))
-  
-    var destination = CGPoint()
-    var control1 = CGPoint()
-    var control2 = CGPoint()
 
     let index = Array(array.dropFirst())
     
-    for (i, value) in index.enumerated() {
+    for (increment, value) in index.enumerated() {
+
+        let destination = calculate.bezierGraphPoint(for: type, from: increment, and: value)
+        let control1 = calculate.bezierControlPoint(1, for: type, from: increment, and: value, with: sourceData.setBezierCurveIntensity)
+        let control2 = calculate.bezierControlPoint(2, for: type, from: increment, and: value, with: sourceData.setBezierCurveIntensity)
+
       
-      if forCombined == true {
-        destination = calc.bezierCombinePoint(i: i, value: value)
-        control1 = calc.bezierControlCombinedPoint(i: i, value: value, intensity: source.setBezierCurveIntensity, isControl1: true)
-        control2 = calc.bezierControlCombinedPoint(i: i, value: value, intensity: source.setBezierCurveIntensity, isControl1: false)
-      } else {
-        destination = calc.bezierGraphPoint(i: i, value: value)
-        control1 = calc.bezierControlPoint(i: i, value: value, intensity: source.setBezierCurveIntensity, isControl1: true)
-        control2 = calc.bezierControlPoint(i: i, value: value, intensity: source.setBezierCurveIntensity, isControl1: false)
-      }
-      
-      if source.enableLineVisibility == true {
+      if sourceData.enableLineVisibility == true {
         path.addCurve(to: destination, control1: control1, control2: control2)
         context.addPath(path)
-        context.setStrokeColor(source.setLineGraphColour)
+        context.setStrokeColor(sourceData.setLineGraphColour)
         context.strokePath()
       }
 
-      if source.enableDataPointLabel == true {
+      if sourceData.enableDataPointLabel == true {
         textRenderer.renderText(text: "\(value)", textFrame: CGRect(x: destination.x, y: destination.y - 15, width: 40, height: 20))
       }
     }

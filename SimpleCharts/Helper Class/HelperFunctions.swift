@@ -280,4 +280,23 @@ class HelperFunctions {
     
   }
   
+  //Create a colour structure from a UIColour and returns an array of CGFloats corresponding to colour data
+  func createColourStructure(from value: [UIColor]) -> [CGFloat] {
+    var colorComponents: [CGFloat] = []
+    
+    for colours in value {
+      guard let components = colours.cgColor.components else { return [] }
+      colorComponents.append(components[0])
+      colorComponents.append(components[1])
+      colorComponents.append(components[2])
+      colorComponents.append(components[3])
+    }
+    
+    return colorComponents
+    
+  }
+  
+  
+  
+  
 }

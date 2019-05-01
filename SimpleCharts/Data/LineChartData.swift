@@ -15,6 +15,10 @@ open class LineChartData: ChartData {
     super.init(dataset: dataset, datasetName: datasetName)
   }
   
+  required public init() {
+    super.init(dataset: [], datasetName: "empty")
+  }
+  
   //Line Chart
   /// Make the circle points on the line graph visible (Default = True)
   open var enableCirclePointVisibility = true
@@ -67,6 +71,7 @@ open class LineChartData: ChartData {
   
   /// Array of colours for the gradient
   open var gradientFillColours: [UIColor] = [UIColor.blue, UIColor.red]
+  
   
   /// Graph Fill Colour for normal fill configuration (Default = Clear)
   open var setGraphFill: UIColor = UIColor.clear

@@ -18,5 +18,10 @@ open class ChartData {
     self.array = dataset
     self.name = datasetName
   }
+  
+  required public init() {
+    self.array = []
+    self.name = "init"
+  }
 
 }

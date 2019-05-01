@@ -45,9 +45,9 @@ open class PieChartView: ArcRenderer {
     print(height)
     
     if UIDevice.current.orientation.isLandscape {
-      //animation.drawAnimatedPie(radiusPercentage: 0.4, segments: data, centerX: width * 0.5, centerY: height * 0.5, mainLayer: layer)
+      animation.drawAnimatedPie(radiusPercentage: 0.4, segments: data, centerX: width * 0.5, centerY: height * 0.5, mainLayer: layer)
     } else {
-      //animation.drawAnimatedPie(radiusPercentage: 0.4, segments: data, centerX: width * 0.5, centerY: height * 0.5, mainLayer: layer)
+      animation.drawAnimatedPie(radiusPercentage: 0.4, segments: data, centerX: width * 0.5, centerY: height * 0.5, mainLayer: layer)
     }
   }
   
@@ -62,9 +62,9 @@ open class PieChartView: ArcRenderer {
     
   
     if UIDevice.current.orientation.isLandscape {
-      renderPieChart(context: context, currentOrientation: orientation.landscape)
+      //renderPieChart(context: context, currentOrientation: orientation.landscape)
     } else {
-      renderPieChart(context: context, currentOrientation: orientation.portrait)
+      //renderPieChart(context: context, currentOrientation: orientation.portrait)
     }
   
     
