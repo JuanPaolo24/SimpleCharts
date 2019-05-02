@@ -145,6 +145,38 @@ open class ChartRenderer: UIView {
       }
     }
   }
+  
+  
+  /// Renders a special X axis gridline for the bar chart
+  func drawBarXAxisGridline(on context: CGContext, using arrayCount: Int) {
+    for increment in 0...arrayCount - 1 {
+      let startPoint = calculate.barXGridlinePoint(using: increment, for: .start)
+      let endPoint = calculate.barXGridlinePoint(using: increment, for: .end)
+      
+      if enableYGridVisibility == true {
+        drawGridLines(context: context, start: startPoint, end: endPoint)
+      }
+    }
+  }
+  
+  
+  /// Y Gridlines used by the horizontal bar graph
+  func drawHorizontalYGridlines(on context: CGContext, using arrayCount: Int) {
+    for increment in 0...arrayCount {
+      let yStartPoint = calculate.yHorizontalGridline(using: increment, for: .start)
+      let yEndPoint = calculate.yHorizontalGridline(using: increment, for: .end)
+      drawGridLines(context: context, start: yStartPoint, end: yEndPoint)
+    }
+  }
+  
+  /// X Gridlines used by the horizontal bar graph
+  func drawHorizontalXGridlines(on context: CGContext, using gridline: Double) {
+    for increment in 0...Int(gridline) {
+      let startPoint = calculate.xHorizontalGridline(using: increment, for: .start )
+      let endPoint = calculate.xHorizontalGridline(using: increment, for: .end)
+      drawGridLines(context: context, start: startPoint, end: endPoint)
+    }
+  }
 
   
 }

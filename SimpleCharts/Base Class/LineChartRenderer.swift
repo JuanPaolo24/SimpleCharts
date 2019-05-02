@@ -146,10 +146,10 @@ open class LineChartRenderer: ChartRenderer {
   }
   
   
-  func addCircles(to context: CGContext, from array: [Double]) {
+  func addCircles(to context: CGContext, from array: [Double], for type: chartType) {
     for (increment, value) in array.enumerated() {
       
-      let xValue = calculate.xlineGraphPoint(for: .singleChart, from: increment)
+      let xValue = calculate.xlineGraphPoint(for: type, from: increment)
       let yValue = calculate.ylineGraphPoint(from: value)
       
       if sourceData.enableCirclePointVisibility == true {

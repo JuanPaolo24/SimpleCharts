@@ -79,4 +79,11 @@ open class LineChartData: ChartData {
   /// Fill alpha/transparency (Default = 0.33)
   open var setFillAlpha: CGFloat = 0.33
   
+  
+  
+  /// Animation Configuration
+  
+  //Animation duration (Default = 2)
+  open var setAnimationDuration: CFTimeInterval = 3
+  
 }

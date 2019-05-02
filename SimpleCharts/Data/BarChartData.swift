@@ -43,4 +43,9 @@ open class BarChartData: ChartData {
   
 
   
+  /// Animation Configuration
+  
+  //Animation duration (Default = 2)
+  open var setAnimationDuration: CFTimeInterval = 3
+  
 }

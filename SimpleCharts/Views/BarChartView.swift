@@ -102,7 +102,6 @@ open class BarChartView: BarChartRenderer {
     let scale = 70.0/31.0
     
     if UIDevice.current.orientation.isLandscape {
-      setupCalculation(withConfiguration: scale)
       renderGraphBase(as: .landscape, on: context, withConfiguration: scale)
       if enableAnimation == false {
         renderBarGraph(on: context)
@@ -111,7 +110,6 @@ open class BarChartView: BarChartRenderer {
         renderHighlight(on: context, withConfiguration: scale)
       }
     } else {
-      setupCalculation(withConfiguration: 1.0)
       renderGraphBase(as: .portrait, on: context, withConfiguration: 1.0)
       if enableAnimation == false {
         renderBarGraph(on: context)
@@ -202,7 +200,7 @@ open class BarChartView: BarChartRenderer {
       animator.calculate = GraphCalculation(array: value, arrayCount: value.count, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
       animator.barCustomisationSource = data.array[i]
       animator.offSet = offSet
-      animator.drawAnimatedBar(on: layer, using: value, with: Double(i), and: Double(convertedData.count), for: .vertical)
+      animator.drawAnimatedBar(on: layer, using: value, with: Double(i), and: Double(convertedData.count), for: barOrientation)
     }
   }
   
@@ -230,29 +228,6 @@ open class BarChartView: BarChartRenderer {
     }
     
   }
-  
-  func setupCalculation(withConfiguration landscapePadding: Double) {
-    let paddedLeftOffset = offSetLeft * landscapePadding
-    let paddedRightOffset = offSetRight * landscapePadding
-    let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
-    let array = helper.convertToDouble(from: data.array)
-    var maxValue = 0.0
-    var minValue = 0.0
-    
-    let actualMax = helper.findMaxValueFrom(array)
-    
-    if enableAxisCustomisation == true {
-      maxValue = yAxis.setYAxisMaximumValue
-      minValue = yAxis.setYAxisMinimumValue
-    } else {
-      maxValue = actualMax
-      minValue = 0
-    }
-    for value in array {
-      calculate = GraphCalculation(array: value, arrayCount: value.count, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
-    }
-  }
-  
   
   func renderBarGraph(on context: CGContext) {
     let array = helper.convertToDouble(from: data.array)
@@ -289,6 +264,10 @@ open class BarChartView: BarChartRenderer {
     } else {
       maxValue = actualMax
       minValue = 0
+    }
+    
+    for value in convertedData {
+      calculate = GraphCalculation(array: value, arrayCount: value.count, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
     }
     
     labelRenderer.calculate = GraphCalculation(array: [], arrayCount: arrayCount, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)

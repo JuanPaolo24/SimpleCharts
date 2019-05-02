@@ -53,7 +53,7 @@ open class LineChartView: LineChartRenderer {
   open var lineType: lineType = .normal
   
   /// Activate animation
-  open var enableAnimation = false
+  open var enableAnimation = true
   
   /// Enable highlighting (Default = true)
   open var enableHighlight: Bool = true
@@ -78,9 +78,9 @@ open class LineChartView: LineChartRenderer {
     if enableAnimation == true {
       setNeedsDisplay()
       if UIDevice.current.orientation.isLandscape {
-        drawAnimatedLine(withConfiguration: scale)
+        renderAnimatedLine(withConfiguration: scale)
       } else {
-        drawAnimatedLine(withConfiguration: 1.0)
+        renderAnimatedLine(withConfiguration: 1.0)
       }
     } else {
       setNeedsDisplay()
@@ -101,9 +101,17 @@ open class LineChartView: LineChartRenderer {
     let scale = 70.0/31.0
     
       if UIDevice.current.orientation.isLandscape {
-        renderLineGraph(context: context, landscapePadding: scale, currentOrientation: .landscape) //70
+        renderGraphBase(as: .landscape, on: context, withConfiguration: scale)
+        renderLineGraph(on: context, withConfiguration: scale)
+        if enableHighlight == true {
+          renderHighlight(on: context, withConfiguration: scale)
+        }
       } else {
-        renderLineGraph(context: context, landscapePadding: 1.0, currentOrientation: .portrait) //31
+        renderGraphBase(as: .portrait, on: context, withConfiguration: 1.0)
+        renderLineGraph(on: context, withConfiguration: 1.0)
+        if enableHighlight == true {
+          renderHighlight(on: context, withConfiguration: 1.0)
+        }
       }
     
   }
@@ -159,16 +167,18 @@ open class LineChartView: LineChartRenderer {
     
   }
   
-  func setupCalculation(withConfiguration landscapePadding: Double) {
+  
+  /// Renders a line graph
+  func renderLineGraph(on context: CGContext, withConfiguration landscapePadding: Double) {
     let paddedLeftOffset = offSetLeft * landscapePadding
     let paddedRightOffset = offSetRight * landscapePadding
+    let convertedData = helper.convertToDouble(from: data.array)
     let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
-    let array = helper.convertToDouble(from: data.array)
-    let arrayCount = helper.findArrayCountFrom(array: array)
-    let actualMax = helper.findMaxValueFrom(array)
+    let arrayCount = helper.findArrayCountFrom(array: convertedData)
+    let actualMax = helper.findMaxValueFrom(convertedData)
+    
     var maxValue = 0.0
     var minValue = 0.0
-    
     if enableAxisCustomisation == true {
       maxValue = yAxis.setYAxisMaximumValue
       minValue = yAxis.setYAxisMinimumValue
@@ -177,108 +187,88 @@ open class LineChartView: LineChartRenderer {
       minValue = 0
     }
     
-    for value in array {
-      calculate = GraphCalculation(array: value, arrayCount: arrayCount, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
-    }
-  }
-  
-  func renderLineGraph(on context: CGContext, withConfiguration landscapePadding: Double) {
-    let array = helper.convertToDouble(from: data.array)
-    let paddedLeftOffset = offSetLeft * landscapePadding
-    let paddedRightOffset = offSetRight * landscapePadding
-    let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
-    for (increment, value) in array.enumerated() {
+    for (increment, value) in convertedData.enumerated() {
+      calculate = GraphCalculation(array: value, arrayCount: arrayCount, maxValue: maxValue, minValue: minValue, frameWidth: Double(frame.size.width), frameHeight: Double(frame.size.height), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
       sourceData = data.array[increment]
-      if lineType == .bezier{
-        addBezierLine(to: context, from: value, for: .singleChart)
-        addBezierGradient(to: context, using: value, offSet: offSet)
-        addCircles(to: context, from: value)
-      } else {
-        addLine(to: context, from: value, for: .singleChart)
-        addGradient(to: context, using: value, offSet: offSet)
-        addCircles(to: context, from: value)
+      addCircles(to: context, from: value, for: .singleChart)
+      if enableAnimation == false {
+        if lineType == .bezier {
+          addBezierLine(to: context, from: value, for: .singleChart)
+          addBezierGradient(to: context, using: value, offSet: offSet)
+        } else {
+          addLine(to: context, from: value, for: .singleChart)
+          addGradient(to: context, using: value, offSet: offSet)
+        }
       }
+      
     }
   }
 
-  
-  // Takes all the components and renders it together
-  func renderLineGraph(context: CGContext, landscapePadding: Double, currentOrientation: orientation) {
+  func renderGraphBase(as currentOrientation: orientation, on context: CGContext, withConfiguration landscapePadding: Double) {
     let helper = HelperFunctions()
-    let legend = LegendRenderer(frame: self.frame)
-    
     let convertedData = helper.convertToDouble(from: data.array)
-    var maxValue = 0.0
-    var minValue = 0.0
     let paddedLeftOffset = offSetLeft * landscapePadding
     let paddedRightOffset = offSetRight * landscapePadding
     let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
-    let axis = AxisLabelRenderer(frame: self.frame)
     let arrayCount = helper.findArrayCountFrom(array: convertedData)
-    
+    let labelRenderer = AxisLabelRenderer(frame: self.frame)
+    let legend = LegendRenderer(frame: self.frame)
     legend.legendPadding(currentOrientation: currentOrientation)
     
     let actualMax = helper.findMaxValueFrom(convertedData)
     
+    var maxValue = 0.0
+    var minValue = 0.0
     if enableAxisCustomisation == true {
-        maxValue = yAxis.setYAxisMaximumValue
-        minValue = yAxis.setYAxisMinimumValue
+      maxValue = yAxis.setYAxisMaximumValue
+      minValue = yAxis.setYAxisMinimumValue
     } else {
       maxValue = actualMax
       minValue = 0
     }
-  
-    drawLineGraph(context: context, array: convertedData, max: maxValue, data: data, landscapePadding: landscapePadding)
+    
+    for value in convertedData {
+      calculate = GraphCalculation(array: value, arrayCount: arrayCount, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
+    }
+    
+    labelRenderer.calculate = GraphCalculation(array: [], arrayCount: arrayCount, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
     
     axisBase(context: context, offSet: offSet)
     drawXAxisGridline(on: context, using: xAxis.setGridlineCount)
     drawYAxisGridline(on: context, using: yAxis.setGridlineCount)
-    highlightValues(in: context, using: convertedData, and: touchPosition, with: maxValue, minValue, offSet)
-
-    
-    
-    axis.calculate = GraphCalculation(array: [], arrayCount: arrayCount, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
     if yAxis.yAxisVisibility == true {
-      axis.drawYAxisLabel(on: context, using: yAxis.setGridlineCount, withAxisInverse: yAxis.enableYAxisInverse)
+      labelRenderer.drawYAxisLabel(on: context, using: yAxis.setGridlineCount, withAxisInverse: yAxis.enableYAxisInverse)
     }
-    
     if xAxis.xAxisVisibility == true {
-      axis.drawXAxisLabel(on: context, using: xAxis.setGridlineCount)
+      labelRenderer.drawXAxisLabel(on: context, using: xAxis.setGridlineCount)
     }
-  
     if legendVisibility == true {
       legend.addLegend(to: context, as: legendShape, using: data.array, and: legendPosition, customXlegend, customYlegend)
     }
-    
   }
   
   
-  /// Renders a line graph
-  func drawLineGraph(context: CGContext, array: [[Double]], max: Double, data: LineChartDataSet, landscapePadding: Double) {
+  func renderHighlight(on context: CGContext, withConfiguration landscapePadding: Double) {
+    let convertedData = helper.convertToDouble(from: data.array)
     let paddedLeftOffset = offSetLeft * landscapePadding
     let paddedRightOffset = offSetRight * landscapePadding
-    let convertedData = helper.convertToDouble(from: data.array)
     let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
-    let arrayCount = helper.findArrayCountFrom(array: convertedData)
+    let actualMax = helper.findMaxValueFrom(convertedData)
     
-    for (i, value) in array.enumerated() {
-      calculate = GraphCalculation(array: value, arrayCount: arrayCount, maxValue: max, minValue: yAxis.setYAxisMinimumValue, frameWidth: Double(frame.size.width), frameHeight: Double(frame.size.height), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
-      sourceData = data.array[i]
-      
-      if lineType == .normal {
-        addBezierLine(to: context, from: value, for: .singleChart)
-        addBezierGradient(to: context, using: value, offSet: offSet)
-        addCircles(to: context, from: value)
-      } else {
-        addLine(to: context, from: value, for: .singleChart)
-        addGradient(to: context, using: value, offSet: offSet)
-        addCircles(to: context, from: value)
-      }
+    var maxValue = 0.0
+    var minValue = 0.0
+    if enableAxisCustomisation == true {
+      maxValue = yAxis.setYAxisMaximumValue
+      minValue = yAxis.setYAxisMinimumValue
+    } else {
+      maxValue = actualMax
+      minValue = 0
     }
+    highlightValues(in: context, using: convertedData, and: touchPosition, with: maxValue, minValue, offSet)
   }
-  
-  
-  func drawAnimatedLine(withConfiguration landscapePadding: Double) {
+
+
+  func renderAnimatedLine(withConfiguration landscapePadding: Double) {
     self.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
     let animationHandler = AnimationRenderer(frame: self.frame)
     let helper = HelperFunctions()
@@ -300,21 +290,13 @@ open class LineChartView: LineChartRenderer {
       maxValue = actualMax
       minValue = 0
     }
-    
     for (i, value) in convertedData.enumerated() {
       animationHandler.calculate = GraphCalculation(array: value, arrayCount: arrayCount, maxValue: maxValue, minValue: minValue, frameWidth: Double(frame.size.width), frameHeight: Double(frame.size.height), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
       animationHandler.lineCustomisationSource = data.array[i]
       animationHandler.drawAnimatedLineGraph(on: layer, using: value)
 
     }
-    
-    
-    
-    
-  
-    
   }
-  
 }
 
 

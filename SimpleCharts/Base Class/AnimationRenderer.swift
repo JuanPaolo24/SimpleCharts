@@ -30,25 +30,26 @@ open class AnimationRenderer: UIView {
     let startingYValue = calculate.ylineGraphStartPoint()
     let startingXValue = calculate.xlineGraphPoint(for: .singleChart, from: 0)
     animatedPath.move(to: CGPoint(x: startingXValue, y: startingYValue))
-  
+    
     for (increment, value) in array.enumerated() {
-        let xValue = calculate.xlineGraphPoint(for: .singleChart, from: increment)
-        let yValue = calculate.ylineGraphPoint(from: value)
-        animatedPath.addLine(to: CGPoint(x: xValue, y: yValue))
-      }
-  
-      let shapeLayer = CAShapeLayer()
-      shapeLayer.path = animatedPath
-      shapeLayer.strokeColor = lineCustomisationSource.setLineGraphColour
-      shapeLayer.fillColor = nil
-      mainLayer.addSublayer(shapeLayer)
-      
-      let animation = CABasicAnimation(keyPath: "strokeEnd")
-      animation.fromValue = 0
-      animation.toValue = 1
-      animation.duration = 4
-      shapeLayer.add(animation, forKey: "line")
+      let xValue = calculate.xlineGraphPoint(for: .singleChart, from: increment)
+      let yValue = calculate.ylineGraphPoint(from: value)
+      animatedPath.addLine(to: CGPoint(x: xValue, y: yValue))
     }
+    
+    let shapeLayer = CAShapeLayer()
+    shapeLayer.path = animatedPath
+    shapeLayer.strokeColor = lineCustomisationSource.setLineGraphColour
+    shapeLayer.fillColor = nil
+    shapeLayer.lineWidth = lineCustomisationSource.setLineWidth
+    mainLayer.addSublayer(shapeLayer)
+    
+    let animation = CABasicAnimation(keyPath: "strokeEnd")
+    animation.fromValue = 0
+    animation.toValue = 1
+    animation.duration = lineCustomisationSource.setAnimationDuration
+    shapeLayer.add(animation, forKey: "line")
+  }
   
   
   
@@ -85,7 +86,7 @@ open class AnimationRenderer: UIView {
       increaseBar = CABasicAnimation(keyPath: "bounds")
       increaseBar.fromValue = initialBound
       increaseBar.toValue = finalBound
-      increaseBar.duration = 2.0
+      increaseBar.duration = barCustomisationSource.setAnimationDuration
       let barLayer = CALayer()
       barLayer.anchorPoint = anchor
       barLayer.frame = finalBound

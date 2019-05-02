@@ -24,6 +24,8 @@ open class CombinedChartView: ChartRenderer {
   /// Custom legend y (When you select .custom on legend position then you can use this to set your own y values)
   open var customYlegend: Double = 0.0
   
+  /// Enables the axis label customisation, if it is false then the max value of the data set will be taken and multiplied by 20% (Default = false)
+  open var enableAxisCustomisation = false
   
   /// Legend visibility (Default = True)
   open var legendVisibility = true
@@ -46,9 +48,17 @@ open class CombinedChartView: ChartRenderer {
   /// An instance of the yAxis to provide customisation through this
   open var yAxis:yAxisConfiguration = yAxisConfiguration()
   
+  /// The orientation of the graph
+  open var barOrientation: barOrientation = .vertical
   
   /// Line type
-  open var enableLineBezier = false
+  open var lineType: lineType = .normal
+  
+  /// Activate animation
+  open var enableAnimation = false
+  
+  /// Enable highlighting (Default = true)
+  open var enableHighlight: Bool = true
   
   /// Add the data source
   public var data = CombinedChartDataSet()
@@ -68,13 +78,16 @@ open class CombinedChartView: ChartRenderer {
   override open func layoutSubviews() {
     let scale = 70.0/31.0
     
-    if UIDevice.current.orientation.isLandscape {
-      //renderAnimatedCombined(landscapePadding: scale)
+    if enableAnimation == true {
+      setNeedsDisplay()
+      if UIDevice.current.orientation.isLandscape {
+        renderAnimatedCombined(landscapePadding: scale)
+      } else {
+        renderAnimatedCombined(landscapePadding: 1.0)
+      }
     } else {
-      //renderAnimatedCombined(landscapePadding: 1.0)
+      setNeedsDisplay()
     }
-    
-    
   }
   
   
@@ -91,9 +104,11 @@ open class CombinedChartView: ChartRenderer {
     let scale = 70.0/31.0
     
     if UIDevice.current.orientation.isLandscape {
-      renderCombinedChart(context: context, landscapePadding: scale, currentOrientation: .landscape)
+      renderGraphBase(as: .landscape, on: context, withConfiguration: scale)
+      renderCombineChart(on: context, withConfiguration: scale)
     } else {
-      renderCombinedChart(context: context, landscapePadding: 1.0, currentOrientation: .portrait)
+      renderGraphBase(as: .portrait, on: context, withConfiguration: 1.0)
+      renderCombineChart(on: context, withConfiguration: 1.0)
     }
     
     
@@ -137,9 +152,6 @@ open class CombinedChartView: ChartRenderer {
     self.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
     let animationHandler = AnimationRenderer()
     let helper = HelperFunctions()
-    let axis = AxisLabelRenderer(frame: self.frame)
-    let legend = LegendRenderer(frame: self.frame)
-    
     let paddedLeftOffset = offSetLeft * landscapePadding
     let paddedRightOffset = offSetRight * landscapePadding
     let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
@@ -152,114 +164,143 @@ open class CombinedChartView: ChartRenderer {
     
     let lineMaxValue = helper.findMaxValueFrom(lineConvertedData)
     let barMaxValue = helper.findMaxValueFrom(barConvertedData)
-    let maxValue = max(lineMaxValue, barMaxValue)
+    let actualMax = max(lineMaxValue, barMaxValue)
     
     let lineArrayCount = helper.findArrayCountFrom(array: lineConvertedData)
     let barArrayCount = helper.findArrayCountFrom(array: barConvertedData)
     let arrayCount = max(lineArrayCount, barArrayCount)
     
-    
-    
-    
-    for (i, value) in barConvertedData.enumerated() {
-      //animationHandler.drawAnimatedBar(array: value, maxValue: maxValue, minValue: 0, arrayCount: Double(barConvertedData.count), dataSetCount: i, offSet: offSet, mainLayer: layer, source: barChartDataSet.array[i])
+    var maxValue = 0.0
+    var minValue = 0.0
+    if enableAxisCustomisation == true {
+      maxValue = yAxis.setYAxisMaximumValue
+      minValue = yAxis.setYAxisMinimumValue
+    } else {
+      maxValue = actualMax
+      minValue = 0
+    }
+  
+    for (increment, value) in barConvertedData.enumerated() {
+      animationHandler.calculate = GraphCalculation(array: value, arrayCount: value.count, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
+      animationHandler.barCustomisationSource = barChartDataSet.array[increment]
+      animationHandler.drawAnimatedBar(on: layer, using: value, with: Double(increment), and: Double(barConvertedData.count), for: barOrientation)
     }
     
-    for (i, value) in lineConvertedData.enumerated() {
-      //animationHandler.drawAnimatedLineGraph(array: value, maxValue: maxValue, minValue: 0, offSet: offSet, height: frameHeight(), width: frameWidth(), mainLayer: layer, source: lineChartDataSet.array[i])
-      
+    for (increment, value) in lineConvertedData.enumerated() {
+      animationHandler.calculate = GraphCalculation(array: value, arrayCount: 0, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
+      animationHandler.lineCustomisationSource = lineChartDataSet.array[increment]
+      animationHandler.drawAnimatedLineGraph(on: layer, using: value)
     }
     
   }
   
-  /// Renders a line graph
-  func lineGraph(context: CGContext, array: [[Double]], max: Double, data: LineChartDataSet, forCombined: Bool, landscapePadding: Double) {
-    let paddedLeftOffset = offSetLeft * landscapePadding
-    let paddedRightOffset = offSetRight * landscapePadding
-    let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
-    let renderer = LineChartRenderer(frame: self.frame)
-    
-
-    for (i, value) in array.enumerated() {
-      renderer.calculate = GraphCalculation(array: value, arrayCount: 0, maxValue: max, minValue: yAxis.setYAxisMinimumValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
-      renderer.sourceData = data.array[i]
-      if enableLineBezier == true {
-        //renderer.drawBezierCurve(context: context, array: value, maxValue: max, minValue: yAxis.setYAxisMinimumValue,source: data.array[i], forCombined: true, offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
-        renderer.addBezierLine(to: context, from: value, for: .combineChart)
-        //renderer.drawCircles(context: context, array: value, maxValue: max, minValue: yAxis.setYAxisMinimumValue, source: data.array[i], offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
-      } else {
-        //renderer.drawLineForCombine(context: context, array: value)
-        renderer.addLine(to: context, from: value, for: .combineChart)
-        //renderer.drawCircles(context: context, array: value, maxValue: max, minValue: yAxis.setYAxisMinimumValue, source: data.array[i], offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
-      }
-    }
-  }
-
-  func barGraph(context: CGContext, array: [[Double]], data: BarChartDataSet, max: Double, landscapePadding: Double) {
-    let paddedLeftOffset = offSetLeft * landscapePadding
-    let paddedRightOffset = offSetRight * landscapePadding
-    let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
-    let renderer = BarChartRenderer(frame: self.frame)
-    
-    for (i, value) in array.enumerated() {
-      renderer.calculate = GraphCalculation(array: value, arrayCount: value.count, maxValue: max, minValue: yAxis.setYAxisMinimumValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
-      renderer.customisationSource = data.array[i]
-      renderer.addVerticalBarGraph(to: context, from: value, with: Double(i), and: Double(array.count))
-    }
-  }
-
-  func renderCombinedChart(context: CGContext, landscapePadding: Double, currentOrientation: orientation) {
+  
+  func renderCombineChart(on context: CGContext, withConfiguration landscapePadding: Double) {
     let helper = HelperFunctions()
-    let axis = AxisLabelRenderer(frame: self.frame)
-    let legend = LegendRenderer(frame: self.frame)
-
     let paddedLeftOffset = offSetLeft * landscapePadding
     let paddedRightOffset = offSetRight * landscapePadding
     let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
-
+    let lineRenderer = LineChartRenderer(frame: self.frame)
+    let barRenderer = BarChartRenderer(frame: self.frame)
+    
     let lineChartDataSet = data.lineData
     let barChartDataSet = data.barData
-
+    
     let lineConvertedData = helper.convertToDouble(from: lineChartDataSet.array)
     let barConvertedData = helper.convertToDouble(from: barChartDataSet.array)
-
+    
     let lineMaxValue = helper.findMaxValueFrom(lineConvertedData)
     let barMaxValue = helper.findMaxValueFrom(barConvertedData)
-    let maxValue = max(lineMaxValue, barMaxValue)
-
+    let actualMax = max(lineMaxValue, barMaxValue)
+    
     let lineArrayCount = helper.findArrayCountFrom(array: lineConvertedData)
     let barArrayCount = helper.findArrayCountFrom(array: barConvertedData)
     let arrayCount = max(lineArrayCount, barArrayCount)
-
     
-    legend.legendPadding(currentOrientation: currentOrientation)
-    
-    let barRenderer = BarChartRenderer(frame: self.frame)
-    axisBase(context: context, offSet: offSet)
-    barGraph(context: context, array: barConvertedData, data: barChartDataSet, max: maxValue, landscapePadding: landscapePadding)
-    lineGraph(context: context, array: lineConvertedData, max: maxValue, data: lineChartDataSet, forCombined: true, landscapePadding: landscapePadding)
-    context.saveGState()
-    drawYAxisGridline(on: context, using: yAxis.setGridlineCount)
-    //barRenderer.barxAxisGridlines(context: context, arrayCount: arrayCount, offSet: offSet)
-    context.restoreGState()
-    
-    
-
-    if yAxis.yAxisVisibility == true {
-      //axis.yAxis(context: context, maxValue: maxValue, minValue: yAxis.setYAxisMinimumValue, axisInverse: yAxis.enableYAxisInverse, offSet: offSet, gridlineCount: yAxis.setGridlineCount)
+    var maxValue = 0.0
+    var minValue = 0.0
+    if enableAxisCustomisation == true {
+      maxValue = yAxis.setYAxisMaximumValue
+      minValue = yAxis.setYAxisMinimumValue
+    } else {
+      maxValue = actualMax
+      minValue = 0
     }
-
-    if xAxis.xAxisVisibility == true {
-      //axis.barGraphxAxis(context: context, arrayCount: arrayCount, offSet: offSet)
+    
+    for (increment, value) in barConvertedData.enumerated() {
+      barRenderer.calculate = GraphCalculation(array: value, arrayCount: value.count, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
+      barRenderer.customisationSource = barChartDataSet.array[increment]
+      if enableAnimation == false {
+        barRenderer.addVerticalBarGraph(to: context, from: value, with: Double(increment), and: Double(barConvertedData.count))
+      }
     }
-
-    if legendVisibility == true {
-      legend.addLegend(to: context, as: legendShape, using: data, and: legendPosition, customXlegend, customYlegend)
-      //Add a checker to check if the developer is adding in the right number of data sets
-
+    
+    for (increment, value) in lineConvertedData.enumerated() {
+      lineRenderer.calculate = GraphCalculation(array: value, arrayCount: 0, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
+      lineRenderer.sourceData = lineChartDataSet.array[increment]
+      lineRenderer.addCircles(to: context, from: value, for: .combineChart)
+      if enableAnimation == false {
+        if lineType == .bezier {
+          lineRenderer.addBezierLine(to: context, from: value, for: .combineChart)
+        } else {
+          lineRenderer.addLine(to: context, from: value, for: .combineChart)
+        }
+      }
     }
-
+    
+    
   }
 
+
+  func renderGraphBase(as currentOrientation: orientation, on context:CGContext, withConfiguration landscapePadding: Double) {
+    let helper = HelperFunctions()
+    let axis = AxisLabelRenderer(frame: self.frame)
+    let legend = LegendRenderer(frame: self.frame)
+    legend.legendPadding(currentOrientation: currentOrientation)
+    let paddedLeftOffset = offSetLeft * landscapePadding
+    let paddedRightOffset = offSetRight * landscapePadding
+    let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
+    
+    let lineChartDataSet = data.lineData
+    let barChartDataSet = data.barData
+    
+    let lineConvertedData = helper.convertToDouble(from: lineChartDataSet.array)
+    let barConvertedData = helper.convertToDouble(from: barChartDataSet.array)
+    
+    let lineMaxValue = helper.findMaxValueFrom(lineConvertedData)
+    let barMaxValue = helper.findMaxValueFrom(barConvertedData)
+    let actualMax = max(lineMaxValue, barMaxValue)
+    
+    let lineArrayCount = helper.findArrayCountFrom(array: lineConvertedData)
+    let barArrayCount = helper.findArrayCountFrom(array: barConvertedData)
+    let arrayCount = max(lineArrayCount, barArrayCount)
+    
+    var maxValue = 0.0
+    var minValue = 0.0
+    if enableAxisCustomisation == true {
+      maxValue = yAxis.setYAxisMaximumValue
+      minValue = yAxis.setYAxisMinimumValue
+    } else {
+      maxValue = actualMax
+      minValue = 0
+    }
+    
+    axis.calculate = GraphCalculation(array: [], arrayCount: arrayCount, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
+    
+    axisBase(context: context, offSet: offSet)
+    context.protectGState {
+      drawYAxisGridline(on: context, using: yAxis.setGridlineCount)
+      drawBarXAxisGridline(on: context, using: arrayCount)
+    }
+    if yAxis.yAxisVisibility == true {
+      axis.drawYAxisLabel(on: context, using: yAxis.setGridlineCount, withAxisInverse: yAxis.enableYAxisInverse)
+    }
+    if xAxis.xAxisVisibility == true {
+      axis.drawbarXAxisLabel(on: context, withCustomisation: enableAxisCustomisation, using: arrayCount, and: xAxis.setXAxisLabel)
+    }
+    if legendVisibility == true {
+      legend.addLegend(to: context, as: legendShape, using: data, and: legendPosition, customXlegend, customYlegend)
+    }
+  }
   
 }
