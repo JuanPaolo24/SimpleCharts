@@ -8,7 +8,6 @@
 
 import Foundation
 
-@IBDesignable
 open class xAxisConfiguration {
   
   //Axis

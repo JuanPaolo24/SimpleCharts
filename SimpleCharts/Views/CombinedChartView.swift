@@ -15,6 +15,9 @@ open class CombinedChartView: ChartRenderer {
   /// Legend Position (Default = bottom)
   open var legendPosition: legendPlacing = .bottom
   
+  /// Legend Shape (Default = Rectangle)
+  open var legendShape: legendShape = .circle
+  
   /// Custom legend x (When you select .custom on legend position then you can use this to set your own x values)
   open var customXlegend: Double = 0.0
   
@@ -178,7 +181,7 @@ open class CombinedChartView: ChartRenderer {
     
 
     for (i, value) in array.enumerated() {
-      renderer.calculate = LineGraphCalculation(array: value, arrayCount: 0, maxValue: max, minValue: yAxis.setYAxisMinimumValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
+      renderer.calculate = GraphCalculation(array: value, arrayCount: 0, maxValue: max, minValue: yAxis.setYAxisMinimumValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
       renderer.sourceData = data.array[i]
       if enableLineBezier == true {
         //renderer.drawBezierCurve(context: context, array: value, maxValue: max, minValue: yAxis.setYAxisMinimumValue,source: data.array[i], forCombined: true, offSet: offSet, xGridlineCount: xAxis.setGridlineCount, yGridlineCount: yAxis.setGridlineCount)
@@ -199,7 +202,7 @@ open class CombinedChartView: ChartRenderer {
     let renderer = BarChartRenderer(frame: self.frame)
     
     for (i, value) in array.enumerated() {
-      renderer.calculate = LineGraphCalculation(array: value, arrayCount: value.count, maxValue: max, minValue: yAxis.setYAxisMinimumValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
+      renderer.calculate = GraphCalculation(array: value, arrayCount: value.count, maxValue: max, minValue: yAxis.setYAxisMinimumValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
       renderer.customisationSource = data.array[i]
       renderer.addVerticalBarGraph(to: context, from: value, with: Double(i), and: Double(array.count))
     }
@@ -231,8 +234,6 @@ open class CombinedChartView: ChartRenderer {
     
     legend.legendPadding(currentOrientation: currentOrientation)
     
-    let generalCalculationHandler = GeneralGraphCalculation(frameHeight: frameHeight(), frameWidth: frameWidth(), arrayCount: Double(arrayCount), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
-    
     let barRenderer = BarChartRenderer(frame: self.frame)
     axisBase(context: context, offSet: offSet)
     barGraph(context: context, array: barConvertedData, data: barChartDataSet, max: maxValue, landscapePadding: landscapePadding)
@@ -253,7 +254,9 @@ open class CombinedChartView: ChartRenderer {
     }
 
     if legendVisibility == true {
-      legend.renderCombinedChartLegend(context: context, data: data, position: legendPosition, customX: customXlegend, customY: customYlegend)
+      legend.addLegend(to: context, as: legendShape, using: data, and: legendPosition, customXlegend, customYlegend)
+      //Add a checker to check if the developer is adding in the right number of data sets
+
     }
 
   }

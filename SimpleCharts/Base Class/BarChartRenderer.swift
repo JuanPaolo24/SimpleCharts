@@ -32,12 +32,12 @@ open class BarChartRenderer: ChartRenderer {
     let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: customisationSource.setTextLabelFont), foreGroundColor: customisationSource.setTextLabelColour)
     
     for (increment, value) in array.enumerated() {
-      let yValue = calculate.yHorizontalValue(i: increment, dataSetCount: dataSetIncrement, count: dataSetCount)
+      let yValue = calculate.yHorizontalValue(using: increment, with: dataSetIncrement, and: dataSetCount)
       let xValue = calculate.xHorizontalValue()
-      let width = calculate.horizontalWidth(value: value)
-      let height = calculate.horizontalHeight(count: dataSetCount)
-      let xFrame = calculate.xHorizontalTextFrame(value: value)
-      let yFrame = calculate.yHorizontalTextFrame(i: increment, dataSetCount: dataSetIncrement, count: dataSetCount)
+      let width = calculate.horizontalWidth(using: value)
+      let height = calculate.horizontalHeight(using: dataSetCount)
+      let xFrame = calculate.xHorizontalTextFrame(using: value)
+      let yFrame = calculate.yHorizontalTextFrame(using: increment, with: dataSetIncrement, and: dataSetCount)
       
       context.protectGState {
         context.setFillColor(customisationSource.setBarGraphFillColour)
@@ -59,12 +59,12 @@ open class BarChartRenderer: ChartRenderer {
     
     for (increment, value) in array.enumerated() {
       
-      let width = calculate.verticalWidth(count: dataSetCount)
-      let xValue = calculate.xVerticalValue(i: increment, dataSetCount: dataSetIncrement, count: dataSetCount)
-      let yValue = calculate.yVerticalValue(value: value)
-      let height = calculate.verticalHeight(value: value)
-      let xFrame = calculate.xVerticalTextFrame(i: increment, dataSetCount: dataSetIncrement, count: dataSetCount)
-      let yFrame = calculate.yVerticalTextFrame(value: value)
+      let width = calculate.verticalWidth(using: dataSetCount)
+      let xValue = calculate.xVerticalValue(using: increment, with: dataSetIncrement, and: dataSetCount)
+      let yValue = calculate.yVerticalValue(using: value)
+      let height = calculate.verticalHeight(using: value)
+      let xFrame = calculate.xVerticalTextFrame(using: increment, with: dataSetIncrement, and: dataSetCount)
+      let yFrame = calculate.yVerticalTextFrame(using: value)
       
       context.protectGState {
         context.setFillColor(customisationSource.setBarGraphFillColour)
@@ -100,24 +100,24 @@ open class BarChartRenderer: ChartRenderer {
   }
   
   func highlightHorizontalValues(in context: CGContext, using array: [[Double]], and touchPoint: CGPoint, with maxValue: Double,  _ minValue: Double,  _ arrayCount: Double,  _ offSet: offset) {
-    var calc = LineGraphCalculation()
+    var calc = GraphCalculation()
     
     var highlightValueArray: [CGRect] = []
     
     for i in 0...(array.count - 1) {
       for (increment, value) in array[i].enumerated() {
-        calc = LineGraphCalculation(arrayCount: array[i].count, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet)
+        calc = GraphCalculation(arrayCount: array[i].count, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet)
 
-        let yValue = calc.yHorizontalValue(i: increment, dataSetCount: Double(i), count: arrayCount)
+        let yValue = calc.yHorizontalValue(using: increment, with: Double(i), and: arrayCount)
         let xValue = calc.xHorizontalValue()
-        let width = calc.horizontalWidth(value: value)
-        let height = calc.horizontalHeight(count: arrayCount)
+        let width = calc.horizontalWidth(using: value)
+        let height = calc.horizontalHeight(using: arrayCount)
         highlightValueArray.append(CGRect(x: xValue, y: yValue, width: width, height: height))
       }
     }
     
-    let sortedXPoint = helper.combineCGRectHorizontalArray(array: highlightValueArray)
-    let newXPoint = helper.findClosestHorizontal(array: sortedXPoint, target: touchPoint)
+    let sortedXPoint = helper.combineCGRectHorizontal(Array: highlightValueArray)
+    let newXPoint = helper.returnClosestHorizontal(from: sortedXPoint, using: touchPoint)
     context.protectGState {
       context.setFillColor(UIColor(red:0.24, green:0.24, blue:0.24, alpha:0.5).cgColor)
       context.setStrokeColor(UIColor(red:0.24, green:0.24, blue:0.24, alpha:0.5).cgColor)
@@ -129,7 +129,7 @@ open class BarChartRenderer: ChartRenderer {
   
   
   func highlightValues(in context: CGContext, using array: [[Double]], and touchPoint: CGPoint, with maxValue: Double,  _ minValue: Double, _ arrayCount: Double,  _ offSet: offset) {
-    var calc = LineGraphCalculation()
+    var calc = GraphCalculation()
     var highlightValueArray: [CGRect] = []
     var width = 0.0
     var height = 0.0
@@ -137,19 +137,19 @@ open class BarChartRenderer: ChartRenderer {
     
     for i in 0...(array.count - 1) {
       for (increment, value) in array[i].enumerated() {
-        calc = LineGraphCalculation(arrayCount: array[i].count, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet)
+        calc = GraphCalculation(arrayCount: array[i].count, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet)
         
-        width = calc.verticalWidth(count: arrayCount)
-        xValue = calc.xVerticalValue(i: increment, dataSetCount: Double(i), count: arrayCount)
-        let yValue = calc.yVerticalValue(value: value)
+        width = calc.verticalWidth(using: arrayCount)
+        xValue = calc.xVerticalValue(using: increment, with: Double(i), and: arrayCount)
+        let yValue = calc.yVerticalValue(using: value)
         
-        height = calc.verticalHeight(value: value)
+        height = calc.verticalHeight(using: value)
         highlightValueArray.append(CGRect(x: xValue, y: yValue, width: width, height: height))
       }
     }
     
-    let sortedXPoint = helper.combineCGRectArray(array: highlightValueArray)
-    let newXPoint = helper.findClosestY(array: sortedXPoint, target: touchPoint)
+    let sortedXPoint = helper.combineCGRect(Array: highlightValueArray)
+    let newXPoint = helper.returnClosestRect(from: sortedXPoint, using: touchPoint)
     context.protectGState {
       context.setFillColor(UIColor(red:0.24, green:0.24, blue:0.24, alpha:0.5).cgColor)
       context.setStrokeColor(UIColor(red:0.24, green:0.24, blue:0.24, alpha:0.5).cgColor)

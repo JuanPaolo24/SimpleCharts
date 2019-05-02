@@ -11,7 +11,7 @@ import CoreGraphics
 
 open class ChartRenderer: UIView {
   
-  var calculate = LineGraphCalculation()
+  var calculate = GraphCalculation()
   
   public override init(frame: CGRect) {
     super.init(frame: frame)

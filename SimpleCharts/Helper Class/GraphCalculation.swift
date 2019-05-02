@@ -9,7 +9,7 @@
 import Foundation
 
 
-open class LineGraphCalculation {
+open class GraphCalculation {
   
   private var array: [Double]
   private var arrayCount: Int
@@ -31,7 +31,6 @@ open class LineGraphCalculation {
     self.minValue = minValue
     self.frameWidth = frameWidth
     self.frameHeight = frameHeight
-    
     self.offSet = offSet
     self.yAxisGridlineCount = yAxisGridlineCount
     self.xAxisGridlineCount = xAxisGridlineCount
@@ -77,7 +76,7 @@ open class LineGraphCalculation {
     
   }
   
-  //Gridlien calculation
+  //Gridline calculation for general graphs
   
   func yGridlinePoint(using i: Int, for destination: position) -> CGPoint {
     let frameScale = (frameHeight - offSet.bottom - offSet.top) / (yAxisGridlineCount - 1)
@@ -91,8 +90,7 @@ open class LineGraphCalculation {
     } else {
       point = CGPoint(x: xAxisPadding, y: yAxisPadding - actualValue)
     }
-    
-    
+
     return point
   }
   
@@ -119,7 +117,7 @@ open class LineGraphCalculation {
   }
   
   
-  // Normal Line Graph
+  // Normal Line Graph calculation
   
   func ylineGraphStartPoint() -> Double {
     let yAxisPadding = frameHeight - offSet.bottom
@@ -138,7 +136,6 @@ open class LineGraphCalculation {
     return yValue
   }
   
-  
   func ylineGraphPoint(from value: Double) -> Double {
     let frameScale = frameHeight - offSet.bottom - offSet.top
     let yAxisPadding = frameHeight - offSet.bottom
@@ -150,9 +147,6 @@ open class LineGraphCalculation {
     let negativePadding = (frameScale / remaining) * negativeValue
     let yValue = (yAxisPadding - negativePadding) - ((frameScale / remaining) * value)
 
-    
-    
-    
     return yValue
   }
   
@@ -262,7 +256,8 @@ open class LineGraphCalculation {
     
   }
   
-
+// Label calculation
+  
   func xAxisLabel(using i: Int, andisBottom isBottom: Bool) -> CGPoint {
     let spaceLeft = (frameWidth - 8) - (offSet.left + offSet.right)
     var increment = 0.0
@@ -327,8 +322,9 @@ open class LineGraphCalculation {
   }
   
   
+  // Bar graph calculation
   
-  func xVerticalValue(i: Int, dataSetCount: Double, count: Double) -> Double {
+  func xVerticalValue(using i: Int, with dataSetCount: Double, and count: Double) -> Double {
     let spaceLeft = frameWidth - (offSet.left + offSet.right)
     let scale = spaceLeft / (Double(arrayCount) * count)
     let increment = (scale * count)
@@ -339,7 +335,7 @@ open class LineGraphCalculation {
   }
   
   
-  func yVerticalValue(value: Double) -> Double {
+  func yVerticalValue(using value: Double) -> Double {
     let frameScale = frameHeight - offSet.bottom - offSet.top
     let yAxisPadding = frameHeight - offSet.bottom
     
@@ -358,7 +354,7 @@ open class LineGraphCalculation {
   }
   
   
-  func verticalWidth(count: Double) -> Double {
+  func verticalWidth(using count: Double) -> Double {
     let spaceLeft = frameWidth - (offSet.left + offSet.right)
     let scale = spaceLeft / (Double(arrayCount) * count)
     let width = scale - 10
@@ -368,7 +364,7 @@ open class LineGraphCalculation {
   }
   
   
-  func verticalHeight(value: Double) -> Double {
+  func verticalHeight(using value: Double) -> Double {
     let frameScale = frameHeight - offSet.bottom - offSet.top
     let yAxisPadding = frameHeight - offSet.bottom
     
@@ -387,7 +383,7 @@ open class LineGraphCalculation {
     return height
   }
   
-  func xVerticalTextFrame(i: Int, dataSetCount: Double, count: Double) -> Double {
+  func xVerticalTextFrame(using i: Int, with dataSetCount: Double, and count: Double) -> Double {
     let spaceLeft = frameWidth - (offSet.left + offSet.right)
     let scale = spaceLeft / (Double(arrayCount) * count)
     let increment = (scale * count)
@@ -398,7 +394,7 @@ open class LineGraphCalculation {
     return xValue
   }
   
-  func yVerticalTextFrame(value: Double) -> Double {
+  func yVerticalTextFrame(using value: Double) -> Double {
     let frameScale = frameHeight - offSet.bottom - offSet.top
     let yAxisPadding = frameHeight - offSet.bottom
     
@@ -421,8 +417,6 @@ open class LineGraphCalculation {
     return yValue
   }
   
-  
-  //This calculation works for the multiple data sets gridline - calculation vertical bar graph
   
   func barXGridlinePoint(using distanceIncrement: Int, for position: position) -> CGPoint {
     let yAxisPadding = frameHeight - offSet.bottom
@@ -462,7 +456,7 @@ open class LineGraphCalculation {
     return xValue
   }
   
-  func yHorizontalValue(i: Int, dataSetCount: Double, count: Double) -> Double {
+  func yHorizontalValue(using i: Int, with dataSetCount: Double, and count: Double) -> Double {
     let spaceLeft = frameHeight - (offSet.bottom + offSet.top)
     let scale = spaceLeft / (Double(arrayCount) * count)
     let increment = (scale * count)
@@ -472,7 +466,7 @@ open class LineGraphCalculation {
     return yValue
   }
   
-  func horizontalWidth(value: Double) -> Double {
+  func horizontalWidth(using value: Double) -> Double {
     let xAxisPadding = frameWidth - (offSet.left + offSet.right)
     let remaining = maxValue - minValue
     
@@ -483,7 +477,7 @@ open class LineGraphCalculation {
     return width
   }
   
-  func horizontalHeight(count: Double) -> Double {
+  func horizontalHeight(using count: Double) -> Double {
     let spaceLeft = frameHeight - (offSet.bottom + offSet.top)
     let scale = spaceLeft / (Double(arrayCount) * count)
     let height = scale - 10
@@ -491,7 +485,7 @@ open class LineGraphCalculation {
     return height
   }
   
-  func xHorizontalTextFrame(value: Double) -> Double {
+  func xHorizontalTextFrame(using value: Double) -> Double {
     
     let frameScale = frameWidth - (offSet.left + offSet.right)
     let remaining = maxValue - minValue
@@ -514,7 +508,7 @@ open class LineGraphCalculation {
     return xValue
   }
   
-  func yHorizontalTextFrame(i: Int, dataSetCount: Double, count: Double) -> Double {
+  func yHorizontalTextFrame(using i: Int, with dataSetCount: Double, and count: Double) -> Double {
     let spaceLeft = frameHeight - (offSet.bottom + offSet.top)
     let scale = spaceLeft / (Double(arrayCount) * count)
     let increment = (scale * count)

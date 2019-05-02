@@ -21,24 +21,17 @@ open class BarChartView: BarChartRenderer {
   /// Legend Position (Default = bottom)
   open var legendPosition: legendPlacing = .bottom
   
+  /// Legend Shape (Default = Rectangle)
+  open var legendShape: legendShape = .circle
+  
   /// Custom legend x (When you select .custom on legend position then you can use this to set your own x values)
   open var customXlegend: Double = 0.0
   
   /// Custom legend y (When you select .custom on legend position then you can use this to set your own y values)
   open var customYlegend: Double = 0.0
   
-  
   /// Enables the axis label customisation (Default = false)
-  open var enableAxisCustomisation = true
-  
-  /// Set X Axis label (Pass in a string array with the same number of labels as the data set)
-  open var setXAxisLabel:[String] = []
-  
-  /// Makes the Y axis inverse (Default = False)
-  open var enableYAxisInverse = false
-  
-  /// Returns true if Y Axis is inverse
-  open var isyAxisInverse: Bool { get {return enableYAxisInverse}}
+  open var enableAxisCustomisation:Bool = true
   
   /// Graph off set on the left (Default = 31)
   open var offSetLeft:Double = 31.0
@@ -52,7 +45,6 @@ open class BarChartView: BarChartRenderer {
   /// Graph off set on the top (Default = 20)
   open var offSetTop:Double = 20.0
   
-
   /// An instance of the xAxis to provide customisation through this
   open var xAxis:xAxisConfiguration = xAxisConfiguration()
   
@@ -60,11 +52,17 @@ open class BarChartView: BarChartRenderer {
   open var yAxis:yAxisConfiguration = yAxisConfiguration()
   
   /// The orientation of the graph
-  open var orientation: barOrientation = .vertical
+  open var barOrientation: barOrientation = .vertical
+  
+  /// Enable animation or not (Default = false)
+  open var enableAnimation: Bool = false
+  
+  /// Enable highlighting (Default = true)
+  open var enableHighlight: Bool = true
   
   public var data = BarChartDataSet()
   
-  open var touchPosition = CGPoint(x: 0, y: 0)
+  private var touchPosition = CGPoint(x: 0, y: 0)
   
   override public init(frame: CGRect) {
     super.init(frame: frame)
@@ -76,17 +74,19 @@ open class BarChartView: BarChartRenderer {
     fatalError("init(coder:) has not been implemented")
   }
   
-  
   override open func layoutSubviews() {
     let scale = 70.0/31.0
     
-    if UIDevice.current.orientation.isLandscape {
-      //renderAnimatedBar(landscapePadding: scale, currentOrientation: .landscape)
+    if enableAnimation == true {
+      setNeedsDisplay()
+      if UIDevice.current.orientation.isLandscape {
+        renderAnimatedBar(as: .landscape, withConfiguration: scale)
+      } else {
+        renderAnimatedBar(as: .portrait, withConfiguration: 1.0)
+      }
     } else {
-      //renderAnimatedBar(landscapePadding: 1.0, currentOrientation: .portrait)
+      setNeedsDisplay()
     }
-  
-    
   }
   
   override open func draw(_ rect: CGRect) {
@@ -102,9 +102,23 @@ open class BarChartView: BarChartRenderer {
     let scale = 70.0/31.0
     
     if UIDevice.current.orientation.isLandscape {
-      renderVerticalBarGraph(context: context, landscapePadding: scale, currentOrientation: .landscape)
+      setupCalculation(withConfiguration: scale)
+      renderGraphBase(as: .landscape, on: context, withConfiguration: scale)
+      if enableAnimation == false {
+        renderBarGraph(on: context)
+      }
+      if enableHighlight == true {
+        renderHighlight(on: context, withConfiguration: scale)
+      }
     } else {
-      renderVerticalBarGraph(context: context, landscapePadding: 1.0, currentOrientation: .portrait)
+      setupCalculation(withConfiguration: 1.0)
+      renderGraphBase(as: .portrait, on: context, withConfiguration: 1.0)
+      if enableAnimation == false {
+        renderBarGraph(on: context)
+      }
+      if enableHighlight == true {
+        renderHighlight(on: context, withConfiguration: 1.0)
+      }
     }
     
   }
@@ -160,31 +174,11 @@ open class BarChartView: BarChartRenderer {
     
   }
   
-  
-  func barGraph(context: CGContext, array: [[Double]], data: BarChartDataSet, max: Double, landscapePadding: Double) {
-    let paddedLeftOffset = offSetLeft * landscapePadding
-    let paddedRightOffset = offSetRight * landscapePadding
-    let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
-    
-    for (i, value) in array.enumerated() {
-      calculate = LineGraphCalculation(array: value, arrayCount: value.count, maxValue: max, minValue: yAxis.setYAxisMinimumValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
-      customisationSource = data.array[i]
-      if orientation == .horizontal {
-        addHorizontalBarGraph(to: context, from: value, with: Double(i), and: Double(array.count))
-      } else {
-        addVerticalBarGraph(to: context, from: value, with: Double(i), and: Double(array.count))
-      }
-    }
-  }
-  
-  
-  func renderAnimatedBar(landscapePadding: Double, currentOrientation: orientation) {
+
+  func renderAnimatedBar(as currentOrientation: orientation, withConfiguration landscapePadding: Double) {
     self.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
     let helper = HelperFunctions()
-    let legend = LegendRenderer(frame: self.frame)
     let convertedData = helper.convertToDouble(from: data.array)
-    
-    let axis = AxisLabelRenderer(frame: self.frame)
     
     var maxValue = 0.0
     var minValue = 0.0
@@ -205,20 +199,84 @@ open class BarChartView: BarChartRenderer {
     
     
     for (i, value) in convertedData.enumerated() {
-      animator.calculate = LineGraphCalculation(array: value, arrayCount: value.count, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
+      animator.calculate = GraphCalculation(array: value, arrayCount: value.count, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
       animator.barCustomisationSource = data.array[i]
       animator.offSet = offSet
       animator.drawAnimatedBar(on: layer, using: value, with: Double(i), and: Double(convertedData.count), for: .vertical)
     }
+  }
+  
+  func renderHighlight(on context: CGContext, withConfiguration landscapePadding: Double) {
+    let array = helper.convertToDouble(from: data.array)
+    let actualMax = helper.findMaxValueFrom(array)
+    let paddedLeftOffset = offSetLeft * landscapePadding
+    let paddedRightOffset = offSetRight * landscapePadding
+    let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
+    
+    var maxValue = 0.0
+    var minValue = 0.0
+    
+    if enableAxisCustomisation == true {
+      maxValue = yAxis.setYAxisMaximumValue
+      minValue = yAxis.setYAxisMinimumValue
+    } else {
+      maxValue = actualMax
+      minValue = 0
+    }
+    if barOrientation == .horizontal {
+      highlightHorizontalValues(in: context, using: array, and: touchPosition, with: maxValue, minValue, Double(array.count), offSet)
+    } else {
+      highlightValues(in: context, using: array, and: touchPosition, with: maxValue, minValue, Double(array.count), offSet)
+    }
     
   }
-
-  func renderVerticalBarGraph(context: CGContext, landscapePadding: Double, currentOrientation: orientation) {
-    let helper = HelperFunctions()
-    let legend = LegendRenderer(frame: self.frame)
-    let convertedData = helper.convertToDouble(from: data.array)
+  
+  func setupCalculation(withConfiguration landscapePadding: Double) {
+    let paddedLeftOffset = offSetLeft * landscapePadding
+    let paddedRightOffset = offSetRight * landscapePadding
+    let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
+    let array = helper.convertToDouble(from: data.array)
+    var maxValue = 0.0
+    var minValue = 0.0
     
-    let axis = AxisLabelRenderer(frame: self.frame)
+    let actualMax = helper.findMaxValueFrom(array)
+    
+    if enableAxisCustomisation == true {
+      maxValue = yAxis.setYAxisMaximumValue
+      minValue = yAxis.setYAxisMinimumValue
+    } else {
+      maxValue = actualMax
+      minValue = 0
+    }
+    for value in array {
+      calculate = GraphCalculation(array: value, arrayCount: value.count, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
+    }
+  }
+  
+  
+  func renderBarGraph(on context: CGContext) {
+    let array = helper.convertToDouble(from: data.array)
+    for (increment, value) in array.enumerated() {
+      customisationSource = data.array[increment]
+      if barOrientation == .horizontal {
+        addHorizontalBarGraph(to: context, from: value, with: Double(increment), and: Double(array.count))
+      } else {
+        addVerticalBarGraph(to: context, from: value, with: Double(increment), and: Double(array.count))
+      }
+    }
+  }
+  
+  func renderGraphBase(as currentOrientation: orientation, on context: CGContext, withConfiguration landscapePadding: Double) {
+    let helper = HelperFunctions()
+    
+    let convertedData = helper.convertToDouble(from: data.array)
+    let paddedLeftOffset = offSetLeft * landscapePadding
+    let paddedRightOffset = offSetRight * landscapePadding
+    let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
+    let arrayCount = helper.findArrayCountFrom(array: convertedData)
+    let labelRenderer = AxisLabelRenderer(frame: self.frame)
+    let legend = LegendRenderer(frame: self.frame)
+    legend.legendPadding(currentOrientation: currentOrientation)
     
     var maxValue = 0.0
     var minValue = 0.0
@@ -233,81 +291,36 @@ open class BarChartView: BarChartRenderer {
       minValue = 0
     }
     
-    let arrayCount = helper.findArrayCountFrom(array: convertedData)
-    
-    let paddedLeftOffset = offSetLeft * landscapePadding
-    let paddedRightOffset = offSetRight * landscapePadding
-    let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
-    legend.legendPadding(currentOrientation: currentOrientation)
+    labelRenderer.calculate = GraphCalculation(array: [], arrayCount: arrayCount, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
     
     axisBase(context: context, offSet: offSet)
-    barGraph(context: context, array: convertedData, data: data, max: maxValue, landscapePadding: landscapePadding)
-    context.saveGState()
-    drawBarXAxisGridline(on: context, using: arrayCount)
-    drawYAxisGridline(on: context, using: yAxis.setGridlineCount)
-//    drawHorizontalXGridlines(on: context, using: xAxis.setGridlineCount)
-//    drawHorizontalYGridlines(on: context, using: arrayCount)
-    context.restoreGState()
-    
-    //highlightValues(in: context, using: convertedData, and: touchPosition, with: maxValue, minValue, Double(convertedData.count), offSet)
-    highlightHorizontalValues(in: context, using: convertedData, and: touchPosition, with: maxValue, minValue, Double(convertedData.count), offSet)
-    
-    axis.calculate = LineGraphCalculation(array: [], arrayCount: arrayCount, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
-    
-    if yAxis.yAxisVisibility == true {
-      //axis.yAxis(context: context, maxValue: maxValue, minValue: minValue, axisInverse: enableYAxisInverse, offSet: offSet, gridlineCount: yAxis.setGridlineCount)
-      //axis.drawYAxisLabel(on: context, using: yAxis.setGridlineCount, withAxisInverse: false)
-      axis.drawHorizontalYAxisLabel(on: context, using: arrayCount)
-    }
-    
-    if xAxis.xAxisVisibility == true {
-//      if enableAxisCustomisation == true {
-//        axis.drawbarXAxisLabel(on: context, withCustomisation: true, using: arrayCount, and: setXAxisLabel)
-//      } else {
-//        axis.drawbarXAxisLabel(on: context, withCustomisation: false, using: arrayCount, and: [])
-//      }
-      axis.drawHorizontalXAxisLabel(on: context, using: xAxis.setGridlineCount)
+    if barOrientation == .horizontal {
+      context.protectGState {
+        drawHorizontalXGridlines(on: context, using: xAxis.setGridlineCount)
+        drawHorizontalYGridlines(on: context, using: arrayCount)
+      }
+      if yAxis.yAxisVisibility == true {
+        labelRenderer.drawHorizontalYAxisLabel(on: context, using: arrayCount)
+      }
+      if xAxis.xAxisVisibility == true {
+        labelRenderer.drawHorizontalXAxisLabel(on: context, using: xAxis.setGridlineCount)
+      }
+    } else {
+      context.protectGState {
+        drawBarXAxisGridline(on: context, using: arrayCount)
+        drawYAxisGridline(on: context, using: yAxis.setGridlineCount)
+      }
+      if yAxis.yAxisVisibility == true {
+        labelRenderer.drawYAxisLabel(on: context, using: yAxis.setGridlineCount, withAxisInverse: yAxis.enableYAxisInverse)
+      }
+      if xAxis.xAxisVisibility == true {
+        labelRenderer.drawbarXAxisLabel(on: context, withCustomisation: enableAxisCustomisation, using: arrayCount, and: xAxis.setXAxisLabel)
+      }
     }
     
     if legendVisibility == true {
-      legend.renderBarChartLegend(context: context, arrays: data.array, position: legendPosition, customX: customXlegend, customY: customYlegend)
+      legend.addLegend(to: context, as: legendShape, using: data.array, and: legendPosition, customXlegend, customYlegend)
     }
-    
-  }
-  
-  func renderHorizontalBarGraph(context: CGContext, landscapePadding: Double, currentOrientation: orientation) {
-    let helper = HelperFunctions()
-    let legend = LegendRenderer(frame: self.frame)
-    let convertedData = helper.convertToDouble(from: data.array)
-    let axis = AxisLabelRenderer(frame: self.frame)
-    
-    let maxValue = helper.findMaxValueFrom(convertedData)
-    let arrayCount = helper.findArrayCountFrom(array: convertedData)
-    let paddedLeftOffset = offSetLeft * landscapePadding
-    let paddedRightOffset = offSetRight * landscapePadding
-    let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
-    
-    
-    axisBase(context: context, offSet: offSet)
-    context.saveGState()
-//    drawHorizontalXGridlines(on: context, using: xAxis.setGridlineCount)
-//    drawHorizontalYGridlines(on: context, using: arrayCount)
-    context.restoreGState()
-    barGraph(context: context, array: convertedData, data: data, max: maxValue, landscapePadding: landscapePadding)
-    
-    
-    if yAxis.yAxisVisibility == true {
-      axis.drawHorizontalYAxisLabel(on: context, using: arrayCount)
-    }
-    
-    if xAxis.xAxisVisibility == true {
-      //axis.horizontalBarGraphXAxis(context: context, maxValue: yAxis.setYAxisMaximumValue, minValue: yAxis.setYAxisMinimumValue, offSet: offSet, gridline: xAxis.setGridlineCount)
-    }
-    
-    if legendVisibility == true {
-      legend.renderBarChartLegend(context: context, arrays: data.array, position: legendPosition, customX: customXlegend, customY: customYlegend)
-    }
-    
   }
   
 }

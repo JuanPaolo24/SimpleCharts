@@ -28,6 +28,14 @@ public enum barOrientation {
   case vertical, horizontal
 }
 
+public enum lineType {
+  case normal, bezier
+}
+
+public enum legendShape {
+  case rectangle, circle
+}
+
 public enum legendPlacing {
   case left, right, bottom, top, custom
 }

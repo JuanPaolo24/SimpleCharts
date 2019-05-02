@@ -235,11 +235,11 @@ open class LineChartRenderer: ChartRenderer {
     var originalValueArray: [CGPoint] = []
     let height = Double(frame.size.height)
     let width = Double(frame.size.width)
-    var calc = LineGraphCalculation()
+    var calc = GraphCalculation()
     
     for i in 0...(array.count - 1) {
       for (increment,value) in array[i].enumerated() {
-        calc = LineGraphCalculation(array: array[i], maxValue: maxValue, minValue: minValue, frameWidth: width, frameHeight: height, offSet: offSet)
+        calc = GraphCalculation(array: array[i], maxValue: maxValue, minValue: minValue, frameWidth: width, frameHeight: height, offSet: offSet)
         //Having its own instance is better for performance
         let xValue = calc.xlineGraphPoint(for: .singleChart, from: increment)
         let yValue = calc.ylineGraphPoint(from: value)
@@ -248,10 +248,10 @@ open class LineChartRenderer: ChartRenderer {
       }
     }
     
-    let sortedXPointArray = helper.combineCGPointArray(array: highlightValueArray)
-    let newXPoint = helper.findClosest(touchPoint, from: sortedXPointArray)
-    let sortedOriginalPointArray = helper.combineCGPointArray(array: originalValueArray)
-    let originalPoint = helper.findClosest(touchPoint, from: sortedOriginalPointArray)
+    let sortedXPointArray = helper.combineCGPoint(Array: highlightValueArray)
+    let newXPoint = helper.returnClosestPoint(from: sortedXPointArray, using: touchPoint)
+    let sortedOriginalPointArray = helper.combineCGPoint(Array: originalValueArray)
+    let originalPoint = helper.returnClosestPoint(from: sortedOriginalPointArray, using: touchPoint)
     
     let textFrame = CGRect(x: newXPoint.x - 20, y: newXPoint.y - 25, width: 50, height: 40)
     let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: 12), foreGroundColor: UIColor.black, backGroundColor: UIColor.gray)
@@ -259,11 +259,11 @@ open class LineChartRenderer: ChartRenderer {
     
     context.protectGState {
       let gridLine = CGMutablePath()
-      gridLine.move(to: CGPoint(x: newXPoint.x, y: 20))
-      gridLine.addLine(to: CGPoint(x: newXPoint.x, y: frame.size.height - 62))
+      gridLine.move(to: CGPoint(x: newXPoint.x, y: CGFloat(offSet.top)))
+      gridLine.addLine(to: CGPoint(x: newXPoint.x, y: CGFloat(height - offSet.bottom)))
       let anotherGridline = CGMutablePath()
-      anotherGridline.move(to: CGPoint(x: 32, y: newXPoint.y))
-      anotherGridline.addLine(to: CGPoint(x: frame.size.width - 32, y: newXPoint.y))
+      anotherGridline.move(to: CGPoint(x: CGFloat(offSet.left), y: newXPoint.y))
+      anotherGridline.addLine(to: CGPoint(x: CGFloat(width - offSet.right), y: newXPoint.y))
       context.addPath(gridLine)
       context.addPath(anotherGridline)
       context.setStrokeColor(UIColor(red:0.95, green:0.87, blue:0.76, alpha:1.0).cgColor)

@@ -12,7 +12,7 @@ import Foundation
 
 open class AnimationRenderer: UIView {
   
-  var calculate = LineGraphCalculation()
+  var calculate = GraphCalculation()
   var offSet = offset(left: 0, right: 0, top: 0, bottom: 0)
   var lineCustomisationSource = LineChartData()
   var barCustomisationSource = BarChartData()
@@ -65,18 +65,18 @@ open class AnimationRenderer: UIView {
       var yValue = 0.0
       var anchor = CGPoint()
       if orientation == .horizontal {
-        width = calculate.horizontalWidth(value: value)
+        width = calculate.horizontalWidth(using: value)
         xValue = calculate.xHorizontalValue()
-        yValue = calculate.yHorizontalValue(i: increment, dataSetCount: dataSetIncrement, count: dataSetCount)
-        height = calculate.horizontalHeight(count: dataSetCount)
+        yValue = calculate.yHorizontalValue(using: increment, with: dataSetIncrement, and: dataSetCount)
+        height = calculate.horizontalHeight(using: dataSetCount)
         initialBound = CGRect(x: xValue, y: yValue, width: 0, height: height)
         finalBound = CGRect(x: xValue, y: yValue, width: width, height: height)
         anchor = CGPoint(x: 0, y: 0)
       } else {
-        width = calculate.verticalWidth(count: dataSetCount)
-        xValue = calculate.xVerticalValue(i: increment, dataSetCount: dataSetIncrement, count: dataSetCount)
-        yValue = calculate.yVerticalValue(value: value)
-        height = calculate.verticalHeight(value: value)
+        width = calculate.verticalWidth(using: dataSetCount)
+        xValue = calculate.xVerticalValue(using: increment, with: dataSetIncrement, and: dataSetCount)
+        yValue = calculate.yVerticalValue(using: value)
+        height = calculate.verticalHeight(using: value)
         initialBound = CGRect(x: xValue, y: Double(mainLayer.frame.height) - offSet.bottom, width: width, height: 0)
         finalBound = CGRect(x: xValue, y: yValue, width: width, height: height)
         anchor = CGPoint(x: 1, y: 1)

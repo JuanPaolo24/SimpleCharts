@@ -13,11 +13,11 @@ open class PieChartView: ArcRenderer {
   /// Legend visibility (Default = True)
   open var legendVisibility = true
   
-  /// Returns true if legend is visible
-  open var isLegendVisible: Bool { get {return legendVisibility} }
-  
   /// Legend Position (Default = Top right)
   open var legendPosition: pielegendPlacing = .topright
+  
+  /// Legend Shape (Default = Rectangle)
+  open var legendShape: legendShape = .rectangle
   
   /// Custom legend x (When you select .custom on legend position then you can use this to set your own x values)
   open var customXlegend: Double = 0.0
@@ -25,8 +25,9 @@ open class PieChartView: ArcRenderer {
   /// Custom legend y (When you select .custom on legend position then you can use this to set your own y values)
   open var customYlegend: Double = 0.0
   
-  
+  /// Enter your PieChartDataSet here
   public var data = PieChartDataSet()
+  
   
   override public init(frame: CGRect) {
     super.init(frame: frame)
@@ -49,34 +50,28 @@ open class PieChartView: ArcRenderer {
 //    } else {
 //      animation.drawAnimatedPie(radiusPercentage: 0.4, segments: data, centerX: width * 0.5, centerY: height * 0.5, mainLayer: layer)
 //    }
+    setNeedsDisplay()
   }
   
   
   override open func draw(_ rect: CGRect) {
     super.draw(rect)
-    
     guard let context = UIGraphicsGetCurrentContext() else {
       print("could not get context")
       return
     }
-    
-  
     if UIDevice.current.orientation.isLandscape {
-      //renderPieChart(context: context, currentOrientation: orientation.landscape)
+      renderPieChart(as: .landscape, on: context)
     } else {
-      //renderPieChart(context: context, currentOrientation: orientation.portrait)
+      renderPieChart(as: .portrait, on: context)
     }
-  
-    
-    
   }
   
-  
-  func renderPieChart(context: CGContext, currentOrientation: orientation) {
+  func renderPieChart(as currentOrientation: orientation, on context: CGContext) {
     let height = frame.size.height
     let width = frame.size.width
-    let legend = LegendRenderer(frame: self.frame)
-    legend.legendPadding(currentOrientation: currentOrientation)
+    let renderer = LegendRenderer(frame: self.frame)
+    renderer.legendPadding(currentOrientation: currentOrientation)
     
     if currentOrientation == orientation.portrait {
       if legendPosition == pielegendPlacing.right {
@@ -90,8 +85,7 @@ open class PieChartView: ArcRenderer {
       drawPieArc(context: context, radiusPercentage: 0.4, segments: data, centerX: width * 0.5, centerY: height * 0.5)
     }
     
-    
-    legend.renderPieChartLegend(context: context, arrays: data.array, position: legendPosition, customX: customXlegend, customY: customYlegend)
+    renderer.addLegend(to: context, as: legendShape, using: data.array, and: legendPosition, customXlegend, customYlegend)
   }
   
 }
