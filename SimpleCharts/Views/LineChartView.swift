@@ -18,8 +18,6 @@ open class LineChartView: LineChartRenderer {
   /// Legend Position (Default = bottom)
   open var legendPosition: legendPlacing = .bottom
   
-  /// Legend Shape (Default = Rectangle)
-  open var legendShape: legendShape = .circle
   
   /// Custom legend x (When you select .custom on legend position then you can use this to set your own x values)
   open var customXlegend: Double = 0.0
@@ -243,7 +241,7 @@ open class LineChartView: LineChartRenderer {
       labelRenderer.drawXAxisLabel(on: context, using: xAxis.setGridlineCount)
     }
     if legendVisibility == true {
-      legend.addLegend(to: context, as: legendShape, using: data.array, and: legendPosition, customXlegend, customYlegend)
+      legend.addLegend(to: context, using: data.array, and: legendPosition, customXlegend, customYlegend)
     }
   }
   

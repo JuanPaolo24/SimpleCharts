@@ -22,5 +22,10 @@ open class PieChartData {
     self.name = name
   }
   
+
+  
+  /// Legend Configuration (Default = Rectangle)
+  open var setLegendShape: legendShape = .rectangle
+  
   
 }

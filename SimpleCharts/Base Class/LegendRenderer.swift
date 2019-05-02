@@ -98,10 +98,11 @@ open class LegendRenderer: UIView {
   
 
   //Add a line chart legend
-  func addLegend(to context: CGContext, as shape: legendShape, using arrays: [LineChartData], and position: legendPlacing, _ customX: Double, _ customY: Double) {
+  func addLegend(to context: CGContext, using arrays: [LineChartData], and position: legendPlacing, _ customX: Double, _ customY: Double) {
     for increment in 1...arrays.count {
       let legendColour = arrays[increment - 1].setLineGraphColour
       let dataSetName = arrays[increment - 1].name
+      let shape = arrays[increment - 1].setLegendShape
       let frameHeight = Double(frame.size.height)
       let frameWidth = Double(frame.size.width)
       let distanceBetweenLegend = Double(legendMaximumDistance)
@@ -121,10 +122,11 @@ open class LegendRenderer: UIView {
   }
   
   //Add a bar chart legend
-  func addLegend(to context: CGContext, as shape: legendShape, using arrays: [BarChartData], and position: legendPlacing, _ customX: Double, _ customY: Double) {
+  func addLegend(to context: CGContext, using arrays: [BarChartData], and position: legendPlacing, _ customX: Double, _ customY: Double) {
     for increment in 1...arrays.count {
       let legendColour = arrays[increment - 1].setBarGraphFillColour
       let dataSetName = arrays[increment - 1].name
+      let shape = arrays[increment - 1].setLegendShape
       let frameHeight = Double(frame.size.height)
       let frameWidth = Double(frame.size.width)
       let distanceBetweenLegend = Double(legendMaximumDistance)
@@ -144,10 +146,11 @@ open class LegendRenderer: UIView {
   }
   
   //Add a pie chart legend
-  func addLegend(to context: CGContext, as shape: legendShape, using arrays: [PieChartData], and position: pielegendPlacing, _ customX: Double, _ customY: Double) {
+  func addLegend(to context: CGContext, using arrays: [PieChartData], and position: pielegendPlacing, _ customX: Double, _ customY: Double) {
     for increment in 1...arrays.count {
       let legendColour = arrays[increment - 1].color.cgColor
       let dataSetName = arrays[increment - 1].name
+      let shape = arrays[increment - 1].setLegendShape
       let frameHeight = Double(frame.size.height)
       let frameWidth = Double(frame.size.width)
       let distanceBetweenLegend = Double(pieLegendMaximumDistance)

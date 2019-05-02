@@ -22,9 +22,9 @@ open class ArcRenderer: UIView {
   }
   
 
-  func drawPieArc(context: CGContext, radiusPercentage: CGFloat, segments: PieChartDataSet, centerX: CGFloat, centerY: CGFloat) {
+  func drawPieArc(on context: CGContext, using segments: PieChartDataSet, with centerX: CGFloat, and centerY: CGFloat) {
     
-    let radius = min(frame.size.width, frame.size.height) * radiusPercentage
+    let radius = min(frame.size.width, frame.size.height) * segments.setRadius
     let viewCenter = CGPoint(x: centerX, y: centerY)
     let valueCount = segments.array.reduce(0, {$0 + $1.value})
     let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: 12.0, weight: .bold), foreGroundColor: UIColor(red:0.65, green:0.65, blue:0.65, alpha:1.0))

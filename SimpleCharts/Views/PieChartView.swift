@@ -16,9 +16,6 @@ open class PieChartView: ArcRenderer {
   /// Legend Position (Default = Top right)
   open var legendPosition: pielegendPlacing = .topright
   
-  /// Legend Shape (Default = Rectangle)
-  open var legendShape: legendShape = .rectangle
-  
   /// Custom legend x (When you select .custom on legend position then you can use this to set your own x values)
   open var customXlegend: Double = 0.0
   
@@ -75,17 +72,17 @@ open class PieChartView: ArcRenderer {
     
     if currentOrientation == orientation.portrait {
       if legendPosition == pielegendPlacing.right {
-        drawPieArc(context: context, radiusPercentage: 0.4, segments: data, centerX: width * 0.4, centerY: height * 0.5)
+        drawPieArc(on: context, using: data, with: width * 0.4, and: height * 0.5)
       } else if legendPosition == pielegendPlacing.left {
-        drawPieArc(context: context, radiusPercentage: 0.4, segments: data, centerX: width * 0.6, centerY: height * 0.5)
+        drawPieArc(on: context, using: data, with: width * 0.6, and: height * 0.5)
       } else {
-        drawPieArc(context: context, radiusPercentage: 0.4, segments: data, centerX: width * 0.5, centerY: height * 0.5)
+        drawPieArc(on: context, using: data, with: width * 0.5, and: height * 0.5)
       }
     } else {
-      drawPieArc(context: context, radiusPercentage: 0.4, segments: data, centerX: width * 0.5, centerY: height * 0.5)
+      drawPieArc(on: context, using: data, with: width * 0.5, and: height * 0.5)
     }
     
-    renderer.addLegend(to: context, as: legendShape, using: data.array, and: legendPosition, customXlegend, customYlegend)
+    renderer.addLegend(to: context, using: data.array, and: legendPosition, customXlegend, customYlegend)
   }
   
 }

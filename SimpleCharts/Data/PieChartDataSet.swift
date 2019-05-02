@@ -20,4 +20,8 @@ open class PieChartDataSet {
   required public init() {
     self.array = [PieChartData(color: UIColor.white, value: 0, name: "")]
   }
+  
+  /// Pie Chart Radius Percentage = Default (0.4)
+  open var setRadius: CGFloat = 0.4
+  
 }

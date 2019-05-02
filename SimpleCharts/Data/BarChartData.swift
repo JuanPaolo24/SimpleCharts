@@ -48,4 +48,7 @@ open class BarChartData: ChartData {
   //Animation duration (Default = 2)
   open var setAnimationDuration: CFTimeInterval = 3
   
+  /// Legend Configuration (Default = Rectangle)
+  open var setLegendShape: legendShape = .rectangle
+  
 }
