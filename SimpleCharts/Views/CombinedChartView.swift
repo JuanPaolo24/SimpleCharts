@@ -15,9 +15,6 @@ open class CombinedChartView: ChartRenderer {
   /// Legend Position (Default = bottom)
   open var legendPosition: legendPlacing = .bottom
   
-  /// Legend Shape (Default = Rectangle)
-  open var legendShape: legendShape = .rectangle
-  
   /// Custom legend x (When you select .custom on legend position then you can use this to set your own x values)
   open var customXlegend: Double = 0.0
   
@@ -286,6 +283,11 @@ open class CombinedChartView: ChartRenderer {
       minValue = 0
     }
     
+    for value in barConvertedData {
+      calculate = GraphCalculation(array: value, arrayCount: value.count, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
+    }
+    
+    
     axis.calculate = GraphCalculation(array: [], arrayCount: arrayCount, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
     
     axisBase(context: context, offSet: offSet)
@@ -296,7 +298,7 @@ open class CombinedChartView: ChartRenderer {
       axis.drawYAxisLabel(on: context, using: yAxis.setGridlineCount, withAxisInverse: yAxis.enableYAxisInverse, and: yAxis.rightYAxisVisibility, yAxis.leftYAxisVisibility)
       axis.drawbarXAxisLabel(on: context, withCustomisation: enableAxisCustomisation, using: arrayCount, and: xAxis.setXAxisLabel, with: xAxis.bottomXAxisVisibility, xAxis.topXAxisVisibility)
     if legendVisibility == true {
-      legend.addLegend(to: context, as: legendShape, using: data, and: legendPosition, customXlegend, customYlegend)
+      legend.addLegend(to: context, using: data, and: legendPosition, customXlegend, customYlegend)
     }
   }
   

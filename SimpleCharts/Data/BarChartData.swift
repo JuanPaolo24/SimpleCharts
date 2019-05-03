@@ -20,8 +20,8 @@ open class BarChartData: ChartData {
   }
   
   //Bar Chart
-  /// Set Bar Graph inside colour (Default = Black)
-  open var setBarGraphFillColour: UIColor = UIColor(red:0.68, green:0.92, blue:1.00, alpha:1.0)
+  /// Set Bar Graph inside color (Default = UIColor(red:0.68, green:0.92, blue:1.00, alpha:1.0))
+  open var setBarGraphFillColor: UIColor = UIColor(red:0.68, green:0.92, blue:1.00, alpha:1.0)
   
   /// Set Bar Graph Line Width (Default = 1.0)
   open var setBarGraphLineWidth = CGFloat(1.0)
@@ -30,19 +30,15 @@ open class BarChartData: ChartData {
   open var setTextLabelFont: CGFloat = 8.0
   
   /// Set the Text Label Color for bar graphs (Default = Black)
-  open var setTextLabelColour: UIColor = UIColor.black
+  open var setTextLabelColor: UIColor = UIColor.black
   
   /// Enable the data point labels (Default = false)
-  open var enableDataPointLabel = false
-  
-  /// Returns true if data point label is visible
-  open var isDataLabelVisible: Bool { get {return enableDataPointLabel} }
-  
+  open var enableDataPointLabel:Bool = false
 
   
   /// Animation Configuration
   
-  //Animation duration (Default = 2)
+  //Animation duration (Default = 3)
   open var setAnimationDuration: CFTimeInterval = 3
   
   /// Legend Configuration (Default = Rectangle)

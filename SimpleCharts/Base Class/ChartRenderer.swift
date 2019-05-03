@@ -29,14 +29,14 @@ open class ChartRenderer: UIView {
   /// Enable the X gridline on the chart
   open var enableXGridVisibility: Bool = true
   
-  /// Set the Axis base colour (Default = Black)
-  open var setAxisBaseColour: UIColor = UIColor.black
+  /// Set the Axis base color (Default = Black)
+  open var setAxisBaseColor: UIColor = UIColor.black
 
   /// Set axis base width (Default = 1.0)
   open var setAxisBaseWidth: CGFloat = 1.0
   
-  /// Set Gridline colour (Default = Black)
-  open var setGridlineColour: UIColor = UIColor.black
+  /// Set Gridline color (Default = Black)
+  open var setGridlineColor: UIColor = UIColor.black
   
   /// Set Gridline Line Width (Default = 0.5)
   open var setGridlineWidth: CGFloat = 0.5
@@ -72,7 +72,7 @@ open class ChartRenderer: UIView {
     axisBase.addLine(to: end)
     context.addPath(axisBase)
     context.setLineWidth(setAxisBaseWidth)
-    context.setStrokeColor(setAxisBaseColour.cgColor)
+    context.setStrokeColor(setAxisBaseColor.cgColor)
     context.strokePath()
   }
   
@@ -107,7 +107,7 @@ open class ChartRenderer: UIView {
     gridLine.move(to: start)
     gridLine.addLine(to: end)
     context.addPath(gridLine)
-    context.setStrokeColor(setGridlineColour.cgColor)
+    context.setStrokeColor(setGridlineColor.cgColor)
     context.strokePath()
     context.setLineWidth(setGridlineWidth)
     

@@ -39,7 +39,7 @@ open class AnimationRenderer: UIView {
     
     let shapeLayer = CAShapeLayer()
     shapeLayer.path = animatedPath
-    shapeLayer.strokeColor = lineCustomisationSource.setLineGraphColour.cgColor
+    shapeLayer.strokeColor = lineCustomisationSource.setLineGraphColor.cgColor
     shapeLayer.fillColor = nil
     shapeLayer.lineWidth = lineCustomisationSource.setLineWidth
     mainLayer.addSublayer(shapeLayer)
@@ -63,13 +63,13 @@ open class AnimationRenderer: UIView {
       animatedPath.addLine(to: CGPoint(x: xValue, y: yValue))
       let circleLayer = CAShapeLayer()
       circleLayer.path = UIBezierPath(arcCenter: CGPoint(x: xValue, y: yValue), radius: lineCustomisationSource.setCirclePointRadius, startAngle: CGFloat(0).degreesToRadians, endAngle: CGFloat(360).degreesToRadians, clockwise: true).cgPath
-      circleLayer.fillColor = lineCustomisationSource.setLineGraphColour.cgColor
+      circleLayer.fillColor = lineCustomisationSource.setLineGraphColor.cgColor
       mainLayer.addSublayer(circleLayer)
     }
     
     let shapeLayer = CAShapeLayer()
     shapeLayer.path = animatedPath
-    shapeLayer.strokeColor = lineCustomisationSource.setLineGraphColour.cgColor
+    shapeLayer.strokeColor = lineCustomisationSource.setLineGraphColor.cgColor
     shapeLayer.fillColor = nil
     shapeLayer.lineWidth = lineCustomisationSource.setLineWidth
     mainLayer.addSublayer(shapeLayer)
@@ -121,7 +121,7 @@ open class AnimationRenderer: UIView {
       let barLayer = CALayer()
       barLayer.anchorPoint = anchor
       barLayer.frame = finalBound
-      barLayer.backgroundColor = barCustomisationSource.setBarGraphFillColour.cgColor
+      barLayer.backgroundColor = barCustomisationSource.setBarGraphFillColor.cgColor
       barLayer.add(increaseBar, forKey: nil)
       mainLayer.addSublayer(barLayer)
       

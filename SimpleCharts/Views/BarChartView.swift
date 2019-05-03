@@ -15,9 +15,6 @@ open class BarChartView: BarChartRenderer {
   /// Legend visibility (Default = True)
   open var legendVisibility = true
   
-  /// Returns true if legend is visible
-  open var isLegendVisible: Bool { get {return legendVisibility} }
-  
   /// Legend Position (Default = bottom)
   open var legendPosition: legendPlacing = .bottom
   

@@ -16,7 +16,7 @@ open class BarChartRenderer: ChartRenderer {
   /// Renders a horizontal bar graph
   func addHorizontalBarGraph(to context: CGContext, from array: [Double], with dataSetIncrement: Double, and dataSetCount: Double) {
     
-    let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: customisationSource.setTextLabelFont), foreGroundColor: customisationSource.setTextLabelColour)
+    let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: customisationSource.setTextLabelFont), foreGroundColor: customisationSource.setTextLabelColor)
     
     for (increment, value) in array.enumerated() {
       let yValue = calculate.yHorizontalValue(using: increment, with: dataSetIncrement, and: dataSetCount)
@@ -27,7 +27,7 @@ open class BarChartRenderer: ChartRenderer {
       let yFrame = calculate.yHorizontalTextFrame(using: increment, with: dataSetIncrement, and: dataSetCount)
       
       context.protectGState {
-        context.setFillColor(customisationSource.setBarGraphFillColour.cgColor)
+        context.setFillColor(customisationSource.setBarGraphFillColor.cgColor)
         context.setStrokeColor(UIColor.black.cgColor)
         context.setLineWidth(customisationSource.setBarGraphLineWidth)
         context.addRect(CGRect(x: xValue, y: yValue, width: width, height: height))
@@ -42,7 +42,7 @@ open class BarChartRenderer: ChartRenderer {
   // Renders a vertical bar graph with support for multiple data sets
   func addVerticalBarGraph(to context: CGContext, from array: [Double], with dataSetIncrement: Double, and dataSetCount: Double) {
     
-    let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: customisationSource.setTextLabelFont), foreGroundColor: customisationSource.setTextLabelColour)
+    let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: customisationSource.setTextLabelFont), foreGroundColor: customisationSource.setTextLabelColor)
     
     for (increment, value) in array.enumerated() {
       
@@ -54,7 +54,7 @@ open class BarChartRenderer: ChartRenderer {
       let yFrame = calculate.yVerticalTextFrame(using: value)
       
       context.protectGState {
-        context.setFillColor(customisationSource.setBarGraphFillColour.cgColor)
+        context.setFillColor(customisationSource.setBarGraphFillColor.cgColor)
         context.setStrokeColor(UIColor.black.cgColor)
         context.setLineWidth(customisationSource.setBarGraphLineWidth)
         context.addRect(CGRect(x: xValue, y: yValue, width: width, height: height))

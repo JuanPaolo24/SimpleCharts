@@ -100,7 +100,7 @@ open class LegendRenderer: UIView {
   //Add a line chart legend
   func addLegend(to context: CGContext, using arrays: [LineChartData], and position: legendPlacing, _ customX: Double, _ customY: Double) {
     for increment in 1...arrays.count {
-      let legendColour = arrays[increment - 1].setLineGraphColour.cgColor
+      let legendColour = arrays[increment - 1].setLineGraphColor.cgColor
       let dataSetName = arrays[increment - 1].name
       let shape = arrays[increment - 1].setLegendShape
       let frameHeight = Double(frame.size.height)
@@ -124,7 +124,7 @@ open class LegendRenderer: UIView {
   //Add a bar chart legend
   func addLegend(to context: CGContext, using arrays: [BarChartData], and position: legendPlacing, _ customX: Double, _ customY: Double) {
     for increment in 1...arrays.count {
-      let legendColour = arrays[increment - 1].setBarGraphFillColour.cgColor
+      let legendColour = arrays[increment - 1].setBarGraphFillColor.cgColor
       let dataSetName = arrays[increment - 1].name
       let shape = arrays[increment - 1].setLegendShape
       let frameHeight = Double(frame.size.height)
@@ -178,7 +178,7 @@ open class LegendRenderer: UIView {
   }
   
   
-  func addLegend(to context: CGContext, as shape: legendShape, using data: CombinedChartDataSet, and position: legendPlacing, _ customX: Double, _ customY: Double) {
+  func addLegend(to context: CGContext, using data: CombinedChartDataSet, and position: legendPlacing, _ customX: Double, _ customY: Double) {
     let helper = HelperFunctions()
     let lineChartDataSet = data.lineData
     let barChartDataSet = data.barData
@@ -188,14 +188,17 @@ open class LegendRenderer: UIView {
     let dataCount = (lineConvertedData.count + barConvertedData.count)
     var legendName: [String] = []
     var legendColour: [CGColor] = []
+    var legendShape: [legendShape] = []
     
     if lineConvertedData.count < 1 {
       legendName.append("No Line Data")
       legendColour.append(UIColor.black.cgColor)
+      legendShape.append(.rectangle)
     } else {
       for increment in 0...lineConvertedData.count - 1 {
         legendName.append(lineChartDataSet.array[increment].name)
-        legendColour.append(lineChartDataSet.array[increment].setLineGraphColour.cgColor)
+        legendColour.append(lineChartDataSet.array[increment].setLineGraphColor.cgColor)
+        legendShape.append(lineChartDataSet.array[increment].setLegendShape)
       }
     }
     
@@ -205,7 +208,8 @@ open class LegendRenderer: UIView {
     } else {
       for increment in 0...barConvertedData.count - 1 {
         legendName.append(barChartDataSet.array[increment].name)
-        legendColour.append(barChartDataSet.array[increment].setBarGraphFillColour.cgColor)
+        legendColour.append(barChartDataSet.array[increment].setBarGraphFillColor.cgColor)
+        legendShape.append(barChartDataSet.array[increment].setLegendShape)
       }
     }
     
@@ -214,15 +218,15 @@ open class LegendRenderer: UIView {
       for increment in 0...dataCount - 1 {
         switch position {
         case.bottom:
-          drawLegend(in: context, as: shape, x: Double(legendMaximumDistance), y: Double(frame.size.height) - 30, legendText: legendName[increment], colour: legendColour[increment])
+          drawLegend(in: context, as: legendShape[increment], x: Double(legendMaximumDistance), y: Double(frame.size.height) - 30, legendText: legendName[increment], colour: legendColour[increment])
         case.top:
-          drawLegend(in: context, as: shape, x: Double(legendMaximumDistance), y: 20, legendText: legendName[increment], colour: legendColour[increment])
+          drawLegend(in: context, as: legendShape[increment], x: Double(legendMaximumDistance), y: 20, legendText: legendName[increment], colour: legendColour[increment])
         case.right:
-          drawLegend(in: context, as: shape, x: Double(frame.size.width) - rightConfigxAxis, y: 20.0 * Double(increment + 1), legendText: legendName[increment], colour: legendColour[increment])
+          drawLegend(in: context, as: legendShape[increment], x: Double(frame.size.width) - rightConfigxAxis, y: 20.0 * Double(increment + 1), legendText: legendName[increment], colour: legendColour[increment])
         case.left:
-          drawLegend(in: context, as: shape, x: leftConfigxAxis, y: 20.0 * Double(increment + 1), legendText: legendName[increment], colour: legendColour[increment])
+          drawLegend(in: context, as: legendShape[increment], x: leftConfigxAxis, y: 20.0 * Double(increment + 1), legendText: legendName[increment], colour: legendColour[increment])
         case.custom:
-          drawLegend(in: context, as: shape, x: customX, y: customY, legendText: legendName[increment], colour: legendColour[increment])
+          drawLegend(in: context, as: legendShape[increment], x: customX, y: customY, legendText: legendName[increment], colour: legendColour[increment])
         }
       }
     }

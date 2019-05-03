@@ -21,51 +21,48 @@ open class LineChartData: ChartData {
   
   //Line Chart
   /// Make the circle points on the line graph visible (Default = True)
-  open var enableCirclePointVisibility = true
+  open var enableCirclePointVisibility:Bool = true
   
   /// Make the line graphs line visible (Default = True)
-  open var enableLineVisibility = true
+  open var enableLineVisibility:Bool = true
   
-  /// Set the graph colour both the circle point and the line
-  open var setLineGraphColour: UIColor = UIColor(red:0.67, green:0.92, blue:1.00, alpha:1.0)
+  /// Set the graph color both the circle point and the line
+  open var setLineGraphColor: UIColor = UIColor(red:0.67, green:0.92, blue:1.00, alpha:1.0)
   
   /// Set Circle Point Radius (Default = 5)
   open var setCirclePointRadius: CGFloat = 5.0
   
-  /// Set Line Point Width (Default = 1)
+  /// Set Line Width (Default = 1)
   open var setLineWidth: CGFloat = 1.0
   
-  /// Enable the data point labels (Default = True)
-  open var enableDataPointLabel = false
+  /// Enable the data point labels (Default = false)
+  open var enableDataPointLabel:Bool = false
   
   /// Set the Text Label Point for line graphs (Default = 8.0)
-  open var setTextLabelFont: CGFloat = 8.0
+  open var setTextLabelFontSize: CGFloat = 8.0
   
   /// Set the Text Label Color for line graphs (Default = Black)
-  open var setTextLabelColour: UIColor = UIColor.black
+  open var setTextLabelColor: UIColor = UIColor.black
   
   /// Set the intensity of the bezier curve (Default 0.2)
-  open var setBezierCurveIntensity = 0.2
+  open var setBezierCurveIntensity:Double = 0.2
   
 
 
   // This section is graph fill customisation //
   
   /// Enable Graph Fill (Default = False)
-  open var enableGraphFill = false
+  open var enableGraphFill:Bool = false
   
-  /// Returns true if graph fill is visible
-  open var isGraphFillEnabled: Bool {get {return enableGraphFill}}
-  
-  /// The type of fill the graph will have
+  /// The type of fill the graph will have (Default = normalFill)
   open var fillType: filltype = .normalFill
   
-  /// Array of colours for the gradient
-  open var gradientFillColours: [UIColor] = [UIColor.blue, UIColor.red]
+  /// Array of colors for the gradient (Default = blue, red)
+  open var gradientFillColors: [UIColor] = [UIColor.blue, UIColor.red]
   
   
-  /// Graph Fill Colour for normal fill configuration (Default = Clear)
-  open var setGraphFill: UIColor = UIColor.clear
+  /// Graph Fill Color for normal fill configuration (Default = Blue)
+  open var setGraphFill: UIColor = UIColor.blue
   
   /// Fill alpha/transparency (Default = 0.33)
   open var setFillAlpha: CGFloat = 0.33
@@ -74,7 +71,7 @@ open class LineChartData: ChartData {
   
   /// Animation Configuration
   
-  //Animation duration (Default = 2)
+  //Animation duration (Default = 3)
   open var setAnimationDuration: CFTimeInterval = 3
   
   
