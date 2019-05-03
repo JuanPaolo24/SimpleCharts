@@ -20,7 +20,7 @@ on the + sign.
 ## Sample Usage
 
 The following are just the basic configuration of the charts. To learn more about the other customisation option refer to the
-[wiki](https://github.com/JuanPaolo24/SimpleCharts/wiki/HomePage) for the documentation. 
+[wiki](https://github.com/JuanPaolo24/SimpleCharts/wiki) for more information. 
 
 ### Creating a simple Line Chart
 
