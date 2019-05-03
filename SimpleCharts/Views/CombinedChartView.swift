@@ -55,7 +55,7 @@ open class CombinedChartView: ChartRenderer {
   open var lineType: lineType = .normal
   
   /// Activate animation
-  open var enableAnimation = false
+  open var enableAnimation = true
   
   /// Enable highlighting (Default = true)
   open var enableHighlight: Bool = true
@@ -77,6 +77,7 @@ open class CombinedChartView: ChartRenderer {
   
   override open func layoutSubviews() {
     let scale = 70.0/31.0
+    
     
     if enableAnimation == true {
       setNeedsDisplay()
@@ -189,7 +190,7 @@ open class CombinedChartView: ChartRenderer {
     for (increment, value) in lineConvertedData.enumerated() {
       animationHandler.calculate = GraphCalculation(array: value, arrayCount: 0, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
       animationHandler.lineCustomisationSource = lineChartDataSet.array[increment]
-      animationHandler.drawAnimatedLineGraph(on: layer, using: value)
+      animationHandler.drawAnimatedCombineLine(on: layer, using: value)
     }
     
   }
@@ -238,8 +239,8 @@ open class CombinedChartView: ChartRenderer {
     for (increment, value) in lineConvertedData.enumerated() {
       lineRenderer.calculate = GraphCalculation(array: value, arrayCount: 0, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
       lineRenderer.sourceData = lineChartDataSet.array[increment]
-      lineRenderer.addCircles(to: context, from: value, for: .combineChart)
       if enableAnimation == false {
+        lineRenderer.addCircles(to: context, from: value, for: .combineChart)
         if lineType == .bezier {
           lineRenderer.addBezierLine(to: context, from: value, for: .combineChart)
         } else {
@@ -247,10 +248,10 @@ open class CombinedChartView: ChartRenderer {
         }
       }
     }
-    
-    
   }
 
+  
+  
 
   func renderGraphBase(as currentOrientation: orientation, on context:CGContext, withConfiguration landscapePadding: Double) {
     let helper = HelperFunctions()
@@ -292,12 +293,8 @@ open class CombinedChartView: ChartRenderer {
       drawYAxisGridline(on: context, using: yAxis.setGridlineCount)
       drawBarXAxisGridline(on: context, using: arrayCount)
     }
-    if yAxis.yAxisVisibility == true {
-      axis.drawYAxisLabel(on: context, using: yAxis.setGridlineCount, withAxisInverse: yAxis.enableYAxisInverse)
-    }
-    if xAxis.xAxisVisibility == true {
-      axis.drawbarXAxisLabel(on: context, withCustomisation: enableAxisCustomisation, using: arrayCount, and: xAxis.setXAxisLabel)
-    }
+      axis.drawYAxisLabel(on: context, using: yAxis.setGridlineCount, withAxisInverse: yAxis.enableYAxisInverse, and: yAxis.rightYAxisVisibility, yAxis.leftYAxisVisibility)
+      axis.drawbarXAxisLabel(on: context, withCustomisation: enableAxisCustomisation, using: arrayCount, and: xAxis.setXAxisLabel, with: xAxis.bottomXAxisVisibility, xAxis.topXAxisVisibility)
     if legendVisibility == true {
       legend.addLegend(to: context, as: legendShape, using: data, and: legendPosition, customXlegend, customYlegend)
     }

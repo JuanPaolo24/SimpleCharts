@@ -317,7 +317,6 @@ open class GraphCalculation {
     let value = (maxValue - minValue) / (yAxisGridlineCount - 1)
 
     let text = String(Int(minValue) + (i * Int(value)))
-
     return text
   }
   
@@ -522,18 +521,12 @@ open class GraphCalculation {
   // Special gridline calculation for the Horizontal bar graph - Vertical bar graph can rely on the general graph calculation
   
   func xHorizontalGridline(using i: Int, for destination: position) -> CGPoint {
-    let spaceLeft = frameWidth - (offSet.left + offSet.right)
-    var increment = 0.0
-    let count = Double(arrayCount)
+    let spaceLeft = (frameWidth - offSet.left - offSet.right) / (xAxisGridlineCount - 1)
+    let actualValue = spaceLeft * Double(i)
     
     let yAxisPadding = frameHeight - offSet.bottom
-    
-    if count < xAxisGridlineCount {
-      increment = spaceLeft / (count - 1)
-    } else {
-      increment = spaceLeft / (xAxisGridlineCount - 1)
-    }
-    let xValue = offSet.left + (increment * Double(i))
+
+    let xValue = offSet.left + actualValue
     
     var point = CGPoint()
     
@@ -567,46 +560,63 @@ open class GraphCalculation {
   }
   
   
-  func barXAxisLabel(using i: Int) -> CGPoint {
+  func barXAxisLabel(using i: Int, andisBottom isBottom: Bool) -> CGPoint {
     let spaceLeft = frameWidth - (offSet.left + offSet.right)
     let scale = spaceLeft / (Double(arrayCount) * 2)
     let increment = (scale * 2)
     let position = scale / 2
     let start = offSet.left + (increment * Double(i))
     let xValue = start + position
-    let yValue = frameHeight - (offSet.bottom - 7)
+    var yValue = 0.0
+    
+    if isBottom == true {
+      yValue = frameHeight - (offSet.bottom - 7)
+    } else {
+      yValue = offSet.top - 15
+    }
     
     return CGPoint(x: xValue, y: yValue)
   }
   
-  func horizontalYAxisLabel(using i: Int) -> CGPoint {
+  func horizontalYAxisLabel(using i: Int, andisLeft isLeft: Bool) -> CGPoint {
     let spaceLeft = frameHeight - (offSet.bottom + offSet.top)
     let scale = spaceLeft / (Double(arrayCount) * 2)
     let increment = (scale * 2)
     let position = scale / 2
     let start = offSet.top + (increment * Double(i))
-    let xValue = offSet.left - 20
+    var xValue = 0.0
     let yValue = start + position
     
+    if isLeft == true {
+      xValue = offSet.left - 20
+    } else {
+      xValue = frameWidth - (offSet.right - 5)
+    }
     
     return CGPoint(x: xValue, y: yValue)
   }
   
-  func horizontalXAxisLabel(using i: Int) -> CGPoint {
-    let spaceLeft = (frameWidth - 8) - (offSet.left + offSet.right)
-    var increment = 0.0
-    let count = Double(arrayCount)
+  func horizontalXAxisLabel(using i: Int, andisBottom isBottom: Bool) -> CGPoint {
+    let spaceLeft = (frameWidth - 8 - offSet.left - offSet.right) / (xAxisGridlineCount - 1)
+    let actualValue = spaceLeft * Double(i)
     
-    if count < xAxisGridlineCount {
-      increment = spaceLeft / (count - 1)
+    let xValue = offSet.left + actualValue
+    var yValue = 0.0
+    
+    if isBottom == true {
+      yValue = (frameHeight - offSet.bottom) + 10
     } else {
-      increment = spaceLeft / (xAxisGridlineCount - 1)
+      yValue = offSet.top - 15
     }
     
-    let xValue = offSet.left + (increment * Double(i))
-    let yValue = (frameHeight - offSet.bottom) + 10
-    
     return CGPoint(x: xValue, y: yValue)
+  }
+  
+  func horizontalXAxisLabelText(using i: Int) -> String {
+    let value = (maxValue - minValue) / (xAxisGridlineCount - 1)
+    
+    let text = String(Int(minValue) + (i * Int(value)))
+    return text
   }
   
 }

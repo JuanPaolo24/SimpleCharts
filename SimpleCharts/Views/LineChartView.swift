@@ -234,12 +234,8 @@ open class LineChartView: LineChartRenderer {
     axisBase(context: context, offSet: offSet)
     drawXAxisGridline(on: context, using: xAxis.setGridlineCount)
     drawYAxisGridline(on: context, using: yAxis.setGridlineCount)
-    if yAxis.yAxisVisibility == true {
-      labelRenderer.drawYAxisLabel(on: context, using: yAxis.setGridlineCount, withAxisInverse: yAxis.enableYAxisInverse)
-    }
-    if xAxis.xAxisVisibility == true {
-      labelRenderer.drawXAxisLabel(on: context, using: xAxis.setGridlineCount)
-    }
+    labelRenderer.drawYAxisLabel(on: context, using: yAxis.setGridlineCount, withAxisInverse: yAxis.enableYAxisInverse, and: yAxis.rightYAxisVisibility, yAxis.leftYAxisVisibility)
+    labelRenderer.drawXAxisLabel(on: context, using: xAxis.setGridlineCount, with: xAxis.bottomXAxisVisibility, xAxis.topXAxisVisibility)
     if legendVisibility == true {
       legend.addLegend(to: context, using: data.array, and: legendPosition, customXlegend, customYlegend)
     }

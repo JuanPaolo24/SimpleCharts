@@ -27,7 +27,7 @@ open class ArcRenderer: UIView {
     let radius = min(frame.size.width, frame.size.height) * segments.setRadius
     let viewCenter = CGPoint(x: centerX, y: centerY)
     let valueCount = segments.array.reduce(0, {$0 + $1.value})
-    let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: 12.0, weight: .bold), foreGroundColor: UIColor(red:0.65, green:0.65, blue:0.65, alpha:1.0))
+    let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: 12.0, weight: .bold), foreGroundColor: UIColor.black)
     var startAngle = -CGFloat.pi * 0.5
     
     for segment in segments.array {

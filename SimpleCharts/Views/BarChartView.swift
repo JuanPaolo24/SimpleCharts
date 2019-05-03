@@ -28,8 +28,11 @@ open class BarChartView: BarChartRenderer {
   /// Custom legend y (When you select .custom on legend position then you can use this to set your own y values)
   open var customYlegend: Double = 0.0
   
-  /// Enables the axis label customisation (Default = false)
-  open var enableAxisCustomisation:Bool = true
+  /// Enables the axis label customisation, if it is false then the max value of the data set will be taken and multiplied by 20% (Default = false)
+  open var enableAxisCustomisation:Bool = false
+  
+  /// Enables the xAxis label customisation (Default = false)
+  open var enableAxisLabelCustomisation: Bool = false
   
   /// Graph off set on the left (Default = 31)
   open var offSetLeft:Double = 31.0
@@ -238,6 +241,7 @@ open class BarChartView: BarChartRenderer {
       }
     }
   }
+
   
   func renderGraphBase(as currentOrientation: orientation, on context: CGContext, withConfiguration landscapePadding: Double) {
     let helper = HelperFunctions()
@@ -257,8 +261,13 @@ open class BarChartView: BarChartRenderer {
     let actualMax = helper.findMaxValueFrom(convertedData)
     
     if enableAxisCustomisation == true {
-      maxValue = yAxis.setYAxisMaximumValue
-      minValue = yAxis.setYAxisMinimumValue
+      if barOrientation == .horizontal {
+        maxValue = xAxis.setXAxisMaximumValue
+        minValue = xAxis.setXAxisMinimumValue
+      } else {
+        maxValue = yAxis.setYAxisMaximumValue
+        minValue = yAxis.setYAxisMinimumValue
+      }
     } else {
       maxValue = actualMax
       minValue = 0
@@ -276,23 +285,15 @@ open class BarChartView: BarChartRenderer {
         drawHorizontalXGridlines(on: context, using: xAxis.setGridlineCount)
         drawHorizontalYGridlines(on: context, using: arrayCount)
       }
-      if yAxis.yAxisVisibility == true {
-        labelRenderer.drawHorizontalYAxisLabel(on: context, using: arrayCount)
-      }
-      if xAxis.xAxisVisibility == true {
-        labelRenderer.drawHorizontalXAxisLabel(on: context, using: xAxis.setGridlineCount)
-      }
+      labelRenderer.drawHorizontalYAxisLabel(on: context, withCustomisation: enableAxisLabelCustomisation, using: arrayCount, and: yAxis.setYAxisLabel, with: yAxis.rightYAxisVisibility, yAxis.leftYAxisVisibility)
+        labelRenderer.drawHorizontalXAxisLabel(on: context, using: xAxis.setGridlineCount, with: xAxis.bottomXAxisVisibility, xAxis.topXAxisVisibility)
     } else {
       context.protectGState {
         drawBarXAxisGridline(on: context, using: arrayCount)
         drawYAxisGridline(on: context, using: yAxis.setGridlineCount)
       }
-      if yAxis.yAxisVisibility == true {
-        labelRenderer.drawYAxisLabel(on: context, using: yAxis.setGridlineCount, withAxisInverse: yAxis.enableYAxisInverse)
-      }
-      if xAxis.xAxisVisibility == true {
-        labelRenderer.drawbarXAxisLabel(on: context, withCustomisation: enableAxisCustomisation, using: arrayCount, and: xAxis.setXAxisLabel)
-      }
+      labelRenderer.drawYAxisLabel(on: context, using: yAxis.setGridlineCount, withAxisInverse: yAxis.enableYAxisInverse, and: yAxis.rightYAxisVisibility, yAxis.leftYAxisVisibility)
+        labelRenderer.drawbarXAxisLabel(on: context, withCustomisation: enableAxisLabelCustomisation, using: arrayCount, and: xAxis.setXAxisLabel, with: xAxis.bottomXAxisVisibility, xAxis.topXAxisVisibility)
     }
     
     if legendVisibility == true {

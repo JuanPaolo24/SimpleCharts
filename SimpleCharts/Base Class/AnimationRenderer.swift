@@ -50,6 +50,37 @@ open class AnimationRenderer: UIView {
     animation.duration = lineCustomisationSource.setAnimationDuration
     shapeLayer.add(animation, forKey: "line")
   }
+  //Draw a special case of a circle for the combine chart to ensure that the circle goes on top of the bar
+  func drawAnimatedCombineLine(on mainLayer: CALayer, using array: [Double]) {
+    let animatedPath = CGMutablePath()
+    let startingYValue = calculate.ylineGraphStartPoint()
+    let startingXValue = calculate.xlineGraphPoint(for: .combineChart, from: 0)
+    animatedPath.move(to: CGPoint(x: startingXValue, y: startingYValue))
+    
+    for (increment, value) in array.enumerated() {
+      let xValue = calculate.xlineGraphPoint(for: .combineChart, from: increment)
+      let yValue = calculate.ylineGraphPoint(from: value)
+      animatedPath.addLine(to: CGPoint(x: xValue, y: yValue))
+      let circleLayer = CAShapeLayer()
+      circleLayer.path = UIBezierPath(arcCenter: CGPoint(x: xValue, y: yValue), radius: lineCustomisationSource.setCirclePointRadius, startAngle: CGFloat(0).degreesToRadians, endAngle: CGFloat(360).degreesToRadians, clockwise: true).cgPath
+      circleLayer.fillColor = lineCustomisationSource.setLineGraphColour
+      mainLayer.addSublayer(circleLayer)
+    }
+    
+    let shapeLayer = CAShapeLayer()
+    shapeLayer.path = animatedPath
+    shapeLayer.strokeColor = lineCustomisationSource.setLineGraphColour
+    shapeLayer.fillColor = nil
+    shapeLayer.lineWidth = lineCustomisationSource.setLineWidth
+    mainLayer.addSublayer(shapeLayer)
+    
+    let animation = CABasicAnimation(keyPath: "strokeEnd")
+    animation.fromValue = 0
+    animation.toValue = 1
+    animation.duration = lineCustomisationSource.setAnimationDuration
+    shapeLayer.add(animation, forKey: "line")
+    
+  }
   
   
   
@@ -96,70 +127,5 @@ open class AnimationRenderer: UIView {
       
     }
   }
-  
-  
-
-//  func drawAnimatedPie(radiusPercentage: CGFloat, segments: PieChartDataSet, centerX: CGFloat, centerY: CGFloat, mainLayer: CALayer) {
-//    let radius = min(frame.size.width, frame.size.height) * radiusPercentage
-//    //let viewCenter = CGPoint(x: bounds.size.width * 0.4, y: bounds.size.height * 0.5)
-//    let viewCenter = CGPoint(x: centerX, y: centerY)
-//    let valueCount = segments.array.reduce(0, {$0 + $1.value})
-//
-//    let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: 12.0, weight: .bold), foreGroundColor: UIColor(red:0.65, green:0.65, blue:0.65, alpha:1.0))
-//
-//    var startAngle = -CGFloat.pi * 0.5
-//
-//    for segment in segments.array {
-//
-//      let path = CGMutablePath()
-//
-//      let endAngle = startAngle + 2 * .pi * (segment.value / valueCount)
-//
-//      let halfAngle = startAngle + (endAngle - startAngle) * 0.5
-//      let labelPosition = CGFloat(0.8)
-//      let labelXPosition = viewCenter.x + (radius * labelPosition) * cos(halfAngle)
-//      let labelYPosition = viewCenter.y + (radius * labelPosition) * sin(halfAngle)
-//
-//
-//      path.move(to: viewCenter)
-//      path.addArc(center: viewCenter, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: false)
-//
-//      let shapeLayer = CAShapeLayer()
-//      shapeLayer.path = path
-//      shapeLayer.fillColor = segment.color.cgColor
-//
-//      let maskPath = CGMutablePath()
-//      maskPath.move(to: viewCenter)
-//      maskPath.addArc(center: viewCenter, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: false)
-//
-//      let shapeLayerMask = CAShapeLayer()
-//      shapeLayerMask.path = maskPath
-//      shapeLayerMask.fillColor = segment.color.cgColor
-//      shapeLayerMask.lineWidth = radius
-//      shapeLayerMask.strokeStart = 0
-//      shapeLayerMask.strokeEnd = 1
-//
-//      shapeLayer.mask = shapeLayerMask
-//
-//      let animation = CABasicAnimation(keyPath: "bounds")
-//      animation.fromValue = shapeLayerMask.strokeStart
-//      animation.toValue = shapeLayerMask.strokeEnd
-//      animation.duration = 2
-//      animation.timingFunction = CAMediaTimingFunction(name: .linear)
-//      animation.isRemovedOnCompletion = false
-//      animation.autoreverses = false
-//      shapeLayer.add(animation, forKey: nil)
-//      mainLayer.addSublayer(shapeLayer)
-//
-//
-//
-//      textRenderer.renderText(text: "\(segment.value)", textFrame: CGRect(x: labelXPosition, y: labelYPosition , width: 40, height: 20))
-//
-//      startAngle = endAngle
-//
-//
-//  }
-//
-//  }
   
 }
