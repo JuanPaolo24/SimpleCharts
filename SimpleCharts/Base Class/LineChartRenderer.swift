@@ -154,7 +154,7 @@ open class LineChartRenderer: ChartRenderer {
       
       if sourceData.enableCirclePointVisibility == true {
         context.addArc(center: CGPoint(x: xValue, y: yValue), radius: sourceData.setCirclePointRadius, startAngle: CGFloat(0).degreesToRadians, endAngle: CGFloat(360).degreesToRadians, clockwise: true)
-        context.setFillColor(sourceData.setLineGraphColour)
+        context.setFillColor(sourceData.setLineGraphColour.cgColor)
         context.fillPath()
       }
     }
@@ -181,7 +181,7 @@ open class LineChartRenderer: ChartRenderer {
         context.protectGState {
           linePath.addLine(to: CGPoint(x: xValue, y: yValue))
           context.addPath(linePath)
-          context.setStrokeColor(sourceData.setLineGraphColour)
+          context.setStrokeColor(sourceData.setLineGraphColour.cgColor)
           context.strokePath()
           context.setLineWidth(sourceData.setLineWidth)
         }
@@ -219,7 +219,7 @@ open class LineChartRenderer: ChartRenderer {
       if sourceData.enableLineVisibility == true {
         path.addCurve(to: destination, control1: control1, control2: control2)
         context.addPath(path)
-        context.setStrokeColor(sourceData.setLineGraphColour)
+        context.setStrokeColor(sourceData.setLineGraphColour.cgColor)
         context.strokePath()
       }
 

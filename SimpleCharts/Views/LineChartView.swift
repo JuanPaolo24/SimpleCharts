@@ -51,10 +51,10 @@ open class LineChartView: LineChartRenderer {
   open var lineType: lineType = .normal
   
   /// Activate animation
-  open var enableAnimation = true
+  open var enableAnimation: Bool = false
   
   /// Enable highlighting (Default = true)
-  open var enableHighlight: Bool = true
+  open var enableHighlight: Bool = false
   
   open var touchPosition = CGPoint(x: 0, y: 0)
   

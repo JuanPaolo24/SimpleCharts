@@ -16,7 +16,7 @@ open class CombinedChartView: ChartRenderer {
   open var legendPosition: legendPlacing = .bottom
   
   /// Legend Shape (Default = Rectangle)
-  open var legendShape: legendShape = .circle
+  open var legendShape: legendShape = .rectangle
   
   /// Custom legend x (When you select .custom on legend position then you can use this to set your own x values)
   open var customXlegend: Double = 0.0
@@ -55,10 +55,10 @@ open class CombinedChartView: ChartRenderer {
   open var lineType: lineType = .normal
   
   /// Activate animation
-  open var enableAnimation = true
+  open var enableAnimation:Bool = false
   
   /// Enable highlighting (Default = true)
-  open var enableHighlight: Bool = true
+  open var enableHighlight: Bool = false
   
   /// Add the data source
   public var data = CombinedChartDataSet()

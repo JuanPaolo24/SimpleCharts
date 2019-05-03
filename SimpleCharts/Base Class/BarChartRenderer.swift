@@ -27,8 +27,8 @@ open class BarChartRenderer: ChartRenderer {
       let yFrame = calculate.yHorizontalTextFrame(using: increment, with: dataSetIncrement, and: dataSetCount)
       
       context.protectGState {
-        context.setFillColor(customisationSource.setBarGraphFillColour)
-        context.setStrokeColor(customisationSource.setBarGraphStrokeColour)
+        context.setFillColor(customisationSource.setBarGraphFillColour.cgColor)
+        context.setStrokeColor(UIColor.black.cgColor)
         context.setLineWidth(customisationSource.setBarGraphLineWidth)
         context.addRect(CGRect(x: xValue, y: yValue, width: width, height: height))
         context.drawPath(using: .fillStroke)
@@ -54,8 +54,8 @@ open class BarChartRenderer: ChartRenderer {
       let yFrame = calculate.yVerticalTextFrame(using: value)
       
       context.protectGState {
-        context.setFillColor(customisationSource.setBarGraphFillColour)
-        context.setStrokeColor(customisationSource.setBarGraphStrokeColour)
+        context.setFillColor(customisationSource.setBarGraphFillColour.cgColor)
+        context.setStrokeColor(UIColor.black.cgColor)
         context.setLineWidth(customisationSource.setBarGraphLineWidth)
         context.addRect(CGRect(x: xValue, y: yValue, width: width, height: height))
         context.drawPath(using: .fillStroke)

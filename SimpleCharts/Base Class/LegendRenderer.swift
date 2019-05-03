@@ -100,7 +100,7 @@ open class LegendRenderer: UIView {
   //Add a line chart legend
   func addLegend(to context: CGContext, using arrays: [LineChartData], and position: legendPlacing, _ customX: Double, _ customY: Double) {
     for increment in 1...arrays.count {
-      let legendColour = arrays[increment - 1].setLineGraphColour
+      let legendColour = arrays[increment - 1].setLineGraphColour.cgColor
       let dataSetName = arrays[increment - 1].name
       let shape = arrays[increment - 1].setLegendShape
       let frameHeight = Double(frame.size.height)
@@ -124,7 +124,7 @@ open class LegendRenderer: UIView {
   //Add a bar chart legend
   func addLegend(to context: CGContext, using arrays: [BarChartData], and position: legendPlacing, _ customX: Double, _ customY: Double) {
     for increment in 1...arrays.count {
-      let legendColour = arrays[increment - 1].setBarGraphFillColour
+      let legendColour = arrays[increment - 1].setBarGraphFillColour.cgColor
       let dataSetName = arrays[increment - 1].name
       let shape = arrays[increment - 1].setLegendShape
       let frameHeight = Double(frame.size.height)
@@ -195,7 +195,7 @@ open class LegendRenderer: UIView {
     } else {
       for increment in 0...lineConvertedData.count - 1 {
         legendName.append(lineChartDataSet.array[increment].name)
-        legendColour.append(lineChartDataSet.array[increment].setLineGraphColour)
+        legendColour.append(lineChartDataSet.array[increment].setLineGraphColour.cgColor)
       }
     }
     
@@ -205,7 +205,7 @@ open class LegendRenderer: UIView {
     } else {
       for increment in 0...barConvertedData.count - 1 {
         legendName.append(barChartDataSet.array[increment].name)
-        legendColour.append(barChartDataSet.array[increment].setBarGraphFillColour)
+        legendColour.append(barChartDataSet.array[increment].setBarGraphFillColour.cgColor)
       }
     }
     

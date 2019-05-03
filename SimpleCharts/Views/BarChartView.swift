@@ -59,7 +59,7 @@ open class BarChartView: BarChartRenderer {
   open var enableAnimation: Bool = false
   
   /// Enable highlighting (Default = true)
-  open var enableHighlight: Bool = true
+  open var enableHighlight: Bool = false
   
   public var data = BarChartDataSet()
   
@@ -278,6 +278,7 @@ open class BarChartView: BarChartRenderer {
     }
     
     labelRenderer.calculate = GraphCalculation(array: [], arrayCount: arrayCount, maxValue: maxValue, minValue: minValue, frameWidth: frameWidth(), frameHeight: frameHeight(), offSet: offSet, yAxisGridlineCount: yAxis.setGridlineCount, xAxisGridlineCount: xAxis.setGridlineCount)
+    
     
     axisBase(context: context, offSet: offSet)
     if barOrientation == .horizontal {
