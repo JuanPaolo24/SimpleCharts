@@ -140,5 +140,5 @@ Some of the things you can create with the library
 Starting June 1st 2019, pull requests are welcome. Refer to the issue page first to highlight the change that you are proposing 
 and discuss the change. 
 
-
-
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
