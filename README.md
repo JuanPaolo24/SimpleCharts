@@ -19,7 +19,7 @@ on the + sign.
 
 ## Requirements
 - Xcode 10
-- iOS 10.0+
+- iOS 9.0+
 
 ## Sample Usage
 
