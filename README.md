@@ -1,9 +1,9 @@
 # SimpleCharts
 
-SimpleCharts is a re-implementation of the famous iOS charting solution [Charts](https://github.com/danielgindi/Charts) for
-my final year project. The goal of the project is to simplify and improve the implementation of ”Charts” through a minimalist 
+SimpleCharts is a re-implementation of the famous iOS charting libray called [Charts](https://github.com/danielgindi/Charts) for
+my final year project as a Bsc Software Engineering Third Year. The goal of the project is to simplify and improve the implementation of ”Charts” through a minimalist 
 approach. It also gives a chance to learn about the inner workings of iOS development frameworks. The approach was not to try 
-and beat “Charts” since it was already established, but to provide a simpler option for developers that do not necessarily 
+and beat “Charts” since it is an already established library in the community, but to provide an additional simpler option for developers that do not necessarily 
 need specific configurations and would prefer an easier time implementing.
 
 
