@@ -17,6 +17,10 @@ on the + sign.
 4. To access the library on your source code; simply add `Import SimpleCharts` on top of your source code file.
 5. Refer to the documentation section below to learn how to use the library.
 
+## Requirements
+- Xcode 10
+- iOS 10.0+
+
 ## Sample Usage
 
 The following are just the basic configuration of the charts. To learn more about the other customisation option refer to the
