@@ -49,6 +49,14 @@ chartView.lineType = .bezier
 #### Output
 ![Alt text](SampleUsage/sampleusagebezier.png?raw=true "Bezier Line Chart")
 
+To add animation just add this line:
+
+```Swift
+chartView.enableAnimation = true
+```
+#### Output
+![Alt Text](https://media.giphy.com/media/TEYYiulfQTNmukAy8b/giphy.gif)
+
 ### Creating a simple Bar Chart
 
 ```Swift
@@ -72,23 +80,47 @@ chartView.barOrientation = .horizontal
 #### Output
 ![Alt text](SampleUsage/sampleusagehorizontal.png?raw=true "Horizontal Bar Chart")
 
+
+To add animation just add this line: 
+
+```Swift
+chartView.enableAnimation = true
+```
+#### Output
+
+![Alt Text](https://media.giphy.com/media/j4wjRjNCrgLRZAylUe/giphy.gif)
+
 ### Creating a simple Combine Chart
 
 ```Swift
 Import SimpleCharts
 
 let chartView = CombineChartView()
-let lineValues: [Double] = [50, 124, 40, 32, 64]
 let barValues: [Double] = [100, 212, 130, 230, 430]
-let lineEntry = LineChartData(dataset: lineValues, datasetName: "LineChart")
+let lineValues: [Double] = [50, 124, 40, 32, 64]
+
 let barEntry = BarChartData(dataset: barValues, datasetName: "BarChart")
+let lineEntry = LineChartData(dataset: lineValues, datasetName: "LineChart")
+lineEntry.setLineGraphColor = .black //This is added to differentiate the bar and line 
+
+let barDataSet = BarChartDataSet(dataset: [barEntry])
 let lineDataSet = LineChartDataSet(dataset: [lineEntry])
-let barDataSet = LineChartDataSet(dataset: [barEntry])
+
 let combinedDataSet = CombinedChartDataSet(lineData: lineDataSet, barData: barDataSet)
 chartView.data = combinedDataSet
 ```
 #### Output
 ![Alt text](SampleUsage/sampleusagecombine.png?raw=true "Combine Chart")
+
+To add animation just add this line: 
+
+```Swift
+chartView.enableAnimation = true
+```
+#### Output
+
+![Alt Text](https://media.giphy.com/media/iJnuatuZx71pUJ6Lhe/giphy.gif)
+
 
 ### Creating a simple Pie Chart
 
