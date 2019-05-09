@@ -56,7 +56,7 @@ open class LineChartView: LineChartRenderer {
   /// Enable highlighting (Default = true)
   open var enableHighlight: Bool = false
   
-  open var touchPosition = CGPoint(x: 0, y: 0)
+  private var touchPosition = CGPoint(x: 0, y: 0)
   
   public var data = LineChartDataSet()
   
@@ -86,7 +86,6 @@ open class LineChartView: LineChartRenderer {
     
   }
   
-
   override open func draw(_ rect: CGRect) {
     super.draw(rect)
     guard let context = UIGraphicsGetCurrentContext() else {
@@ -111,7 +110,6 @@ open class LineChartView: LineChartRenderer {
           renderHighlight(on: context, withConfiguration: 1.0)
         }
       }
-    
   }
   
   override open func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -211,7 +209,7 @@ open class LineChartView: LineChartRenderer {
     let arrayCount = helper.findArrayCountFrom(array: convertedData)
     let labelRenderer = AxisLabelRenderer(frame: self.frame)
     let legend = LegendRenderer(frame: self.frame)
-    legend.legendPadding(currentOrientation: currentOrientation)
+    legend.setLegendPadding(as: currentOrientation)
     
     let actualMax = helper.findMaxValueFrom(convertedData)
     

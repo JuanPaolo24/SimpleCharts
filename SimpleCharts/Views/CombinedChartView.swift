@@ -51,14 +51,16 @@ open class CombinedChartView: ChartRenderer {
   /// Line type
   open var lineType: lineType = .normal
   
-  /// Activate animation
+  /// Activate animation (Default = false)
   open var enableAnimation:Bool = false
   
-  /// Enable highlighting (Default = true)
+  /// Enable highlighting (Default = false)
   open var enableHighlight: Bool = false
   
   /// Add the data source
   public var data = CombinedChartDataSet()
+  
+  private var touchPosition = CGPoint(x: 0, y: 0)
   
   
   override public init(frame: CGRect) {
@@ -104,13 +106,38 @@ open class CombinedChartView: ChartRenderer {
     if UIDevice.current.orientation.isLandscape {
       renderGraphBase(as: .landscape, on: context, withConfiguration: scale)
       renderCombineChart(on: context, withConfiguration: scale)
+      if enableHighlight == true {
+        renderHighlight(on: context, withConfiguration: scale)
+      }
     } else {
       renderGraphBase(as: .portrait, on: context, withConfiguration: 1.0)
       renderCombineChart(on: context, withConfiguration: 1.0)
+      if enableHighlight == true {
+        renderHighlight(on: context, withConfiguration: 1.0)
+      }
     }
     
     
   }
+  
+  
+  override open func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    if let touch = touches.first {
+      let position = touch.location(in: self)
+      touchPosition = position
+      setNeedsDisplay()
+    }
+  }
+  
+  
+  override open func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+    if let touch = touches.first {
+      let position = touch.location(in: self)
+      touchPosition = position
+      setNeedsDisplay()
+    }
+  }
+  
   
   // Changes offset configuration based on the position of the legend
   // This is for the default configuration
@@ -246,6 +273,40 @@ open class CombinedChartView: ChartRenderer {
       }
     }
   }
+  
+  func renderHighlight(on context: CGContext, withConfiguration landscapePadding: Double) {
+    let helper = HelperFunctions()
+    let paddedLeftOffset = offSetLeft * landscapePadding
+    let paddedRightOffset = offSetRight * landscapePadding
+    let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)
+    let lineRenderer = LineChartRenderer(frame: self.frame)
+    let barRenderer = BarChartRenderer(frame: self.frame)
+    
+    let lineChartDataSet = data.lineData
+    let barChartDataSet = data.barData
+    
+    let lineConvertedData = helper.convertToDouble(from: lineChartDataSet.array)
+    let barConvertedData = helper.convertToDouble(from: barChartDataSet.array)
+    
+    let lineMaxValue = helper.findMaxValueFrom(lineConvertedData)
+    let barMaxValue = helper.findMaxValueFrom(barConvertedData)
+    let actualMax = max(lineMaxValue, barMaxValue)
+    
+    var maxValue = 0.0
+    var minValue = 0.0
+    if enableAxisCustomisation == true {
+      maxValue = yAxis.setYAxisMaximumValue
+      minValue = yAxis.setYAxisMinimumValue
+    } else {
+      maxValue = actualMax
+      minValue = 0
+    }
+    
+    //TODO: Rewrite the highlight value function to make it work better on combine
+    lineRenderer.highlightValues(in: context, using: lineConvertedData, and: touchPosition, with: maxValue, minValue, offSet)
+    barRenderer.highlightVerticalValues(in: context, using: barConvertedData, and: touchPosition, with: maxValue, minValue, Double(barConvertedData.count), offSet)
+    
+  }
 
   
   
@@ -254,7 +315,7 @@ open class CombinedChartView: ChartRenderer {
     let helper = HelperFunctions()
     let axis = AxisLabelRenderer(frame: self.frame)
     let legend = LegendRenderer(frame: self.frame)
-    legend.legendPadding(currentOrientation: currentOrientation)
+    legend.setLegendPadding(as: currentOrientation)
     let paddedLeftOffset = offSetLeft * landscapePadding
     let paddedRightOffset = offSetRight * landscapePadding
     let offSet = offset.init(left: paddedLeftOffset, right: paddedRightOffset, top: offSetTop, bottom: offSetBottom)

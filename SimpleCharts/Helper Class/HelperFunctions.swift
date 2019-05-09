@@ -75,7 +75,7 @@ class HelperFunctions {
 
   // This function will take in an array and a target number and return the closest number from the array to the target number
   // Uses the binary search algorithm
-  ///Refactor this soon 
+  // This function is taken from (https://www.geeksforgeeks.org/find-closest-number-array/) and refactored to fit a swift style approach
   func returnClosestPoint(from array: [CGPoint], using target: CGPoint) -> CGPoint{
     let arrayCount = array.count
     var arrayStart = 0
@@ -112,6 +112,7 @@ class HelperFunctions {
   }
   
   /// finds the closest value for target.x between value 1 and value 2
+  // This function is taken from (https://www.geeksforgeeks.org/find-closest-number-array/) and refactored to fit a swift style approach
   func findClosest(_ target: CGPoint, between value1: CGPoint, and value2: CGPoint) -> CGPoint {
     
     if (target.x - value1.x) >= (value2.x - target.x) {
@@ -122,6 +123,7 @@ class HelperFunctions {
   }
   
   // A variation of the findclosest function specially made to return a CGRect instead of a point
+  // This function is taken from (https://www.geeksforgeeks.org/find-closest-number-array/) and refactored to fit a swift style approach
   func returnClosestRect(from array: [CGRect], using target: CGPoint) -> CGRect {
     let arrayCount = array.count
     var arrayStart = 0
@@ -129,25 +131,32 @@ class HelperFunctions {
     var mid = 0
     
     while arrayStart < arrayEnd {
+      // Finds the middle value of the array
       mid = (arrayStart + arrayEnd) / 2
+      
+      // If the target is less than the first value of the array then return the first value
       if target.x <= array[0].midX {
         return array[0]
       }
       
+      // If the target is more than the last value of the array then return the last value
       if target.x >= array[arrayCount-1].midX {
         return array[arrayCount-1]
       }
       
+      // If the middle point of the array equals the target then return the middle value
       if CGPoint(x: array[mid].midX, y: array[mid].minY) == target {
         return array[mid]
       }
       
+      //If middle value is more than the target then search the left side
       if target.x < array[mid].midX {
         if mid > 0 && target.x > array[mid-1].midX {
           return findClosestRect(target, between: array[mid-1], and: array[mid])
         }
         arrayEnd = mid
       } else {
+        //If middle value is less than the target then search the right side
         if mid < arrayCount-1 && target.x < array[mid+1].midX {
           return findClosestRect(target, between: array[mid], and: array[mid+1])
         }
@@ -158,6 +167,7 @@ class HelperFunctions {
   }
   
     /// finds the closest value for target.x between value 1 and value 2
+    // This function is taken from (https://www.geeksforgeeks.org/find-closest-number-array/) and refactored to fit a swift style approach
   func findClosestRect(_ target: CGPoint, between value1: CGRect, and value2: CGRect) -> CGRect {
     
     if (target.x - value1.midX) >= (value2.midX - target.x) {
@@ -167,7 +177,7 @@ class HelperFunctions {
     }
   }
   
-  
+    // This function is taken from (https://www.geeksforgeeks.org/find-closest-number-array/) and refactored to fit a swift style approach
   func returnClosestHorizontal(from array: [CGRect], using target: CGPoint) -> CGRect {
     let arrayCount = array.count
     var arrayStart = 0
@@ -206,6 +216,7 @@ class HelperFunctions {
   }
   
   /// finds the closest value for target.y between value 1 and value 2
+    // This function is taken from (https://www.geeksforgeeks.org/find-closest-number-array/) and refactored to fit a swift style approach
   func findClosestHorizontal(_ target: CGPoint, between value1: CGRect, and value2: CGRect) -> CGRect {
     
     if (target.y - value1.midY) >= (value2.midY - target.y) {
@@ -239,12 +250,12 @@ class HelperFunctions {
     
   }
   
-  //Create a colour structure from a UIColour and returns an array of CGFloats corresponding to colour data
-  func createColourStructure(from value: [UIColor]) -> [CGFloat] {
+  //Create a color structure from a UIColour and returns an array of CGFloats corresponding to colour data
+  func createColorStructure(from value: [UIColor]) -> [CGFloat] {
     var colorComponents: [CGFloat] = []
     
-    for colours in value {
-      guard let components = colours.cgColor.components else { return [] }
+    for colors in value {
+      guard let components = colors.cgColor.components else { return [] }
       colorComponents.append(components[0])
       colorComponents.append(components[1])
       colorComponents.append(components[2])

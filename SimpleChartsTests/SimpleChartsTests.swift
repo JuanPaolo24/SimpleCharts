@@ -14,8 +14,8 @@ class SimpleChartsTests: XCTestCase {
   var chartRenderer: ChartRenderer!
   var array: [Double]!
   var max: Double!
-  var calcPortrait: LineGraphCalculation!
-  var calcLandscape: LineGraphCalculation!
+  var calcPortrait: GraphCalculation!
+  var calcLandscape: GraphCalculation!
   let helper = HelperFunctions()
   
   override func setUp() {
@@ -46,10 +46,12 @@ class SimpleChartsTests: XCTestCase {
   func testBinarySearchFunction() {
     let helper = HelperFunctions()
     let sampleArray = [CGPoint(x: 30, y: 50), CGPoint(x: 50, y: 100), CGPoint(x: 100, y: 500), CGPoint(x: 150, y: 400)]
-    let binarySearch = helper.findClosest(array: sampleArray, target: CGPoint(x: 35, y: 530))
-    let endBinary = helper.findClosest(array: sampleArray, target: CGPoint(x: 140, y: 200))
+    let startBinary = helper.returnClosestPoint(from: sampleArray, using: CGPoint(x: 35, y: 530))
+    let midBinary = helper.returnClosestPoint(from: sampleArray, using: CGPoint(x: 70, y: 350))
+    let endBinary = helper.returnClosestPoint(from: sampleArray, using: CGPoint(x: 140, y: 200))
     
-    XCTAssertEqual(binarySearch, CGPoint(x: 30, y: 50))
+    XCTAssertEqual(startBinary, CGPoint(x: 30, y: 50))
+    XCTAssertEqual(midBinary, CGPoint(x: 50, y: 100))
     XCTAssertEqual(endBinary, CGPoint(x: 150, y: 400))
     
   }
@@ -59,7 +61,7 @@ class SimpleChartsTests: XCTestCase {
   func testCombinedCGPointArrayFunction() {
     let helper = HelperFunctions()
     let array = [CGPoint(x: 60, y: 50), CGPoint(x: 50, y: 100), CGPoint(x: 100, y: 500), CGPoint(x: 150, y: 400)]
-    let result = helper.combineCGPointArray(array: array)
+    let result = helper.combineCGPoint(Array: array)
     
     XCTAssertEqual(result, [CGPoint(x: 50, y: 100), CGPoint(x: 60, y: 50), CGPoint(x: 100, y: 500), CGPoint(x: 150, y: 400)])
   }

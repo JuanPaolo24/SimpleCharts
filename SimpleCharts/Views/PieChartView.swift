@@ -57,7 +57,7 @@ open class PieChartView: ArcRenderer {
     let height = frame.size.height
     let width = frame.size.width
     let renderer = LegendRenderer(frame: self.frame)
-    renderer.legendPadding(currentOrientation: currentOrientation)
+    renderer.setLegendPadding(as: currentOrientation)
     
     if currentOrientation == orientation.portrait {
       if legendPosition == pielegendPlacing.right {

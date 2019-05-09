@@ -96,7 +96,7 @@ open class BarChartRenderer: ChartRenderer {
   }
   
   
-  func highlightValues(in context: CGContext, using array: [[Double]], and touchPoint: CGPoint, with maxValue: Double,  _ minValue: Double, _ arrayCount: Double,  _ offSet: offset) {
+  func highlightVerticalValues(in context: CGContext, using array: [[Double]], and touchPoint: CGPoint, with maxValue: Double,  _ minValue: Double, _ arrayCount: Double,  _ offSet: offset) {
     var calc = GraphCalculation()
     var highlightValueArray: [CGRect] = []
     var width = 0.0

@@ -62,7 +62,7 @@ open class LineChartData: ChartData {
   
   
   /// Graph Fill Color for normal fill configuration (Default = Blue)
-  open var setGraphFill: UIColor = UIColor.blue
+  open var setGraphFill: UIColor = UIColor(red:0.67, green:0.92, blue:1.00, alpha:1.0)
   
   /// Fill alpha/transparency (Default = 0.33)
   open var setFillAlpha: CGFloat = 0.33

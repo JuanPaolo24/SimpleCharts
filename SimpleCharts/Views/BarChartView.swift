@@ -99,6 +99,7 @@ open class BarChartView: BarChartRenderer {
     
     let scale = 70.0/31.0
     
+    
     if UIDevice.current.orientation.isLandscape {
       renderGraphBase(as: .landscape, on: context, withConfiguration: scale)
       if enableAnimation == false {
@@ -222,7 +223,7 @@ open class BarChartView: BarChartRenderer {
     if barOrientation == .horizontal {
       highlightHorizontalValues(in: context, using: array, and: touchPosition, with: maxValue, minValue, Double(array.count), offSet)
     } else {
-      highlightValues(in: context, using: array, and: touchPosition, with: maxValue, minValue, Double(array.count), offSet)
+      highlightVerticalValues(in: context, using: array, and: touchPosition, with: maxValue, minValue, Double(array.count), offSet)
     }
     
   }
@@ -250,7 +251,7 @@ open class BarChartView: BarChartRenderer {
     let arrayCount = helper.findArrayCountFrom(array: convertedData)
     let labelRenderer = AxisLabelRenderer(frame: self.frame)
     let legend = LegendRenderer(frame: self.frame)
-    legend.legendPadding(currentOrientation: currentOrientation)
+    legend.setLegendPadding(as: currentOrientation)
     
     var maxValue = 0.0
     var minValue = 0.0

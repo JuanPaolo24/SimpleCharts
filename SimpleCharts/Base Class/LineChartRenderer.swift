@@ -47,7 +47,7 @@ open class LineChartRenderer: ChartRenderer {
           gradientPath.closeSubpath()
           context.addPath(gradientPath)
           context.clip()
-          let colorComponents = helper.createColourStructure(from: sourceData.gradientFillColors)
+          let colorComponents = helper.createColorStructure(from: sourceData.gradientFillColors)
           
           let locations:[CGFloat] = [0.0, 1.0]
           
@@ -70,6 +70,7 @@ open class LineChartRenderer: ChartRenderer {
       }
     }
   }
+  
   
   func addBezierGradient(to context: CGContext, using array: [Double], offSet: offset) {
     
@@ -120,7 +121,7 @@ open class LineChartRenderer: ChartRenderer {
           context.addPath(gradientPath)
           context.clip()
           
-          let colorComponents = helper.createColourStructure(from: sourceData.gradientFillColors)
+          let colorComponents = helper.createColorStructure(from: sourceData.gradientFillColors)
           
           let locations:[CGFloat] = [0.0, 1.0]
           
@@ -182,8 +183,8 @@ open class LineChartRenderer: ChartRenderer {
           linePath.addLine(to: CGPoint(x: xValue, y: yValue))
           context.addPath(linePath)
           context.setStrokeColor(sourceData.setLineGraphColor.cgColor)
-          context.strokePath()
           context.setLineWidth(sourceData.setLineWidth)
+          context.strokePath()
         }
       }
       

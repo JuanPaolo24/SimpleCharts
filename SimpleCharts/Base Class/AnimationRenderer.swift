@@ -42,14 +42,17 @@ open class AnimationRenderer: UIView {
     shapeLayer.strokeColor = lineCustomisationSource.setLineGraphColor.cgColor
     shapeLayer.fillColor = nil
     shapeLayer.lineWidth = lineCustomisationSource.setLineWidth
-    mainLayer.addSublayer(shapeLayer)
     
     let animation = CABasicAnimation(keyPath: "strokeEnd")
     animation.fromValue = 0
     animation.toValue = 1
     animation.duration = lineCustomisationSource.setAnimationDuration
     shapeLayer.add(animation, forKey: "line")
+    mainLayer.addSublayer(shapeLayer)
   }
+  
+  
+  
   //Draw a special case of a circle for the combine chart to ensure that the circle goes on top of the bar
   func drawAnimatedCombineLine(on mainLayer: CALayer, using array: [Double]) {
     let animatedPath = CGMutablePath()
@@ -88,7 +91,7 @@ open class AnimationRenderer: UIView {
     
     var initialBound = CGRect()
     var finalBound = CGRect()
-    var increaseBar = CABasicAnimation()
+    
     
     for (increment, value) in array.enumerated() {
       var width = 0.0
@@ -114,15 +117,16 @@ open class AnimationRenderer: UIView {
         anchor = CGPoint(x: 1, y: 1)
       }
       
-      increaseBar = CABasicAnimation(keyPath: "bounds")
-      increaseBar.fromValue = initialBound
-      increaseBar.toValue = finalBound
-      increaseBar.duration = barCustomisationSource.setAnimationDuration
+      var animation = CABasicAnimation()
+      animation = CABasicAnimation(keyPath: "bounds")
+      animation.fromValue = initialBound
+      animation.toValue = finalBound
+      animation.duration = barCustomisationSource.setAnimationDuration
       let barLayer = CALayer()
       barLayer.anchorPoint = anchor
       barLayer.frame = finalBound
       barLayer.backgroundColor = barCustomisationSource.setBarGraphFillColor.cgColor
-      barLayer.add(increaseBar, forKey: nil)
+      barLayer.add(animation, forKey: nil)
       mainLayer.addSublayer(barLayer)
       
     }

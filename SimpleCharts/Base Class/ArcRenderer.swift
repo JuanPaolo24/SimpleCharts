@@ -21,6 +21,7 @@ open class ArcRenderer: UIView {
     super.init(coder: aDecoder)
   }
   
+  // This function is inspired from this project (https://github.com/hamishknight/Pie-Chart-View). It has been refactored to fit the structure of this project but the essence is from the project by hamishknight
 
   func drawPieArc(on context: CGContext, using segments: PieChartDataSet, with centerX: CGFloat, and centerY: CGFloat) {
     
@@ -30,10 +31,10 @@ open class ArcRenderer: UIView {
     let textRenderer = TextRenderer(font: UIFont.systemFont(ofSize: 12.0, weight: .bold), foreGroundColor: UIColor.black)
     var startAngle = -CGFloat.pi * 0.5
     
-    for segment in segments.array {
-      context.setFillColor(segment.color.cgColor)
+    for pieslice in segments.array {
+      context.setFillColor(pieslice.color.cgColor)
       
-      let endAngle = startAngle + 2 * .pi * (segment.value / valueCount)
+      let endAngle = startAngle + 2 * .pi * (pieslice.value / valueCount)
       let halfAngle = startAngle + (endAngle - startAngle) * 0.5
       let labelPosition = CGFloat(0.8)
       let labelXPosition = viewCenter.x + (radius * labelPosition) * cos(halfAngle)
@@ -41,11 +42,9 @@ open class ArcRenderer: UIView {
       context.move(to: viewCenter)
       context.addArc(center: viewCenter, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: false)
       context.fillPath()
-      textRenderer.renderText(text: "\(segment.value)", textFrame: CGRect(x: labelXPosition, y: labelYPosition , width: 40, height: 20))
+      textRenderer.renderText(text: "\(pieslice.value)", textFrame: CGRect(x: labelXPosition, y: labelYPosition , width: 40, height: 20))
       startAngle = endAngle
-    
     }
-    
   }
   
   

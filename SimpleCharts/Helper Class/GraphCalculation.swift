@@ -166,7 +166,6 @@ open class GraphCalculation {
       xValue = offSet.left + (increment * Double(i))
     }
     
-    
     return xValue
   }
   

@@ -22,17 +22,17 @@ open class LegendRenderer: UIView {
   
     /// Variable used by the legend to determine the distance between each one to prevent the text overlapping
   private var legendMaximumDistance = CGFloat(45)
-  private var leftConfigxAxis = 10.0
-  private var rightConfigxAxis = 60.0
+  private var leftConfigxAxis: Double = 10.0
+  private var rightConfigxAxis: Double  = 60.0
   
   private var pieLegendMaximumDistance = CGFloat(100)
-  private var bottomConfigyAxis = 80.0
-  private var topConfigyAxis = 80.0
+  private var bottomConfigyAxis: Double = 80.0
+  private var topConfigyAxis: Double = 80.0
   
-  private var pieLegendPadding = 0.0
+  private var pieLegendPadding: Double = 0.0
   
   // Change the configuration of the legend based on the device orientation
-  func legendPadding(currentOrientation: orientation) {
+  func setLegendPadding(as currentOrientation: orientation) {
     if currentOrientation == .landscape {
       legendMaximumDistance = CGFloat(70)
       leftConfigxAxis = 70
